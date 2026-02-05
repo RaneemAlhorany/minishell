@@ -1,24 +1,21 @@
 
-void read_input (t_token token , char **argv)
+
+
+//! THIS METHOD USE TO CREATE TOKEN THAT WILL USED FOR INPUT
+t_token* create_token(char *value , t_token_type type)
 {
+    t_token * token;
 
-}
+    token = malloc (sizeof(t_token));
+    if (!token)
+        return (NULL);
 
-void create_token(t_token *token)
-{
-
-    token -> value = NULL;
+    token -> value = value ;
     token -> next = NULL;
-    token -> type.TOKEN_WORD = NULL;
+    token -> type = type;
 
-    token -> type.TOKEN_WORD = NULL;
-    token -> type.TOKEN_PIPE = NULL;
-    token -> type.TOKEN_REDIRECT_IN = NULL;
-    token -> type.TOKEN_REDIRECT_OUT = NULL;
-    token -> type.TOKEN_REDIRECT_APPEND = NULL;
-    token -> type.TOKEN_HEREDOC = NULL;
-
+    return (token);
 }
 
 
-     
+//////////////////////////////////////////////////////////////
