@@ -1,8 +1,10 @@
 #ifndef MINISHEEL_H
 # define MINISHEEL_H
 
-
+# include "./env/env.h"
 #include "./lexer/token_lexer.h"
+#include "./expansion/expand.h"
+
 
 typedef struct s_cmd
 {

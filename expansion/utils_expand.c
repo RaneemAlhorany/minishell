@@ -32,7 +32,7 @@ char    *expand_var(char *input, int *i, t_env *env, int last_status)
     }
     if (!ft_isalpha(input[*i]) && input[*i] != '_')
     {
-        (*i)--;  // important fix
+//        (*i)--;  // important fix
         return (ft_strdup("$"));
     }
     start = *i;
@@ -45,7 +45,6 @@ char    *expand_var(char *input, int *i, t_env *env, int last_status)
     free(var_name);
     return (value);
 }
-
 
  void cleanup_expand(t_expand *ex)
 {

@@ -1,7 +1,10 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-# include "env.h"
+# include <stdlib.h>
+# include <string.h>
+#include <stddef.h>
+#include <sys/types.h>
 
 typedef struct s_buffer
 {

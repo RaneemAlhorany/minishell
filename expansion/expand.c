@@ -1,8 +1,4 @@
-
 #include "minishell.h"
-
-
-
 
  int  handle_quotes(t_expand *ex)
 {
@@ -23,7 +19,6 @@
     return (2);
 }
 
-
 int  handle_expansion(t_expand *ex)
 {
     char    *expanded;
@@ -41,6 +36,7 @@ int  handle_expansion(t_expand *ex)
     }
     return (2);
 }
+
 int  handle_regular_char(t_expand *ex)
 {
     if (!buffer_append_char(&ex->buf,

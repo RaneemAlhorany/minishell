@@ -1,4 +1,4 @@
-
+#include "minishell.h"
 char    *get_env_value(char *name, t_env *env)
 {
     t_env   *temp;

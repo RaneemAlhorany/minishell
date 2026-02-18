@@ -51,7 +51,7 @@ int  buffer_append_str(t_buffer *buf, char *str)
 
 
 
-static int  buffer_grow(t_buffer *buf, size_t needed)
+int  buffer_grow(t_buffer *buf, size_t needed)
 {
     char    *new_data;
     size_t  new_capacity;

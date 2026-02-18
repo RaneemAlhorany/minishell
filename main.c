@@ -1,27 +1,122 @@
 
 #include "minishell.h"
-#include <unistd.h>
 
-int main()
+static t_env *create_node(char *env_line)
 {
-	char *res = expand_string(input, env, last_status);
-	printf("RESULT: [%s]\n", res);
-	free(res);
+    t_env  *node;
+    char   *equal;
+    int     key_len;
 
+    node = malloc(sizeof(t_env));
+    if (!node)
+        return (NULL);
+
+    equal = ft_strchr(env_line, '=');
+    if (!equal)
+    {
+        free(node);
+        return (NULL);
+    }
+
+    key_len = equal - env_line;
+    node->key = ft_substr(env_line, 0, key_len);
+    node->value = ft_strdup(equal + 1);
+    node->next = NULL;
+
+    if (!node->key || !node->value)
+        return (free(node->key), free(node->value), free(node), NULL);
+
+    return (node);
 }
 
-test case  : 
-$USER
-hello$USER
-"$USER"
-'$USER'
-"$USER$HOME"
-$UNDEFINED
-$
-$$
-$?
+t_env *init_env(char **envp)
+{
+    t_env  *head;
+    t_env  *current;
+    t_env  *new_node;
+    int     i;
 
-valgrind ./minishell
+    head = NULL;
+    current = NULL;
+    i = 0;
+
+    while (envp[i])
+    {
+        new_node = create_node(envp[i]);
+        if (!new_node)
+            return (NULL);
+
+        if (!head)
+            head = new_node;
+        else
+            current->next = new_node;
+
+        current = new_node;
+        i++;
+    }
+    return (head);
+}
+
+void free_env(t_env *env)
+{
+    t_env *tmp;
+
+    while (env)
+    {
+        tmp = env;
+        env = env->next;
+        free(tmp->key);
+        free(tmp->value);
+        free(tmp);
+    }
+}
+
+int main(int argc, char **argv, char **envp)
+{
+    t_env   *env;
+    char    *result;
+    char    *input;
+    int     last_status;
+
+    (void)argc;
+    (void)argv;
+
+    last_status = 0;
+    env = init_env(envp);
+
+    while (1)
+    {
+        input = readline("test> ");
+        if (!input)
+            break;
+
+        result = expand_string(input, env, last_status);
+        if (result)
+        {
+            printf("RESULT: [%s]\n", result);
+            free(result);
+        }
+
+        free(input);
+    }
+
+    free_env(env);
+    return (0);
+}
+
+
+// test case  : 
+// $USER
+// hello$USER
+// "$USER"
+// '$USER'
+// "$USER$HOME"
+// $UNDEFINED
+// $
+// $$
+// $?
+
+// valgrind ./minishell
 
 
 
