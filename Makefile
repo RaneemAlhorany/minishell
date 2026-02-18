@@ -29,6 +29,7 @@ LIBFT = black_box_project/Libft/libft.a
 
 all: libft $(NAME)
 
+
 libft:
 	$(MAKE) -C black_box_project/Libft
 
