@@ -29,8 +29,6 @@ const char *token_type_to_string(t_token_type type);
 
 ////////////////////////
 void	free_tokens(t_token *head);
-int syntax_check(t_token *head);
-int is_redirection(t_token_type type);
 
 
 

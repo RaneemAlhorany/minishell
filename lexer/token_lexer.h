@@ -47,6 +47,8 @@ t_token *lexer (char *input);
 t_token* create_token(char *value , t_token_type type);
 void append_token(t_token **head , t_token *new_token);
 
+int syntax_check(t_token *head);
+int is_redirection(t_token_type type);
 
 
 #endif 

@@ -8,8 +8,8 @@ INCS = -I. -Iblack_box_project/Libft -Iblack_box_project/pipex
 SRCS = lexer/lexer.c \
 lexer/lexer_utils.c \
 lexer/token.c \
+lexer/syntax_check_lexer.c \
 A_edit_that_we_will_use_it_in_the_futeure/parser/parser.c \
-A_edit_that_we_will_use_it_in_the_futeure/parser/pars.c \
 A_edit_that_we_will_use_it_in_the_futeure/src/executor/executor.c \
 A_edit_that_we_will_use_it_in_the_futeure/utils/free.c \
 A_edit_that_we_will_use_it_in_the_futeure/src/builtins/exit.c \
