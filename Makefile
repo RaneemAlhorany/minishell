@@ -22,6 +22,9 @@ expansion/expand.c \
 expansion/utils_expand.c \
 expansion/utils_expand_buffer.c \
 env/get_env_value.c \
+A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_bulld.c \
+A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_exec.c \
+A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_free.c \
 main.c
 
 LIBFT = black_box_project/Libft/libft.a
