@@ -45,6 +45,7 @@ t_token *word_detection(char **input)
     if (!temp)
         return (NULL);
     token = create_token(temp, TOKEN_WORD);
+    free(temp);
     if (!token)
         return (NULL);
     return (token);

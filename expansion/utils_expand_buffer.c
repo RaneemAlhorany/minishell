@@ -57,10 +57,10 @@ int  buffer_grow(t_buffer *buf, size_t needed)
     size_t  new_capacity;
     size_t  i;
 
-    if (buf->len + needed < buf->capacity)
+    if (buf->len + needed + 1 < buf->capacity)
         return (1);
     new_capacity = buf->capacity * 2;
-    while (new_capacity <= buf->len + needed)
+    while (new_capacity <= buf->len + needed +1)
         new_capacity *= 2;
     new_data = malloc(new_capacity);
     if (!new_data)

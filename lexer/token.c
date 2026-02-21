@@ -10,11 +10,11 @@ t_token* create_token(char *value , t_token_type type)
 	token = (t_token *)malloc(sizeof(t_token));
     if (!token)
         return (NULL);
-    token -> value = ft_strdup(value);
-    if (!token -> value )
+    token->value = ft_strdup(value);
+    if (!token->value)
     {
         free(token);
-        return(NULL);
+        return (NULL);
     }
     token -> next = NULL;
     token -> type = type;
@@ -40,3 +40,16 @@ void append_token(t_token **head , t_token *new_token)
 }
 
 
+void	free_tokens(t_token *head)
+{
+	t_token	*tmp;
+
+	while (head)
+	{
+		tmp = head->next;
+		if (head->value)
+			free(head->value);
+		free(head);
+		head = tmp;
+	}
+}

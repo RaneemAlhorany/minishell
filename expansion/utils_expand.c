@@ -32,8 +32,8 @@ char    *expand_var(char *input, int *i, t_env *env, int last_status)
     }
     if (!ft_isalpha(input[*i]) && input[*i] != '_')
     {
-//        (*i)--;  // important fix
-        return (ft_strdup("$"));
+        (*i)++;  
+        return (ft_strdup(""));
     }
     start = *i;
     while (ft_isalnum(input[*i]) || input[*i] == '_')

@@ -1,19 +1,17 @@
 #include "minishell.h"
 
- int  handle_quotes(t_expand *ex)
+int handle_quotes(t_expand *ex)
 {
     if (ex->input[ex->i] == '\'' && !ex->in_double)
     {
         ex->in_single = !ex->in_single;
-        if (!buffer_append_char(&ex->buf, ex->input[ex->i++]))
-            return (0);
+        ex->i++;        
         return (1);
     }
     if (ex->input[ex->i] == '"' && !ex->in_single)
     {
         ex->in_double = !ex->in_double;
-        if (!buffer_append_char(&ex->buf, ex->input[ex->i++]))
-            return (0);
+        ex->i++;          
         return (1);
     }
     return (2);
@@ -76,6 +74,8 @@ char    *expand_string(char *input,t_env *env, int last_status)
     if (!init_expand(&ex, input, env, last_status))
         return (NULL);
     if (!process_expand(&ex))
+        return (cleanup_expand(&ex), NULL);
+    if (ex.in_single || ex.in_double)
         return (cleanup_expand(&ex), NULL);
     return (ex.buf.data);
 }

@@ -25,13 +25,3 @@ char    *get_env_value(char *name, t_env *env);
 
 
 
-// void    expand_tokens(t_token *list, t_env *env, int last_status)
-// {
-//     while (list)
-//     {
-//         list->value = expand_string(list->value, env, last_status);
-//         list = list->next;
-//     }
-
-
-// }

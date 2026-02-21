@@ -1,6 +1,29 @@
 
 #include "minishell.h"
 
+
+
+
+int is_command_token(t_token_type type)
+{
+    if (type == TOKEN_WORD || is_redirection(type))
+        return (1);
+    return (0);
+}
+
+int is_redirection(t_token_type type)
+{
+    if (type == TOKEN_REDIRECT_IN
+        ||type == TOKEN_REDIRECT_OUT
+        || type == TOKEN_REDIRECT_APPEND
+        || type == TOKEN_HEREDOC)
+        return (1);
+
+    return (0);
+
+
+}
+
 int syntax_check(t_token *head)
 {
     t_token *current;
@@ -16,10 +39,10 @@ int syntax_check(t_token *head)
         {
             if (!pre || !current-> next)
                 return (0);
-            if (pre -> type != TOKEN_WORD  || current-> next -> type != TOKEN_WORD)
+            if ( !is_command_token(pre->type) || !is_command_token(current->next->type))
                 return (0);
         }
-        else if (is_redirection(current->type) == 1)
+        else if (is_redirection(current->type))
         {
             if (!current-> next ||  current-> next -> type != TOKEN_WORD)
                 return (0);
@@ -32,15 +55,4 @@ int syntax_check(t_token *head)
 
 
 
-int is_redirection(t_token_type type)
-{
-    if (type == TOKEN_REDIRECT_IN
-        ||type == TOKEN_REDIRECT_OUT
-        || type == TOKEN_REDIRECT_APPEND
-        || type == TOKEN_HEREDOC)
-        return (1);
 
-    return (0);
-
-
-}

@@ -1,4 +1,7 @@
 
+ reminder main + make file + test to complete the parsing section 
+
+
 // #include "minishell.h"
 
 // static t_env *create_node(char *env_line)
