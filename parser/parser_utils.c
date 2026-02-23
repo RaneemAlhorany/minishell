@@ -1,5 +1,13 @@
 #include "minishell.h"
 
+int is_pipe(t_token **tokens)
+{
+    if (!*tokens)
+        return (0);
+    if ((*tokens)->type != TOKEN_PIPE)
+        return (0);
+    return (1);
+}
 
 t_ast *create_ast_node(t_node_type type)
 {
@@ -21,6 +29,8 @@ t_ast *create_ast_node(t_node_type type)
     }
     return (node);
 }
+
+
 t_ast *parse_pipeline(t_token **tokens)
 {
     t_ast *left;
@@ -38,15 +48,6 @@ t_ast *parse_pipeline(t_token **tokens)
     return (create_pipe_node(tokens, left));
 }
 
-
-int is_pipe(t_token **tokens)
-{
-    if (!*tokens)
-        return (0);
-    if ((*tokens)->type != TOKEN_PIPE)
-        return (0);
-    return (1);
-}
 
 t_ast *create_pipe_node(t_token **tokens, t_ast *left)
 {

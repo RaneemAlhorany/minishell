@@ -1,5 +1,114 @@
 
- reminder main + make file + test to complete the parsing section 
+
+
+#include "minishell.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdio.h>
+
+void print_redirections(t_redirection *r)
+{
+    while (r)
+    {
+        printf("    REDIR type=%d file=%s\n", r->type, r->filename);
+        r = r->next;
+    }
+}
+
+void print_ast(t_ast *ast, int depth)
+{
+    if (!ast)
+        return;
+
+    for (int i = 0; i < depth; i++)
+        printf("  ");
+
+    if (ast->type == NODE_COMMAND)
+    {
+        printf("COMMAND\n");
+
+        for (int i = 0; ast->cmd->args && ast->cmd->args[i]; i++)
+        {
+            for (int j = 0; j < depth + 1; j++)
+                printf("  ");
+            printf("ARG: %s\n", ast->cmd->args[i]);
+        }
+
+        if (ast->cmd->redirections)
+        {
+            for (int j = 0; j < depth + 1; j++)
+                printf("  ");
+            printf("REDIRECTIONS:\n");
+            print_redirections(ast->cmd->redirections);
+        }
+    }
+    else if (ast->type == NODE_PIPE)
+    {
+        printf("PIPE\n");
+        print_ast(ast->pipe.left, depth + 1);
+        print_ast(ast->pipe.right, depth + 1);
+    }
+}
+
+int main(int argc, char **argv, char **envp)
+{
+    char    *input;
+    t_token *tokens;
+    t_ast   *ast;
+
+    (void)argc;
+    (void)argv;
+
+    while (1)
+    {
+        input = readline("minishell-test$ ");
+        if (!input)
+            break;
+
+        if (*input)
+            add_history(input);
+
+        // 🔹 1) lexer
+        tokens = lexer(input);   // عدّل الاسم حسب مشروعك
+
+        if (!tokens)
+        {
+            printf("Lexer error\n");
+            free(input);
+            continue;
+        }
+
+        // 🔹 2) syntax check
+        if (!syntax_check(tokens))
+        {
+            printf("Syntax error\n");
+            free_tokens(tokens); // تأكد عندك free_tokens
+            free(input);
+            continue;
+        }
+
+        // 🔹 3) parse
+        ast = parse_pipeline(&tokens);
+        if (!ast)
+        {
+            printf("Parse error\n");
+            free_tokens(tokens);
+            free(input);
+            continue;
+        }
+
+        // 🔹 4) print AST
+        printf("=== AST ===\n");
+        print_ast(ast, 0);
+
+        // 🔹 5) cleanup
+        free_ast(ast);
+        free_tokens(tokens);
+        free(input);
+    }
+
+    return (0);
+}
 
 
 // #include "minishell.h"
@@ -187,63 +296,63 @@
 // // 	return (0);
 // // }
 
-#include "minishell.h"
+// #include "minishell.h"
 
 
-int main(int argc, char **argv, char **envp)// expand_string مش عارف كيف اربطها
-{
-    t_token *tokens;
-    t_cmd   *cmds;
-    t_ast   *ast;
-    char    *input;
+// int main(int argc, char **argv, char **envp)// expand_string مش عارف كيف اربطها
+// {
+//     t_token *tokens;
+//     t_cmd   *cmds;
+//     t_ast   *ast;
+//     char    *input;
 
-    (void)argc;
-    (void)argv;
+//     (void)argc;
+//     (void)argv;
 
-    while (1)
-    {
-        input = readline("minishell$ ");
-        if (!input)
-        {
-            printf("exit\n");
-            break;
-        }
-        if (*input)
-            add_history(input);
-        tokens = lexer(input);
-        if (!tokens)
-        {
-            free(input);
-            continue;
-        }
-        if (!syntax_check(tokens))
-        {
-            printf("syntax error\n");
-            free_tokens(tokens);
-            free(input);
-            continue;
-        }
-        cmds = parser(tokens);
-        if (!cmds)
-        {
-            free_tokens(tokens);
-            free(input);
-            continue;
-        }
-        ast = build_ast_from_cmds(cmds);
-        if (!ast)
-        {
-            free_command_list(cmds);
-            free_tokens(tokens);
-            free(input);
-            continue;
-        }
-        execute_ast(ast, envp);
-        free_ast(ast);
-        free_command_list(cmds);
-        free_tokens(tokens);
-        free(input);
-    }
-    return (0);
-}
-// دخل قيمه احفضها بلهستوري اعملها توكن و شيك لها سينتكس  و اذا ما فيها مشاكل اعمل لها بارسنج و بعدين ابني منها شجره و في الاخر انفذها و حرر كل الذاكره اللي استخدمتها في كل مرحله
+//     while (1)
+//     {
+//         input = readline("minishell$ ");
+//         if (!input)
+//         {
+//             printf("exit\n");
+//             break;
+//         }
+//         if (*input)
+//             add_history(input);
+//         tokens = lexer(input);
+//         if (!tokens)
+//         {
+//             free(input);
+//             continue;
+//         }
+//         if (!syntax_check(tokens))
+//         {
+//             printf("syntax error\n");
+//             free_tokens(tokens);
+//             free(input);
+//             continue;
+//         }
+//         cmds = parser(tokens);
+//         if (!cmds)
+//         {
+//             free_tokens(tokens);
+//             free(input);
+//             continue;
+//         }
+//         ast = build_ast_from_cmds(cmds);
+//         if (!ast)
+//         {
+//             free_command_list(cmds);
+//             free_tokens(tokens);
+//             free(input);
+//             continue;
+//         }
+//         execute_ast(ast, envp);
+//         free_ast(ast);
+//         free_command_list(cmds);
+//         free_tokens(tokens);
+//         free(input);
+//     }
+//     return (0);
+// }
+// // دخل قيمه احفضها بلهستوري اعملها توكن و شيك لها سينتكس  و اذا ما فيها مشاكل اعمل لها بارسنج و بعدين ابني منها شجره و في الاخر انفذها و حرر كل الذاكره اللي استخدمتها في كل مرحله

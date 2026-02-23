@@ -1,6 +1,15 @@
 
 #include "minishell.h"
 
+
+void	init_cmd(t_cmd *cmd)
+{
+    cmd->args = NULL;
+    cmd->redirections = NULL;
+}
+
+
+
 int	count_words_in_cmd(t_token *token)
 {
 	int		count;
@@ -43,12 +52,6 @@ t_cmd *create_cmd(int argc)
 
 
 
-
-void	init_cmd(t_cmd *cmd)
-{
-    cmd->args = NULL;
-    cmd->redirections = NULL;
-}
 
 t_redirection *create_redirection(t_token *current)
 {
