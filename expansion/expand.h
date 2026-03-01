@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <sys/types.h>
 
+
+
 typedef struct s_buffer
 {
     char    *data;
@@ -37,7 +39,6 @@ int  init_expand(t_expand *ex,char *input, t_env *env, int last_status);
 char *handle_env_variable(char *input, int *i, t_env *env);
 char *handle_special_dollar(char *input, int *i, int last_status);
 char    *expand_var(char *input, int *i, t_env *env, int last_status);
-void cleanup_expand(t_expand *ex);
 
 int  handle_quotes(t_expand *ex);
 int  handle_expansion(t_expand *ex);

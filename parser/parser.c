@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "parsing.h"
 
 int is_pipe(t_token **tokens)
 {
@@ -24,30 +24,10 @@ t_ast *create_ast_node(t_node_type type)
     }
     else if (type == NODE_COMMAND)
     {
-        node->cmd.args = NULL;
-        node->cmd.redirections = NULL;
+        node->cmd = NULL;
     }
     return (node);
 }
-
-
-t_ast *parse_pipeline(t_token **tokens)
-{
-    t_ast *left;
-
-    if (!tokens || !*tokens)
-        return (NULL);
-
-    left = build_command(tokens);
-    if (!left)
-        return (NULL);
-
-    if (!is_pipe(tokens))
-        return (left);
-
-    return (create_pipe_node(tokens, left));
-}
-
 
 t_ast *create_pipe_node(t_token **tokens, t_ast *left)
 {
@@ -77,3 +57,28 @@ t_ast *create_pipe_node(t_token **tokens, t_ast *left)
     node->pipe.right = right;
     return (node);
 }
+
+
+
+
+t_ast *parse_pipeline(t_token **tokens)
+{
+    t_ast *left;
+
+    if (!tokens || !*tokens)
+        return (NULL);
+
+    left = build_command(tokens);
+    if (!left)
+        return (NULL);
+
+    if (!is_pipe(tokens))
+        return (left);
+
+    return (create_pipe_node(tokens, left));
+}
+
+
+
+
+

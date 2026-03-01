@@ -40,10 +40,7 @@ int  buffer_append_str(t_buffer *buf, char *str)
 
     i = 0;
     while (str[i])
-    {
-        buf->data[buf->len++] = str[i];
-        i++;
-    }
+        buf->data[buf->len++] = str[i++];
     buf->data[buf->len] = '\0';
     return (1);
 }

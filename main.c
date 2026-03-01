@@ -6,6 +6,7 @@
 #include <readline/history.h>
 #include <stdio.h>
 
+
 void print_redirections(t_redirection *r)
 {
     while (r)
@@ -58,6 +59,7 @@ int main(int argc, char **argv, char **envp)
 
     (void)argc;
     (void)argv;
+    (void)envp;
 
     while (1)
     {

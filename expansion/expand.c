@@ -74,8 +74,16 @@ char    *expand_string(char *input,t_env *env, int last_status)
     if (!init_expand(&ex, input, env, last_status))
         return (NULL);
     if (!process_expand(&ex))
-        return (cleanup_expand(&ex), NULL);
+    {
+        free(ex.buf.data);
+        return (NULL);
+    }
     if (ex.in_single || ex.in_double)
-        return (cleanup_expand(&ex), NULL);
+    {
+        free(ex.buf.data);
+
+        return (NULL);
+    }
     return (ex.buf.data);
+
 }

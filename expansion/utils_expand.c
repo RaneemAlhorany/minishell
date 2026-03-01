@@ -1,9 +1,6 @@
 
 #include "minishell.h"
 
-
-
-
  int  init_expand(t_expand *ex,char *input, t_env *env, int last_status)
 {
     ex->input = input;
@@ -16,6 +13,8 @@
         return (0);
     return (1);
 }
+
+
 
 char *handle_special_dollar(char *input, int *i, int last_status)
 {
@@ -34,7 +33,7 @@ char *handle_special_dollar(char *input, int *i, int last_status)
         return (ft_strdup("$"));
     if (!ft_isalpha(input[*i]) && input[*i] != '_')
         return (ft_strdup("$"));
-    return (NULL); // ليس special
+    return (NULL); // not a special
 }
 
 char *handle_env_variable(char *input, int *i, t_env *env)
@@ -67,11 +66,6 @@ char *expand_var(char *input, int *i, t_env *env, int last_status)
     return (handle_env_variable(input, i, env));
 }
 
-
- void cleanup_expand(t_expand *ex)
-{
-    free(ex->buf.data);
-}
 
 
 

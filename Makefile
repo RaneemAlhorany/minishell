@@ -12,22 +12,16 @@ expansion/expand.c \
 expansion/utils_expand.c \
 expansion/utils_expand_buffer.c \
 env/get_env_value.c \
-parser/parser_utils.c \
+parser/parser.c \
 parser/build_command_1.c \
 parser/build_command_2.c \
 parser/parser_helper.c\
-parser/syntax_check_lexer \
-A_edit_that_we_will_use_it_in_the_futeure/src/executor/executor.c \
-A_edit_that_we_will_use_it_in_the_futeure/utils/free.c \
-A_edit_that_we_will_use_it_in_the_futeure/src/builtins/exit.c \
+parser/syntax_check_lexer.c \
 black_box_project/pipex/utils_bonus.c \
 black_box_project/pipex/pipe_and_fork_bonus.c \
 black_box_project/pipex/handel_errors_bonus_1.c \
 black_box_project/pipex/handel_errors_bonus_2.c \
 black_box_project/pipex/files_bonus.c \
-A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_bulld.c \
-A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_exec.c \
-A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree_free.c \
 main.c
 
 LIBFT = black_box_project/Libft/libft.a

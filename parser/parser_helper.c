@@ -1,5 +1,5 @@
 
-#include "minishell.h"
+#include "parsing.h"
 
 
 void free_redirections(t_redirection *r)
@@ -43,7 +43,7 @@ void free_ast(t_ast *ast)
 
     if (ast->type == NODE_COMMAND)
     {
-        free_command(&ast->cmd);
+        free_command(ast->cmd);
     }
     else if (ast->type == NODE_PIPE)
     {
