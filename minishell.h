@@ -43,6 +43,13 @@ typedef struct s_ast
 } t_ast;
 
 
+typedef struct s_shell
+{
+    t_env       *env; 
+    int         is_running;
+    int         last_exit_status;
+} t_shell;
+
 ///////////////////////////////////
 //! everything bellow need to edit 
 
