@@ -16,7 +16,6 @@ int  parse_n_flag(char **args, int *index)
             break;
         if (args[*index][1] != 'n')
             break;
-
         j = 1;
         while (args[*index][j] == 'n')
             j++;
@@ -36,9 +35,9 @@ void print_echo_args(char **args, int index)
 {
     while (args[index])
     {
-        write(1, args[index], ft_strlen(args[index]));
+       ft_putstr_fd(args[index], 1);
         if (args[index + 1])
-            write(1, " ", 1);
+            ft_putchar_fd(' ' , 1);
         index++;
     }
 }
@@ -57,12 +56,11 @@ int builtin_echo(t_cmd *cmd, t_shell *shell)
         write(1, "\n", 1);
         return (0);
     }
-
     flag = parse_n_flag(args, &index);
     print_echo_args(args, index);
-
     if (flag == 0)
-        write(1, "\n", 1);
-
+        ft_putchar_fd('\n' , 1);
     return (0);
 }
+
+
