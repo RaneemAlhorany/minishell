@@ -1,3 +1,4 @@
+// edit +test
 
 
 #include "builtin.h"
@@ -51,7 +52,7 @@ void update_or_add_env(t_shell *shell, char *key, char *value)
         if (existing->value)
             free(existing->value);
         if (value)
-            existing->value =  ft_strdup(value)
+            existing->value =  ft_strdup(value);
         else 
             existing->value =  NULL;
     }

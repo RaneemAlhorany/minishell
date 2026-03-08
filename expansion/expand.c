@@ -35,13 +35,41 @@ int  handle_expansion(t_expand *ex)
     return (2);
 }
 
-int  handle_regular_char(t_expand *ex)
+// int  handle_regular_char(t_expand *ex)
+// {
+//     if (!buffer_append_char(&ex->buf,
+//                             ex->input[ex->i++]))
+//         return (0);
+//     return (1);
+// }
+
+
+
+int handle_regular_char(t_expand *ex)
 {
-    if (!buffer_append_char(&ex->buf,
-                            ex->input[ex->i++]))
+    if (ex->input[ex->i] == '\\' && ex->in_double)
+    {
+        ex->i++; 
+        
+        if (ex->input[ex->i] && (ex->input[ex->i] == '"' 
+                    || ex->input[ex->i] == '$' 
+                    || ex->input[ex->i] == '\\'))
+        {
+            if (!buffer_append_char(&ex->buf, ex->input[ex->i]))
+                return (0);
+            ex->i++;
+            return (1);
+        }
+        if (!buffer_append_char(&ex->buf, '\\'))
+            return (0);
+        return (1);
+    }
+    if (!buffer_append_char(&ex->buf, ex->input[ex->i++]))
         return (0);
     return (1);
 }
+
+
 
 int  process_expand(t_expand *ex)
 {

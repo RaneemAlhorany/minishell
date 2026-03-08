@@ -42,14 +42,14 @@ void print_echo_args(char **args, int index)
     }
 }
 
+
+
 int builtin_echo(t_cmd *cmd, t_shell *shell)
 {
-    char    **args;
-    int     index;
-    int     flag;
-
-    (void)shell;
-    args = cmd->args;
+    char    **args = cmd->args;
+    int     index = 1;
+    int     flag = 0;
+    char    *expanded;
 
     if (!args[1])
     {
@@ -57,9 +57,19 @@ int builtin_echo(t_cmd *cmd, t_shell *shell)
         return (0);
     }
     flag = parse_n_flag(args, &index);
-    print_echo_args(args, index);
-    if (flag == 0)
-        ft_putchar_fd('\n' , 1);
+    while (args[index])
+    {
+        expanded = expand_string(args[index], shell->env, shell->last_exit_status);
+        if (!expanded)
+            expanded = args[index]; // fallback if expand_string fails
+        ft_putstr_fd(expanded, 1);
+        free(expanded);
+        if (args[index + 1])
+            ft_putchar_fd(' ', 1);
+        index++;
+    }
+    if (!flag)
+        ft_putchar_fd('\n', 1);
     return (0);
 }
 

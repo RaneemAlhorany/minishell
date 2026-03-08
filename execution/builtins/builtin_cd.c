@@ -1,3 +1,5 @@
+// edit +test
+
 #include "builtin.h"
 
 char *get_cd_path(t_cmd *cmd, t_shell *shell)
@@ -16,7 +18,19 @@ char *get_cd_path(t_cmd *cmd, t_shell *shell)
         }
     }
     else
-        path = cmd->args[1];
+	{
+		if (strcmp(cmd->args[1], "~") == 0)
+		{
+			path = get_env_value("HOME", shell->env);
+			if (!path)
+			{
+				ft_putendl_fd("cd: HOME not set", 2);
+				return (NULL);
+			}
+		}
+		else
+			path = cmd->args[1];
+	}
     return (path);
 }
 

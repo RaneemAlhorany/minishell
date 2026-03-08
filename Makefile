@@ -22,10 +22,21 @@ black_box_project/pipex/pipe_and_fork_bonus.c \
 black_box_project/pipex/handel_errors_bonus_1.c \
 black_box_project/pipex/handel_errors_bonus_2.c \
 black_box_project/pipex/files_bonus.c \
-main.c
-
+shell/shell.c \
+env/env_list.c \
+env/env_helper.c \
+execution/execute_builtin.c \
+main.c \
+execution/execute_ast.c \
+execution/builtins/builtin_cd.c \
+execution/builtins/builtin_echo.c \
+execution/builtins/builtin_env.c \
+execution/builtins/builtin_exit.c \
+execution/builtins/builtin_export.c \
+execution/builtins/builtin_pwd.c \
+execution/builtins/builtin_unset.c\
+execution/execute_command.c
 LIBFT = black_box_project/Libft/libft.a
-
 
 all: libft $(NAME)
 

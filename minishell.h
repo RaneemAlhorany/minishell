@@ -5,6 +5,7 @@
 #include "./lexer/lexer.h"
 #include "./expansion/expand.h"
 #include "./parser/parsing.h"
+#include "./execution/execution.h"
 
 typedef struct s_redirection
 {
@@ -56,8 +57,11 @@ typedef struct s_shell
 // #include "./A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree.h"
 
 
-int    executor(t_cmd *cmds, char **envp);
-int	builtin_exit(t_cmd *cmd, char *input, t_token *tokens);
+t_shell * init_shell(char **envp);
 
+
+
+int    executor(t_cmd *cmds, char **envp);
+t_shell * init_shell(char **envp);
 
 #endif 

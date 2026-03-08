@@ -1,7 +1,4 @@
-
-
-
-
+#include "execution.h"
 
 int execute_command_node (t_ast *node , t_shell *shell)
 { 
@@ -13,7 +10,8 @@ int execute_command_node (t_ast *node , t_shell *shell)
     if (builtin_type != BUILTIN_NONE)
         return (execute_builtin(node ->cmd, shell, builtin_type));    
     else
- //       return (execute_external(node, shell));
+        write(2, "minishell: external command not found: ", 39);
+       // return (execute_external(node, shell)); // Enable external command execution
 
  return (0);
 }

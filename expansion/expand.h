@@ -5,7 +5,12 @@
 # include <string.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include "../env/env.h"
 
+
+
+
+typedef struct s_env t_env;
 
 
 typedef struct s_buffer
@@ -26,7 +31,6 @@ typedef struct s_expand
     int         last_status;
     t_buffer    buf;
 }   t_expand;
-
 
 
 

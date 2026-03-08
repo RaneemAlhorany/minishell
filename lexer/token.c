@@ -16,8 +16,8 @@ t_token* create_token(char *value , t_token_type type)
         free(token);
         return (NULL);
     }
-    token -> next = NULL;
     token -> type = type;
+    token -> next = NULL;
 
     return (token);
 }

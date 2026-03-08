@@ -1,4 +1,5 @@
 
+#include "minishell.h"
 
 t_shell * init_shell(char **envp)
 {

@@ -10,13 +10,19 @@ int  move_through_word(char **input)
         {
             quote = **input;
             (*input)++;
-
             while (**input && **input != quote)
-                (*input)++;
-
+            {
+                if (quote == '"' && **input == '\\')
+                {
+                    (*input)++; // for backslash
+                    if (**input == '"' || **input == '\\' || **input == '$')
+                        (*input)++; // safe to skip the escaped character
+                }
+                else
+                    (*input)++;
+            }
             if (**input != quote)
                 return (0);
-
             (*input)++;
         }
         else if (**input == ' ' || **input == '\t'

@@ -1,3 +1,4 @@
+#include "env.h"
 
 
 
@@ -20,4 +21,30 @@ t_env *find_env(t_env *env, char *key)
 }
 
 
+
+
+void	update_env(t_shell *shell, char *key, char *value)
+{
+	t_env	*node;
+	t_env	*new_node;
+
+	node = find_env(shell->env, key);
+	if (node)
+	{
+		free(node->value);
+		if (value)
+			node->value = ft_strdup(value);
+		else
+			node->value = NULL;
+		return ;
+	}
+	new_node = create_env_node(key);
+	if (!new_node)
+		return ;
+	if (value)
+		new_node->value = ft_strdup(value);
+	else
+		new_node->value = NULL;
+	env_add_back(&shell->env, new_node);
+}
 
