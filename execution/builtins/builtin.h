@@ -15,16 +15,29 @@ int  parse_n_flag(char **args, int *index);
 void print_echo_args(char **args, int index);
 int builtin_echo(t_cmd *cmd, t_shell *shell);
 
+
+int	parse_pwd_options(t_cmd *cmd, char *mode);
+char	*get_pwd_value(char mode, t_shell *shell);
 int builtin_pwd(t_cmd *cmd, t_shell *shell);
+
+
+void	print_cd_help_part_1();
+void	print_cd_help_part_2();
+char	*get_home_path(t_shell *shell);
+char	*get_oldpwd_path(t_shell *shell);
+char	*get_cd_path(t_cmd *cmd, t_shell *shell);
+char *expand_path(char *path, t_shell *shell);
+int change_dir_and_update(t_shell *shell, char *path, char *pwd);
+int builtin_cd(t_cmd *cmd, t_shell *shell);
+
+
+///////////
+
 
 int builtin_env(t_cmd *cmd, t_shell *shell);
 
 void remove_env(t_shell *shell, char *key);
 int builtin_unset(t_cmd *cmd, t_shell *shell);
-
-int	builtin_cd(t_cmd *cmd, t_shell *shell);
-int	change_dir_and_update(t_shell *shell, char *path, char *pwd);
-char *get_cd_path(t_cmd *cmd, t_shell *shell);
 
 
 

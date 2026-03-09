@@ -26,6 +26,7 @@ typedef struct s_token
 t_token    *lexer(char *input);
 int  move_through_word(char **input);
 t_token    *word_detection(char **input);
+int	handle_quotes_for_lexer(char **input);
 
 
 void        skip_spaces(char **input);
@@ -37,5 +38,8 @@ t_token    *operator_detection(char **input);
 t_token    *create_token(char *value, t_token_type type);
 void        append_token(t_token **head, t_token *new_token);
 void        free_tokens(t_token *head);
+
+
+
 
 #endif

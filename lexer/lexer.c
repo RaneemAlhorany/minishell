@@ -1,39 +1,48 @@
 #include "minishell.h"
 
-int  move_through_word(char **input)
-{
-    char quote;
 
-    while (**input)
-    {
-        if (**input == '\'' || **input == '"')
-        {
-            quote = **input;
-            (*input)++;
-            while (**input && **input != quote)
-            {
-                if (quote == '"' && **input == '\\')
-                {
-                    (*input)++; // for backslash
-                    if (**input == '"' || **input == '\\' || **input == '$')
-                        (*input)++; // safe to skip the escaped character
-                }
-                else
-                    (*input)++;
-            }
-            if (**input != quote)
-                return (0);
-            (*input)++;
-        }
-        else if (**input == ' ' || **input == '\t'
-            || **input == '<' || **input == '>'
-            || **input == '|' || **input == '\n')
-            break;
-        else
-            (*input)++;
-    }
-    return (1);
+int	handle_quotes_for_lexer(char **input)
+{
+	char	quote;
+
+	quote = **input;
+	(*input)++;
+	while (**input && **input != quote)
+	{
+		if (quote == '"' && **input == '\\')
+		{
+			(*input)++;
+			if (**input == '"' || **input == '\\' || **input == '$')
+				(*input)++;
+		}
+		else
+			(*input)++;
+	}
+	if (**input != quote)
+		return (0);
+	(*input)++;
+	return (1);
 }
+
+int	move_through_word(char **input)
+{
+	while (**input)
+	{
+		if (**input == '\'' || **input == '"')
+		{
+			if (!handle_quotes_for_lexer(input))
+				return (0);
+		}
+		else if (**input == ' ' || **input == '\t'
+			|| **input == '<' || **input == '>'
+			|| **input == '|' || **input == '\n')
+			break;
+		else
+			(*input)++;
+	}
+	return (1);
+}
+
 
 t_token *word_detection(char **input)
 {
@@ -93,4 +102,39 @@ t_token *lexer(char *input)
 
 
 
+
+// int  move_through_word(char **input)
+// {
+//     char quote;
+
+//     while (**input)
+//     {
+//         if (**input == '\'' || **input == '"')
+//         {
+//             quote = **input;
+//             (*input)++;
+//             while (**input && **input != quote)
+//             {
+//                 if (quote == '"' && **input == '\\')
+//                 {
+//                     (*input)++; // for backslash
+//                     if (**input == '"' || **input == '\\' || **input == '$')
+//                         (*input)++; // safe to skip the escaped character
+//                 }
+//                 else
+//                     (*input)++;
+//             }
+//             if (**input != quote)
+//                 return (0);
+//             (*input)++;
+//         }
+//         else if (**input == ' ' || **input == '\t'
+//             || **input == '<' || **input == '>'
+//             || **input == '|' || **input == '\n')
+//             break;
+//         else
+//             (*input)++;
+//     }
+//     return (1);
+// }
 

@@ -15,6 +15,7 @@ env/get_env_value.c \
 parser/parser.c \
 parser/build_command_1.c \
 parser/build_command_2.c \
+parser/build_command_3.c \
 parser/parser_helper.c\
 parser/syntax_check_lexer.c \
 black_box_project/pipex/utils_bonus.c \
@@ -29,6 +30,7 @@ execution/execute_builtin.c \
 main.c \
 execution/execute_ast.c \
 execution/builtins/builtin_cd.c \
+execution/builtins/builtin_cd_helper.c \
 execution/builtins/builtin_echo.c \
 execution/builtins/builtin_env.c \
 execution/builtins/builtin_exit.c \

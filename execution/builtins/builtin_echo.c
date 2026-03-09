@@ -53,7 +53,7 @@ int builtin_echo(t_cmd *cmd, t_shell *shell)
 
     if (!args[1])
     {
-        write(1, "\n", 1);
+        ft_putchar_fd('\n', 1);
         return (0);
     }
     flag = parse_n_flag(args, &index);

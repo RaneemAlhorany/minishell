@@ -79,17 +79,5 @@ t_redirection *create_redirection(t_token *current)
 }
 
 
-void add_redirection(t_cmd *cmd, t_redirection *new_redir, t_redirection **last)
-{
-    if (!cmd->redirections)
-        cmd->redirections = new_redir;
-    else
-        (*last)->next = new_redir;
-
-    *last = new_redir;
-}
-
-
-
 
 

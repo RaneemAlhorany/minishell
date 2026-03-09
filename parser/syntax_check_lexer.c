@@ -1,7 +1,4 @@
-
 #include "parsing.h"
-
-
 
 
 int is_command_token(t_token_type type)
@@ -10,6 +7,8 @@ int is_command_token(t_token_type type)
         return (1);
     return (0);
 }
+
+
 
 int is_redirection(t_token_type type)
 {
@@ -20,8 +19,6 @@ int is_redirection(t_token_type type)
         return (1);
 
     return (0);
-
-
 }
 
 int syntax_check(t_token *head)
@@ -52,6 +49,7 @@ int syntax_check(t_token *head)
     }
     return (1);
 }
+
 
 
 
