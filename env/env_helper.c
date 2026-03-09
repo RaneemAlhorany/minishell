@@ -1,9 +1,6 @@
 #include "env.h"
 
 
-
-
-
 t_env *find_env(t_env *env, char *key)
 {
     t_env *temp;

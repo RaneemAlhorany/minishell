@@ -1,6 +1,6 @@
 #include "execution.h"
 
-int execute_command_node (t_ast *node , t_shell *shell)
+int execute_command_node(t_ast *node , t_shell *shell)
 { 
     t_builtin_type builtin_type;
     if (!node || !node ->cmd || !node ->cmd ->args || !node ->cmd ->args[0])
@@ -15,6 +15,9 @@ int execute_command_node (t_ast *node , t_shell *shell)
 
  return (0);
 }
+
+
+
 
 
 

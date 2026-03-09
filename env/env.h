@@ -5,7 +5,6 @@
 #include "black_box_project/Libft/libft.h" 
 #include "../minishell.h"
 
-//?????? 
 typedef struct s_env
 {
     char            *key;

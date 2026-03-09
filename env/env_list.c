@@ -62,6 +62,8 @@ void free_env_list(t_env *head)
         free(temp);
     }
 }
+
+
 t_env *create_env_node(char *env_str)
 {
     char    *equal_sign;
@@ -88,6 +90,8 @@ t_env *create_env_node(char *env_str)
         return (NULL);
     return (new_node);
 }
+
+
 
 t_env *build_env_list(char **envp)
 {

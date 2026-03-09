@@ -2,7 +2,7 @@
 
 #include "builtin.h"
 
-char *expand_path(char *path, t_shell *shell)//
+char *expand_path(char *path, t_shell *shell)
 {
     char *expanded;
 
@@ -13,6 +13,8 @@ char *expand_path(char *path, t_shell *shell)//
         return ft_strdup(path); // fallback if expand_string fails
     return expanded;
 }
+
+
 
 void	print_cd_help(void)
 {

@@ -35,15 +35,6 @@ int  handle_expansion(t_expand *ex)
     return (2);
 }
 
-// int  handle_regular_char(t_expand *ex)
-// {
-//     if (!buffer_append_char(&ex->buf,
-//                             ex->input[ex->i++]))
-//         return (0);
-//     return (1);
-// }
-
-
 
 int handle_regular_char(t_expand *ex)
 {

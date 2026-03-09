@@ -44,36 +44,6 @@ t_ast *build_command(t_token **tokens)
 
 
 
-// int fill_command_data(t_ast *node, t_token **tokens)
-// {
-//     int index;
-//     int has_word;
-//     t_redirection *last_redir;
-
-//     index = 0;
-//     has_word = 0;
-//     last_redir = NULL;
-//     while (*tokens && (*tokens)->type != TOKEN_PIPE)
-//     {
-//         if ((*tokens)->type == TOKEN_WORD)
-//         {
-//             if (!handle_word_token(node->cmd, *tokens, &index))
-//                 return (0);
-//             has_word = 1;
-//         }
-//         else if (is_redirection((*tokens)->type))
-//         {
-//             if (!handle_redirection_token(node->cmd, tokens, &last_redir))
-//                 return (0);
-//         }
-//         else
-//             return (0); // token غير متوقع
-//         *tokens = (*tokens)->next;
-//     }
-//     if (!has_word && !node->cmd->redirections)
-//         return (0);
-//     return (1);
-// }
 
 
 int	process_command_tokens(t_ast *node, t_token **tokens, int *has_word)
