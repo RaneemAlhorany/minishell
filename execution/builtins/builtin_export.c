@@ -69,13 +69,21 @@ void handle_export_arg(char *arg, t_shell *shell)
 {
     char *equal;
     char *key;
+    char *raw_value;
     char *value;
 
     equal = ft_strchr(arg, '=');
     if (equal)
     {
         key = ft_substr(arg, 0, equal - arg);
-        value = equal + 1;
+        raw_value = equal + 1;
+        if ((raw_value[0] == '"' && raw_value[ft_strlen(raw_value)-1] == '"') ||
+            (raw_value[0] == '\'' && raw_value[ft_strlen(raw_value)-1] == '\''))
+        {
+            raw_value[ft_strlen(raw_value)-1] = '\0';
+            raw_value++;
+        }
+        value = expand_string(raw_value, shell->env, shell->last_exit_status);
     }
     else
     {
@@ -86,11 +94,16 @@ void handle_export_arg(char *arg, t_shell *shell)
     {
         ft_putstr_fd("export: not a valid identifier\n", 2);
         free(key);
-        return ;
+        if (equal)
+            free(value);
+        return;
     }
     update_or_add_env(shell, key, value);
     free(key);
+    if (value)
+        free(value);
 }
+
 
 int builtin_export(t_cmd *cmd, t_shell *shell)
 {
