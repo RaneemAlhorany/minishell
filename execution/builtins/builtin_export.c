@@ -27,11 +27,14 @@ void print_export_list(t_env *env)
     {
         if (env->key)
         {
+            ft_putstr_fd("declare -x ", 1);
             ft_putstr_fd(env->key, 1);
             if (env->value)
             {
-                ft_putstr_fd("=", 1);
+                ft_putstr_fd("=\"", 1);
                 ft_putstr_fd(env->value, 1);
+                ft_putstr_fd("\"", 1);
+
             }
             ft_putstr_fd("\n", 1);
         }
@@ -72,6 +75,12 @@ void handle_export_arg(char *arg, t_shell *shell)
     char *raw_value;
     char *value;
 
+    if (arg[0] == '-') // Check if the argument starts with '-'
+    {
+        ft_putstr_fd("export: invalid option\n", 2);
+        return;
+    }
+
     equal = ft_strchr(arg, '=');
     if (equal)
     {
@@ -88,8 +97,9 @@ void handle_export_arg(char *arg, t_shell *shell)
     else
     {
         key = ft_strdup(arg);
-        value = NULL;
+        value = get_env_value(key, shell->env); // Correct argument order
     }
+
     if (!is_valid_identifier(key))
     {
         ft_putstr_fd("export: not a valid identifier\n", 2);
@@ -100,7 +110,7 @@ void handle_export_arg(char *arg, t_shell *shell)
     }
     update_or_add_env(shell, key, value);
     free(key);
-    if (value)
+    if (value && equal) // Free only if value was newly allocated
         free(value);
 }
 
