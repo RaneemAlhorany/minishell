@@ -11,6 +11,7 @@ void skip_spaces(char **input)
 }
 
 
+
 t_token *detect_double_operator(char **input)
 {
     t_token *token;

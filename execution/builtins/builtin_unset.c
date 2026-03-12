@@ -37,30 +37,12 @@ char *strip_quotes(char *str)
     return (ft_strtrim(str, "\""));
 }
 
-int builtin_unset(t_cmd *cmd, t_shell *shell)
+int handle_unset_option(t_cmd *cmd, int *i)
 {
-    int i;
-    char *key;
-
-    if (!cmd || !shell)
-        return (1);
-    i = 1;
-    /*
     if (cmd->args[1] && cmd->args[1][0] == '-')
     {
         if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
-            i = 2;
-        else
-        {
-            ft_putendl_fd("unset: %s: invalid option\n", cmd->args[1], 2);
-            ft_putendl_fd("unset: usage: unset [-v] [name ...]\n", cmd->args[1], 2);
-            return (1);
-        }
-    }*/
-    if (cmd->args[1] && cmd->args[1][0] == '-')
-    {
-        if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
-            i = 2;
+            *i = 2;
         else
         {
             ft_putendl_fd("unset:invalid option", 2);
@@ -68,6 +50,13 @@ int builtin_unset(t_cmd *cmd, t_shell *shell)
             return (1);
         }
     }
+    return (0);
+}
+
+void process_unset_args(t_cmd *cmd, t_shell *shell, int i)
+{
+    char *key;
+
     while (cmd->args[i])
     {
         key = strip_quotes(cmd->args[i]);
@@ -78,5 +67,55 @@ int builtin_unset(t_cmd *cmd, t_shell *shell)
         }
         i++;
     }
+}
+
+
+int builtin_unset(t_cmd *cmd, t_shell *shell)
+{
+    int i;
+
+    if (!cmd || !shell)
+        return (1);
+
+    i = 1;
+
+    if (handle_unset_option(cmd, &i))
+        return (1);
+
+    process_unset_args(cmd, shell, i);
+
     return (0);
 }
+
+
+// int builtin_unset(t_cmd *cmd, t_shell *shell)
+// {
+//     int i;
+//     char *key;
+
+//     if (!cmd || !shell)
+//         return (1);
+//     i = 1;
+//     if (cmd->args[1] && cmd->args[1][0] == '-')
+//     {
+//         if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
+//             i = 2;
+//         else
+//         {
+//             ft_putendl_fd("unset:invalid option", 2);
+//             ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
+//             return (1);
+//         }
+//     }
+//     while (cmd->args[i])
+//     {
+//         key = strip_quotes(cmd->args[i]);
+//         if (key)
+//         {
+//             remove_env(shell, key);
+//             free(key);
+//         }
+//         i++;
+//     }
+//     return (0);
+// }

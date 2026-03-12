@@ -33,7 +33,9 @@ execution/builtins/builtin_cd.c \
 execution/builtins/builtin_cd_helper.c \
 execution/builtins/builtin_echo.c \
 execution/builtins/builtin_env.c \
+execution/builtins/builtin_env_helper.c \
 execution/builtins/builtin_exit.c \
+execution/builtins/builtin_export_helper.c \
 execution/builtins/builtin_export.c \
 execution/builtins/builtin_pwd.c \
 execution/builtins/builtin_unset.c\
