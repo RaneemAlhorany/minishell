@@ -23,7 +23,7 @@ int is_valid_identifier(char *key)
 
 
 
-void print_export_list(t_env *env)
+void print_export_list(t_env *env)//bablo edit
 {
     while (env)
     {
@@ -31,12 +31,12 @@ void print_export_list(t_env *env)
         {
             ft_putstr_fd("declare -x ", 1);
             ft_putstr_fd(env->key, 1);
-            if (env->value)
+            if (env->has_value)
             {
                 ft_putstr_fd("=\"", 1);
-                ft_putstr_fd(env->value, 1);
+                if (env->value)
+                    ft_putstr_fd(env->value, 1);
                 ft_putstr_fd("\"", 1);
-
             }
             ft_putstr_fd("\n", 1);
         }
@@ -46,7 +46,7 @@ void print_export_list(t_env *env)
 
 
 
-void update_or_add_env(t_shell *shell, char *key, char *value)
+void update_or_add_env(t_shell *shell, char *key, char *value)//bablo edit
 {
     t_env *existing;
     t_env *new_node;
@@ -54,12 +54,23 @@ void update_or_add_env(t_shell *shell, char *key, char *value)
     existing = find_env(shell->env, key);
     if (existing)
     {
-        if (existing->value)
-            free(existing->value);
         if (value)
-            existing->value =  ft_strdup(value);
-        else 
-            existing->value =  NULL;
+        {
+            if (existing->value)
+                free(existing->value);
+            existing->value = ft_strdup(value);
+            existing->has_value = 1;
+        }
+        else
+        {
+            if (!existing->has_value)
+            {
+                if (existing->value)
+                    free(existing->value);
+                existing->value = NULL;
+                existing->has_value = 0;
+            }
+        }
     }
     else
     {

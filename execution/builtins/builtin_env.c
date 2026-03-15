@@ -2,7 +2,7 @@
 
 #include "builtin.h"
 
-void update_env_list(t_env **env, char *key, char *value)
+void update_env_list(t_env **env, char *key, char *value)//bablo edit
 {
     t_env *existing;
     t_env *new_node;
@@ -13,11 +13,25 @@ void update_env_list(t_env **env, char *key, char *value)
     existing = find_env(*env, key);
     if (existing)
     {
-        free(existing->value);
-        if(value)
+        if (value)
+        {
+            free(existing->value);
             existing->value = ft_strdup(value);
+            existing->has_value = 1;
+        }
         else
-            existing->value = NULL;
+        {
+            if (!existing->has_value)
+            {
+                free(existing->value);
+                existing->value = NULL;
+                existing->has_value = 0;
+            }
+            else
+            {
+                // keep existing value when export VAR without '=' and value already set
+            }
+        }
     }
     else
     {

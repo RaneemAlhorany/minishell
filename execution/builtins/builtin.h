@@ -57,7 +57,7 @@ int builtin_pwd(t_cmd *cmd, t_shell *shell);
 
 void remove_env(t_shell *shell, char *key);
 char *strip_quotes(char *str);
-int handle_unset_option(t_cmd *cmd, int *i)
+int handle_unset_option(t_cmd *cmd, int *i);
 void process_unset_args(t_cmd *cmd, t_shell *shell, int i);
 int builtin_unset(t_cmd *cmd, t_shell *shell);
 

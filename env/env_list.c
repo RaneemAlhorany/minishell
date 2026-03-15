@@ -1,6 +1,6 @@
 #include "env.h"
 
-t_env *env_new(char *key, char *value)
+t_env *env_new(char *key, char *value)//bablo edit
 {
     t_env *new_node;
 
@@ -14,9 +14,15 @@ t_env *env_new(char *key, char *value)
         return NULL;
     }
     if (value)
+    {
         new_node->value = ft_strdup(value);
+        new_node->has_value = 1;
+    }
     else
-        new_node->value = NULL;   
+    {
+        new_node->value = NULL;
+        new_node->has_value = 0;
+    }
     if (value && !new_node->value)
     {
         free(new_node->key);

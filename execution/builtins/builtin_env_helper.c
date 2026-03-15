@@ -30,15 +30,17 @@ int handle_env_command_error(t_cmd *cmd, int i)
     return (0);
 }
 
-void print_env(t_env *env)
+void print_env(t_env *env)//bablo edit
 {
     while (env)
     {
-        if (env->key && env->value)
+        if (env->key && env->has_value)
         {
             ft_putstr_fd(env->key, 1);
             ft_putchar_fd('=', 1);
-            ft_putendl_fd(env->value, 1);
+            if (env->value)
+                ft_putstr_fd(env->value, 1);
+            ft_putchar_fd('\n', 1);
         }
         env = env->next;
     }

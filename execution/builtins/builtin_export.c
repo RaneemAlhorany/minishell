@@ -10,12 +10,13 @@ char *get_key(char *arg, char *equal)
     return (ft_strdup(arg));
 }
 
-char *get_value(char *arg, char *equal, t_shell *shell)
+char *get_value(char *arg, char *equal, t_shell *shell)//bablo edit
 {
     char *raw_value;
 
+    (void)arg;
     if (!equal)
-        return (get_env_value(arg, shell->env));
+        return (NULL);
 
     raw_value = equal + 1;
     raw_value = remove_quotes(raw_value);
