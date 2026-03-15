@@ -33,7 +33,8 @@ char **env_list_to_envp(t_env *env)
     cur = env;
     while (cur)
     {
-        len++;
+        if (cur->is_exported && cur->has_value)
+            len++;
         cur = cur->next;
     }
     envp = malloc(sizeof(char *) * (len + 1));
@@ -43,19 +44,22 @@ char **env_list_to_envp(t_env *env)
     cur = env;
     while (cur)
     {
-        line = ft_strjoin(cur->key, "=");
-        if (!line)
-            break;
-        envp[i] = ft_strjoin(line, cur->value ? cur->value : "");
-        free(line);
-        if (!envp[i])
-            break;
-        i++;
+        if (cur->is_exported && cur->has_value)
+        {
+            line = ft_strjoin(cur->key, "=");
+            if (!line)
+                break;
+            envp[i] = ft_strjoin(line, cur->value ? cur->value : "");
+            free(line);
+            if (!envp[i])
+                break;
+            i++;
+        }
         cur = cur->next;
     }
     if (i != len)
     {
-        while (i--) 
+        while (i--)
             free(envp[i]);
         free(envp);
         return (NULL);
@@ -167,25 +171,14 @@ int execute_external(t_cmd *cmd, t_shell *shell)
 }
 
 int execute_command_node(t_ast *node , t_shell *shell)
-{ 
+{
     t_builtin_type builtin_type;
 
     if (!node || !node ->cmd || !node ->cmd ->args || !node ->cmd ->args[0])
-        return (0); 
+        return (0);
     builtin_type  = get_builtin_type(node ->cmd ->args[0]);
 
     if (builtin_type != BUILTIN_NONE)
         return (execute_builtin(node ->cmd, shell, builtin_type));
     return (execute_external(node->cmd, shell));
 }
-
-
-
-
-
-
-
-
-
-
-

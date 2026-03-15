@@ -1,7 +1,4 @@
-
 #include "builtin.h"
-
-
 
 int is_valid_identifier(char *key)
 {
@@ -19,15 +16,11 @@ int is_valid_identifier(char *key)
     return (1);
 }
 
-
-
-
-
-void print_export_list(t_env *env)//bablo edit
+void print_export_list(t_env *env)
 {
     while (env)
     {
-        if (env->key)
+        if (env->key && env->is_exported)
         {
             ft_putstr_fd("declare -x ", 1);
             ft_putstr_fd(env->key, 1);
@@ -44,9 +37,27 @@ void print_export_list(t_env *env)//bablo edit
     }
 }
 
+void remove_export_flag(t_shell *shell, char *key)
+{
+    t_env *node;
 
+    if (!shell || !key)
+        return;
+    node = find_env(shell->env, key);
+    if (node)
+    {
+        node->is_exported = 0;
+        return;
+    }
+    node = env_new(key, NULL);
+    if (!node)
+        return;
+    node->is_exported = 0;
+    node->has_value = 0;
+    env_add_back(&shell->env, node);
+}
 
-void update_or_add_env(t_shell *shell, char *key, char *value)//bablo edit
+void update_or_add_env(t_shell *shell, char *key, char *value)
 {
     t_env *existing;
     t_env *new_node;
@@ -71,6 +82,7 @@ void update_or_add_env(t_shell *shell, char *key, char *value)//bablo edit
                 existing->has_value = 0;
             }
         }
+        existing->is_exported = 1;
     }
     else
     {
@@ -80,7 +92,6 @@ void update_or_add_env(t_shell *shell, char *key, char *value)//bablo edit
         env_add_back(&shell->env, new_node);
     }
 }
-
 
 int validate_identifier_export(char *key, char *value, char *equal)
 {

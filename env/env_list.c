@@ -1,6 +1,6 @@
 #include "env.h"
 
-t_env *env_new(char *key, char *value)//bablo edit
+t_env *env_new(char *key, char *value)
 {
     t_env *new_node;
 
@@ -23,6 +23,7 @@ t_env *env_new(char *key, char *value)//bablo edit
         new_node->value = NULL;
         new_node->has_value = 0;
     }
+    new_node->is_exported = 1;
     if (value && !new_node->value)
     {
         free(new_node->key);
@@ -50,7 +51,6 @@ void env_add_back(t_env **head, t_env *new)
         temp = temp->next;
     temp->next = new;
 }
-
 
 
 void free_env_list(t_env *head)
@@ -98,7 +98,6 @@ t_env *create_env_node(char *env_str)
 }
 
 
-
 t_env *build_env_list(char **envp)
 {
     t_env   *env_list;
@@ -120,5 +119,3 @@ t_env *build_env_list(char **envp)
     }
     return (env_list);
 }
-
-

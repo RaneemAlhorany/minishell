@@ -30,11 +30,11 @@ int handle_env_command_error(t_cmd *cmd, int i)
     return (0);
 }
 
-void print_env(t_env *env)//bablo edit
+void print_env(t_env *env)
 {
     while (env)
     {
-        if (env->key && env->has_value)
+        if (env->key && env->is_exported && env->has_value)
         {
             ft_putstr_fd(env->key, 1);
             ft_putchar_fd('=', 1);

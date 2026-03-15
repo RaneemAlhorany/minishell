@@ -42,6 +42,7 @@ int builtin_exit(t_cmd *cmd, t_shell *shell);
 
 int is_valid_identifier(char *key);
 void print_export_list(t_env *env);
+void remove_export_flag(t_shell *shell, char *key);
 void update_or_add_env(t_shell *shell, char *key, char *value);
 int validate_identifier_export(char *key, char *value, char *equal);
 char *get_key(char *arg, char *equal);

@@ -18,6 +18,7 @@ void update_env_list(t_env **env, char *key, char *value)//bablo edit
             free(existing->value);
             existing->value = ft_strdup(value);
             existing->has_value = 1;
+            existing->is_exported = 1;
         }
         else
         {
