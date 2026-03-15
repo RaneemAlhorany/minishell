@@ -6,7 +6,7 @@ char *get_key(char *arg, char *equal)
         return (ft_substr(arg, 0, equal - arg));
     return (ft_strdup(arg));
 }
-
+//bablo edit
 char *get_value(char *arg, char *equal, t_shell *shell)
 {
     char *raw_value;
@@ -14,7 +14,6 @@ char *get_value(char *arg, char *equal, t_shell *shell)
     (void)arg;
     if (!equal)
         return (NULL);
-
     raw_value = equal + 1;
     return (expand_string(raw_value, shell->env, shell->last_exit_status));
 }
@@ -40,7 +39,7 @@ void handle_export_arg(char *arg, t_shell *shell)
     if (value && equal)
         free(value);
 }
-
+//bablo edit
 int builtin_export(t_cmd *cmd, t_shell *shell)
 {
     int i;

@@ -29,7 +29,7 @@ int handle_env_command_error(t_cmd *cmd, int i)
     }
     return (0);
 }
-
+//bablo edit
 void print_env(t_env *env)
 {
     while (env)

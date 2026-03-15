@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "black_box_project/Libft/libft.h" 
 #include "../minishell.h"
-
+//bablo edit has_value and is_exported
 typedef struct s_env
 {
     char            *key;

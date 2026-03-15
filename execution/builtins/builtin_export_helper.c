@@ -15,7 +15,7 @@ int is_valid_identifier(char *key)
     }
     return (1);
 }
-
+//bablo edit
 void print_export_list(t_env *env)
 {
     while (env)
@@ -36,7 +36,7 @@ void print_export_list(t_env *env)
         env = env->next;
     }
 }
-
+//bablo edit
 void remove_export_flag(t_shell *shell, char *key)
 {
     t_env *node;
@@ -56,7 +56,7 @@ void remove_export_flag(t_shell *shell, char *key)
     node->has_value = 0;
     env_add_back(&shell->env, node);
 }
-
+//bablo edit
 void update_or_add_env(t_shell *shell, char *key, char *value)
 {
     t_env *existing;
