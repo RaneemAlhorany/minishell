@@ -36,7 +36,7 @@ void print_export_list(t_env *env)
         env = env->next;
     }
 }
-//bablo edit
+//bablo edit new fun
 void remove_export_flag(t_shell *shell, char *key)
 {
     t_env *node;

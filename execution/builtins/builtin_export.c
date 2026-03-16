@@ -53,7 +53,6 @@ int builtin_export(t_cmd *cmd, t_shell *shell)
         print_export_list(shell->env);
         return (0);
     }
-
     if (ft_strncmp(cmd->args[1], "-n", 3) == 0)
     {
         i = 2;
@@ -73,13 +72,11 @@ int builtin_export(t_cmd *cmd, t_shell *shell)
         }
         return (error);
     }
-
     if (cmd->args[1][0] == '-')
     {
         ft_putstr_fd("export: invalid option\n", 2);
         return (2);
     }
-
     i = 1;
     while (cmd->args[i])
     {

@@ -20,18 +20,12 @@ void update_env_list(t_env **env, char *key, char *value)//bablo edit
             existing->has_value = 1;
             existing->is_exported = 1;
         }
-        else
+        else if (!existing->has_value)
         {
-            if (!existing->has_value)
-            {
-                free(existing->value);
-                existing->value = NULL;
-                existing->has_value = 0;
-            }
-            else
-            {
-                // keep existing value when export VAR without '=' and value already set
-            }
+            
+            free(existing->value);
+            existing->value = NULL;
+            existing->has_value = 0;
         }
     }
     else
