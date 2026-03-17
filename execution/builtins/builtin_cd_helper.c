@@ -46,6 +46,23 @@ void	print_cd_help_part_2()
 }
 
 
+
+char	*get_oldpwd_path(t_shell *shell)
+{
+	char	*path;
+
+	path = get_env_value("OLDPWD", shell->env);
+	if (!path)
+	{
+		ft_putendl_fd("cd: OLDPWD not set", 2);
+		return (NULL);
+	}
+
+	ft_putendl_fd(path , 1);
+	return (path);
+}
+
+
 char	*get_home_path(t_shell *shell)
 {
 	char	*path;
@@ -59,40 +76,18 @@ char	*get_home_path(t_shell *shell)
 	return (path);
 }
 
-char	*get_oldpwd_path(t_shell *shell)
-{
-	char	*path;
 
-	path = get_env_value("OLDPWD", shell->env);
-	if (!path)
-	{
-		ft_putendl_fd("cd: OLDPWD not set", 2);
-		return (NULL);
-	}
-	printf("%s\n", path);
-	return (path);
+char *expand_path(char *path, t_shell *shell)
+{
+    char *expanded;
+
+    if (!path || !shell)
+        return (NULL);
+    expanded = expand_string(path, shell->env, shell->last_exit_status);
+    if (!expanded)
+        return ft_strdup(path); // fallback if expand_string fails
+    return expanded;
 }
 
-char	*get_cd_path(t_cmd *cmd, t_shell *shell)
-{
-	char	*path;
-
-	if (!cmd || !cmd->args || !shell)
-		return (NULL);
-	if (!cmd->args[1])
-		path = get_home_path(shell);
-	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
-		path = get_oldpwd_path(shell);
-	else if (ft_strncmp(cmd->args[1], "~", 2) == 0)
-		path = get_home_path(shell);
-	else if (ft_strncmp(cmd->args[1], "--help", 7) == 0)
-	{
-		print_cd_help_part_1();
-		return (NULL);
-	}
-	else
-		path = expand_path(cmd->args[1], shell);
-	return (path);
-}
 
 

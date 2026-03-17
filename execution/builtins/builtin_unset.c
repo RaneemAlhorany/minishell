@@ -1,5 +1,4 @@
 // edit +test
-
 #include "builtin.h"
 
 void remove_env(t_shell *shell, char *key)
@@ -37,22 +36,6 @@ char *strip_quotes(char *str)
     return (ft_strtrim(str, "\""));
 }
 
-int handle_unset_option(t_cmd *cmd, int *i)
-{
-    if (cmd->args[1] && cmd->args[1][0] == '-')
-    {
-        if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
-            *i = 2;
-        else
-        {
-            ft_putendl_fd("unset:invalid option", 2);
-            ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
-            return (1);
-        }
-    }
-    return (0);
-}
-
 void process_unset_args(t_cmd *cmd, t_shell *shell, int i)
 {
     char *key;
@@ -69,6 +52,21 @@ void process_unset_args(t_cmd *cmd, t_shell *shell, int i)
     }
 }
 
+int handle_unset_option(t_cmd *cmd, int *i)
+{
+    if (cmd->args[1] && cmd->args[1][0] == '-')
+    {
+        if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
+            *i = 2;
+        else
+        {
+            ft_putendl_fd("unset:invalid option", 2);
+            ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
+            return (1);
+        }
+    }
+    return (0);
+}
 
 int builtin_unset(t_cmd *cmd, t_shell *shell)
 {
@@ -86,36 +84,3 @@ int builtin_unset(t_cmd *cmd, t_shell *shell)
 
     return (0);
 }
-
-
-// int builtin_unset(t_cmd *cmd, t_shell *shell)
-// {
-//     int i;
-//     char *key;
-
-//     if (!cmd || !shell)
-//         return (1);
-//     i = 1;
-//     if (cmd->args[1] && cmd->args[1][0] == '-')
-//     {
-//         if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
-//             i = 2;
-//         else
-//         {
-//             ft_putendl_fd("unset:invalid option", 2);
-//             ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
-//             return (1);
-//         }
-//     }
-//     while (cmd->args[i])
-//     {
-//         key = strip_quotes(cmd->args[i]);
-//         if (key)
-//         {
-//             remove_env(shell, key);
-//             free(key);
-//         }
-//         i++;
-//     }
-//     return (0);
-// }

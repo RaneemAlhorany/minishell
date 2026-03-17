@@ -36,9 +36,11 @@ execution/builtins/builtin_env.c \
 execution/builtins/builtin_env_helper.c \
 execution/builtins/builtin_exit.c \
 execution/builtins/builtin_export_helper.c \
+execution/builtins/builtin_export_helper2.c \
 execution/builtins/builtin_export.c \
 execution/builtins/builtin_pwd.c \
 execution/builtins/builtin_unset.c\
+execution/builtins/shared_method.c\
 execution/execute_command.c
 LIBFT = black_box_project/Libft/libft.a
 
@@ -52,6 +54,9 @@ OBJS = $(SRCS:.c=.o)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCS) -c $< -o $@
+
+%.o: %.C
+	$(CC) $(CFLAGS) $(INCS) -x c -c $< -o $@
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBFT) -lreadline

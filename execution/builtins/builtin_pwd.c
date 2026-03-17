@@ -1,6 +1,17 @@
 #include "builtin.h"
 
+char	*get_pwd_value(char mode, t_shell *shell)
+{
+	char	*pwd;
 
+	if (mode == 'P')
+		pwd = getcwd(NULL, 0);
+	else
+		pwd = get_env_value("PWD", shell->env);
+	if (!pwd)
+		pwd = getcwd(NULL, 0);
+	return (pwd);
+}
 
 int	parse_pwd_options(t_cmd *cmd, char *mode)
 {
@@ -29,20 +40,6 @@ int	parse_pwd_options(t_cmd *cmd, char *mode)
 	return (1);
 }
 
-char	*get_pwd_value(char mode, t_shell *shell)
-{
-	char	*pwd;
-
-	if (mode == 'P')
-		pwd = getcwd(NULL, 0);
-	else
-		pwd = get_env_value("PWD", shell->env);
-	if (!pwd)
-		pwd = getcwd(NULL, 0);
-	return (pwd);
-}
-
-
 int	builtin_pwd(t_cmd *cmd, t_shell *shell)
 {
 	char	*pwd;
@@ -58,6 +55,3 @@ int	builtin_pwd(t_cmd *cmd, t_shell *shell)
 		free(pwd);
 	return (0);
 }
-
-
-

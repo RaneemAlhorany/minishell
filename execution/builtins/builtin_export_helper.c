@@ -1,107 +1,96 @@
 #include "builtin.h"
 
-int is_valid_identifier(char *key)
-{
-    int i;
-
-    if (!key || (!ft_isalpha(key[0]) && key[0] != '_'))
-        return (0);
-    i = 1;
-    while (key[i])
-    {
-        if (!ft_isalnum(key[i]) && key[i] != '_')
-            return (0);
-        i++;
-    }
-    return (1);
-}
-//bablo edit
 void print_export_list(t_env *env)
 {
+    t_env **arr;
+    int count;
+    int i;
+
+    count = count_exported(env);
+    if (count == 0)
+        return ;
+    arr = collect_exported(env, count);
+    if (!arr)
+        return ;
+
+    sort_env(arr, count);
+    i = 0;
+    while (i < count)
+        print_one_env(arr[i++]);
+    free(arr);
+}
+
+int count_exported(t_env *env)
+{
+    int count;
+
+    count = 0;
     while (env)
     {
         if (env->key && env->is_exported)
-        {
-            ft_putstr_fd("declare -x ", 1);
-            ft_putstr_fd(env->key, 1);
-            if (env->has_value)
-            {
-                ft_putstr_fd("=\"", 1);
-                if (env->value)
-                    ft_putstr_fd(env->value, 1);
-                ft_putstr_fd("\"", 1);
-            }
-            ft_putstr_fd("\n", 1);
-        }
+            count++;
         env = env->next;
     }
+    return (count);
 }
-//bablo edit new fun
-void remove_export_flag(t_shell *shell, char *key)
-{
-    t_env *node;
 
-    if (!shell || !key)
-        return;
-    node = find_env(shell->env, key);
-    if (node)
+t_env **collect_exported(t_env *env, int count)
+{
+    t_env **arr;
+    int i;
+
+    arr = malloc(sizeof(t_env *) * count);
+    if (!arr)
+        return (NULL);
+    i = 0;
+    while (env)
     {
-        node->is_exported = 0;
-        return;
+        if (env->key && env->is_exported)
+            arr[i++] = env;
+        env = env->next;
     }
-    node = env_new(key, NULL);
-    if (!node)
-        return;
-    node->is_exported = 0;
-    node->has_value = 0;
-    env_add_back(&shell->env, node);
+    return (arr);
 }
-//bablo edit
-void update_or_add_env(t_shell *shell, char *key, char *value)
-{
-    t_env *existing;
-    t_env *new_node;
 
-    existing = find_env(shell->env, key);
-    if (existing)
+void sort_env(t_env **arr, int count)
+{
+    int i;
+    int j;
+    size_t len;
+    t_env *tmp;
+
+    i = 0;
+    while (i < count - 1)
     {
-        if (value)
+        j = 0;
+        while (j < count - i - 1)
         {
-            if (existing->value)
-                free(existing->value);
-            existing->value = ft_strdup(value);
-            existing->has_value = 1;
-        }
-        else
-        {
-            if (!existing->has_value)
+            if (ft_strlen(arr[j]->key) > ft_strlen(arr[j + 1]->key))
+                len = ft_strlen(arr[j]->key);
+            else
+                len = ft_strlen(arr[j + 1]->key);
+            if (ft_strncmp(arr[j]->key, arr[j + 1]->key, len) > 0)
             {
-                if (existing->value)
-                    free(existing->value);
-                existing->value = NULL;
-                existing->has_value = 0;
+                tmp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
             }
+            j++;
         }
-        existing->is_exported = 1;
-    }
-    else
-    {
-        new_node = env_new(key, value);
-        if (!new_node)
-            return ;
-        env_add_back(&shell->env, new_node);
+        i++;
     }
 }
 
-int validate_identifier_export(char *key, char *value, char *equal)
+void print_one_env(t_env *node)
 {
-    if (!is_valid_identifier(key))
+    ft_putstr_fd("declare -x ", 1);
+    ft_putstr_fd(node->key, 1);
+    if (node->has_value)
     {
-        ft_putstr_fd("export: not a valid identifier\n", 2);
-        free(key);
-        if (equal)
-            free(value);
-        return (1);
+        ft_putstr_fd("=\"", 1);
+        if (node->value)
+            ft_putstr_fd(node->value, 1);
+        ft_putstr_fd("\"", 1);
     }
-    return (0);
+    ft_putstr_fd("\n", 1);
 }

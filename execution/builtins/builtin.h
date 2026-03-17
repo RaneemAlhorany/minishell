@@ -22,8 +22,8 @@ int builtin_cd(t_cmd *cmd, t_shell *shell);
 
 
 int  parse_n_flag(char **args, int *index);
-void print_echo_args(char **args, int index);
 int builtin_echo(t_cmd *cmd, t_shell *shell);
+void print_args(char **args, int index, t_shell *shell);
 
 
 void handle_env_assignments(t_cmd *cmd, t_env **new_env, int *i);
@@ -32,6 +32,7 @@ void print_env(t_env *env);
 void update_env_list(t_env **env, char *key, char *value);
 int handle_option(t_cmd *cmd, t_shell *shell, t_env **new_env, int *i);
 int builtin_env(t_cmd *cmd, t_shell *shell);
+void handle_existing(t_env *existing, char *value);
 
 
 char *remove_quotes(char *str);
@@ -43,12 +44,19 @@ int builtin_exit(t_cmd *cmd, t_shell *shell);
 int is_valid_identifier(char *key);
 void print_export_list(t_env *env);
 void remove_export_flag(t_shell *shell, char *key);
-void update_or_add_env(t_shell *shell, char *key, char *value);
 int validate_identifier_export(char *key, char *value, char *equal);
 char *get_key(char *arg, char *equal);
 char *get_value(char *arg, char *equal, t_shell *shell);
 void handle_export_arg(char *arg, t_shell *shell);
 int builtin_export(t_cmd *cmd, t_shell *shell);
+int handle_export_n(t_cmd *cmd, t_shell *shell);
+void apply_export_n(t_shell *shell, char *key, char *value);
+int parse_export_arg(char *arg, char **key, char **value);
+int count_exported(t_env *env);
+void print_one_env(t_env *node);
+t_env **collect_exported(t_env *env, int count);
+void sort_env(t_env **arr, int count);
+
 
 
 int	parse_pwd_options(t_cmd *cmd, char *mode);

@@ -3,18 +3,6 @@
 
 
 
-char *expand_path(char *path, t_shell *shell)
-{
-    char *expanded;
-
-    if (!path || !shell)
-        return (NULL);
-    expanded = expand_string(path, shell->env, shell->last_exit_status);
-    if (!expanded)
-        return ft_strdup(path); // fallback if expand_string fails
-    return expanded;
-}
-
 int change_dir_and_update(t_shell *shell, char *path, char *pwd)
 {
     char *new_pwd;
@@ -22,9 +10,9 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
     if (chdir(path) != 0)
     {
         ft_putstr_fd("cd: ", 2);
-        ft_putstr_fd(path, 2);
-        ft_putstr_fd(": ", 2);
         perror(NULL);
+        ft_putstr_fd(": ", 2);
+        ft_putstr_fd(path, 2);
         free(pwd);
         return (1);
     }
@@ -41,17 +29,45 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
     return (0);
 }
 
+char	*get_cd_path(t_cmd *cmd, t_shell *shell)
+{
+	char	*path;
+
+	if (!cmd || !cmd->args || !shell)
+		return (NULL);
+	if (!cmd->args[1])
+		path = get_home_path(shell);
+	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
+		path = get_oldpwd_path(shell);
+	else if (ft_strncmp(cmd->args[1], "~", 2) == 0)
+		path = get_home_path(shell);
+	else if (ft_strncmp(cmd->args[1], "--help", 7) == 0)
+	{
+		print_cd_help_part_1();
+		return (NULL);
+	}
+	else
+		path = expand_path(cmd->args[1], shell);
+	return (path);
+}
+
+
+
+
 int builtin_cd(t_cmd *cmd, t_shell *shell)
 {
     char *path;
     char *pwd;
+
     if (!cmd || !shell)
         return (1);
+
     if (cmd->args[1] && cmd->args[2])
     {
         ft_putendl_fd("cd: too many arguments", 2);
         return (1);
     }
+
     pwd = getcwd(NULL, 0);
     if (!pwd)
         return (1);
