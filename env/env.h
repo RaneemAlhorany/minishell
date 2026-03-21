@@ -25,5 +25,8 @@ void free_env_list(t_env *head);
 t_env *create_env_node(char *env_str);
 t_env *find_env(t_env *env, char *key);
 void    update_env(t_shell *shell, char *key, char *value);
+char **env_list_to_envp(t_env *env);
+void free_envp(char **envp);
+
 
 #endif

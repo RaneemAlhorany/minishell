@@ -1,0 +1,48 @@
+
+#include "execution.h"
+
+
+int is_valid_pipe_node(t_ast *node)
+{
+    if (!node || node->type != NODE_PIPE
+        || !node->pipe.left || !node->pipe.right)
+        return (0);
+    return (1);
+}
+void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2])
+{
+    dup2(pipe_fd[1], STDOUT_FILENO);
+    close(pipe_fd[0]);
+    close(pipe_fd[1]);
+    _exit(execute_ast(node->pipe.left, shell));
+}
+
+
+
+void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
+{
+    dup2(pipe_fd[0], STDIN_FILENO);
+    close(pipe_fd[1]);
+    close(pipe_fd[0]);
+    _exit(execute_ast(node->pipe.right, shell));
+}
+
+int wait_for_pipe(pid_t left_pid, pid_t right_pid)
+{
+    int status;
+
+    waitpid(left_pid, NULL, 0);
+    if (waitpid(right_pid, &status, 0) == -1)
+        return (1);
+
+    if (WIFEXITED(status))
+        return (WEXITSTATUS(status));
+    return (1);
+}
+
+int create_pipe(int pipe_fd[2])
+{
+    if (pipe(pipe_fd) == -1)
+        return (1);
+    return (0);
+}

@@ -1,3 +1,7 @@
+// edit this file after implement the heardoc redirection 
+
+
+
 #include "execution.h"
 
 int  apply_redirections(t_redirection *redirections)
@@ -14,7 +18,7 @@ int  apply_redirections(t_redirection *redirections)
             {
                 opened_fd = open(redirections->filename, O_RDONLY);
                 if (opened_fd < 0)
-                    return(fail (redirections->filename));
+                    return(fail_redirection (redirections->filename));
                 dup2(opened_fd, STDIN_FILENO);
                 close(opened_fd);
 
@@ -23,7 +27,7 @@ int  apply_redirections(t_redirection *redirections)
             {
                 opened_fd = open(redirections->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (opened_fd < 0)
-                    return(fail (redirections->filename));
+                    return(fail_redirection (redirections->filename));
                 dup2(opened_fd, STDOUT_FILENO);
                 close(opened_fd);
             }
@@ -31,7 +35,7 @@ int  apply_redirections(t_redirection *redirections)
             {
                 opened_fd = open(redirections->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
                 if (opened_fd < 0)
-                    return(fail (redirections->filename));
+                    return(fail_redirection (redirections->filename));
                 dup2(opened_fd, STDOUT_FILENO);
                 close(opened_fd);
             }
@@ -46,7 +50,7 @@ int  apply_redirections(t_redirection *redirections)
 }
 
 
-int fail ( char *filename)
+int fail_redirection ( char *filename)
 {
     perror(filename);
     return(0);
