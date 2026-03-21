@@ -1,7 +1,5 @@
 #include "builtin.h"
 
-<<<<<<< HEAD
-=======
 void print_env(t_env *env)
 {
     while (env)
@@ -78,7 +76,6 @@ int handle_option(t_cmd *cmd, t_shell *shell, t_env **new_env, int *i)
     return (0);
 }
 
->>>>>>> 5b98786 (built in)
 int builtin_env(t_cmd *cmd, t_shell *shell)
 {
     t_env *new_env;

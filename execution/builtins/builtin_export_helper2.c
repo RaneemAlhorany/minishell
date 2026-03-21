@@ -1,24 +1,13 @@
 #include "builtin.h"
-int	handle_export_flow(t_cmd *cmd, t_shell *shell, int i, int flag_n)
-{
-	if (!cmd->args[i])
-	{
-		print_export_list(shell->env);
-		return (0);
-	}
-	if (flag_n)
-		return (handle_export_n(cmd, shell, i));
-	while (cmd->args[i])
-		handle_export_arg(cmd->args[i++], shell);
-	return (0);
-}
 
-int handle_export_n(t_cmd *cmd, t_shell *shell,int i)
+int handle_export_n(t_cmd *cmd, t_shell *shell)
 {
+    int     i;
     int     error;
     char    *key;
     char    *value;
 
+    i = 2;
     error = 0;
     while (cmd->args[i])
     {
@@ -34,46 +23,27 @@ int handle_export_n(t_cmd *cmd, t_shell *shell,int i)
     return (error);
 }
 
-int	parse_export_arg(char *arg, char **key, char **value)
+int parse_export_arg(char *arg, char **key, char **value)
 {
-	if (extract_key_value(arg, key, value))
-		return (1);
-	if (!is_valid_identifier(*key))
-	{
-		ft_putstr_fd("export: not a valid identifier\n", 2);
-		free(*key);
-		if (*value)
-			free(*value);
-		return (1);
-	}
-	return (0);
-}
+    char *equal;
 
-int	extract_key_value(char *arg, char **key, char **value)
-{
-	char	*equal;
-
-	*value = NULL;
-	equal = ft_strchr(arg, '=');
-	if (equal)
-	{
-		*key = ft_substr(arg, 0, equal - arg);
-		if (!*key)
-			return (1);
-		*value = ft_strdup(equal + 1);
-		if (!*value)
-		{
-			free(*key);
-			return (1);
-		}
-	}
-	else
-	{
-		*key = ft_strdup(arg);
-		if (!*key)
-			return (1);
-	}
-	return (0);
+    *value = NULL;
+    equal = ft_strchr(arg, '=');
+    if (equal)
+    {
+        *key = ft_substr(arg, 0, equal - arg);
+        *value = ft_strdup(equal + 1);
+    }
+    else
+        *key = ft_strdup(arg);
+    if (!*key || (equal && !*value))
+        return (1);
+    if (!is_valid_identifier(*key))
+    {
+        ft_putstr_fd("export: not a valid identifier\n", 2);
+        return (1);
+    }
+    return (0);
 }
 
 int is_valid_identifier(char *key)
@@ -92,3 +62,46 @@ int is_valid_identifier(char *key)
     return (1);
 }
 
+void apply_export_n(t_shell *shell, char *key, char *value)
+{
+    t_env *node;
+
+    node = find_env(shell->env, key);
+
+    if (!node && value)
+    {
+        node = env_new(key, value);
+        if (node)
+        {
+            node->is_exported = 0;
+            node->has_value = 1;
+            env_add_back(&shell->env, node);
+        }
+    }
+    else
+        remove_export_flag(shell, key);
+}
+
+void remove_export_flag(t_shell *shell, char *key)
+{
+    t_env *node;
+
+    if (!shell || !key)
+        return;
+    node = find_env(shell->env, key);
+    if (node)
+    {
+        node->is_exported = 0;
+        return;
+    }
+    char *env_val = getenv(key);
+    if (env_val)
+    {
+        node = env_new(key, env_val);
+        if (!node)
+            return;
+        node->is_exported = 0;
+        node->has_value = 1;
+        env_add_back(&shell->env, node);
+    }
+}
