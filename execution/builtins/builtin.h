@@ -21,11 +21,7 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd);
 int builtin_cd(t_cmd *cmd, t_shell *shell);
 
 
-<<<<<<< HEAD
-int  parse_n_flag(char **args, int *index);
-=======
 int  parse_char_flag(char **args, int *index , char character);
->>>>>>> 5b98786 (built in)
 int builtin_echo(t_cmd *cmd, t_shell *shell);
 void print_args(char **args, int index, t_shell *shell);
 
@@ -45,28 +41,10 @@ int is_numeric(char *str);
 int builtin_exit(t_cmd *cmd, t_shell *shell);
 
 
-<<<<<<< HEAD
-int is_valid_identifier(char *key);
-void print_export_list(t_env *env);
-void remove_export_flag(t_shell *shell, char *key);
-int validate_identifier_export(char *key, char *value, char *equal);
-char *get_key(char *arg, char *equal);
-char *get_value(char *arg, char *equal, t_shell *shell);
-void handle_export_arg(char *arg, t_shell *shell);
-=======
 //////////export
 int	parse_export_options(char **args, int *i, int *flag_p, int *flag_n);
 int	is_only_pn_options(const char *s, int *flag_p, int *flag_n);
->>>>>>> 5b98786 (built in)
 int builtin_export(t_cmd *cmd, t_shell *shell);
-int handle_export_n(t_cmd *cmd, t_shell *shell);
-void apply_export_n(t_shell *shell, char *key, char *value);
-int parse_export_arg(char *arg, char **key, char **value);
-int count_exported(t_env *env);
-void print_one_env(t_env *node);
-t_env **collect_exported(t_env *env, int count);
-void sort_env(t_env **arr, int count);
-
 
 ////////// export helper1
 void print_export_list(t_env *env);
