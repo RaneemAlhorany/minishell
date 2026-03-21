@@ -51,3 +51,4 @@ int  process_expand(t_expand *ex);
 char    *expand_string(char *input,t_env *env, int last_status);
 
 #endif
+
