@@ -3,8 +3,6 @@
 char	*get_pwd_value(char mode, t_shell *shell)
 {
 	char	*pwd;
-<<<<<<< HEAD
-=======
 
 	if (mode == 'P')
 		pwd = getcwd(NULL, 0);
@@ -21,16 +19,7 @@ char	*get_pwd_value(char mode, t_shell *shell)
 		pwd = getcwd(NULL, 0);
 	return (pwd);
 }
->>>>>>> 5b98786 (built in)
 
-	if (mode == 'P')
-		pwd = getcwd(NULL, 0);
-	else
-		pwd = get_env_value("PWD", shell->env);
-	if (!pwd)
-		pwd = getcwd(NULL, 0);
-	return (pwd);
-}
 
 int	parse_pwd_options(t_cmd *cmd, char *mode)
 {

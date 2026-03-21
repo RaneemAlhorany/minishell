@@ -66,3 +66,5 @@ int validate_identifier_export(char *key, char *value, char *equal)
     }
     return (0);
 }
+
+

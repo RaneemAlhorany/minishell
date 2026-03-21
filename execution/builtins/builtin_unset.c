@@ -1,4 +1,4 @@
-// edit +test
+
 #include "builtin.h"
 
 void remove_env(t_shell *shell, char *key)
@@ -56,11 +56,7 @@ int handle_unset_option(t_cmd *cmd, int *i)
 {
     if (cmd->args[1] && cmd->args[1][0] == '-')
     {
-<<<<<<< HEAD
-        if (ft_strncmp(cmd->args[1], "-v", 3) == 0)
-=======
         if (parse_char_flag(cmd->args ,i ,'v'))
->>>>>>> 5b98786 (built in)
             *i = 2;
         else
         {
