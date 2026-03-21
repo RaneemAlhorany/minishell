@@ -100,7 +100,6 @@ char    *expand_string(char *input,t_env *env, int last_status)
     if (ex.in_single || ex.in_double)
     {
         free(ex.buf.data);
-
         return (NULL);
     }
     return (ex.buf.data);

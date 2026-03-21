@@ -33,10 +33,16 @@ execution/builtins/builtin_cd.c \
 execution/builtins/builtin_cd_helper.c \
 execution/builtins/builtin_echo.c \
 execution/builtins/builtin_env.c \
-execution/builtins/builtin_env_helper.c \
 execution/builtins/builtin_exit.c \
+<<<<<<< HEAD
 execution/builtins/builtin_export_helper.c \
 execution/builtins/builtin_export_helper2.c \
+=======
+execution/builtins/builtin_export_helper1.c \
+execution/builtins/builtin_export_helper2.c \
+execution/builtins/builtin_export_helper3.c \
+execution/builtins/builtin_export_helper4.c \
+>>>>>>> 5b98786 (built in)
 execution/builtins/builtin_export.c \
 execution/builtins/builtin_pwd.c \
 execution/builtins/builtin_unset.c\

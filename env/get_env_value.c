@@ -10,7 +10,6 @@ char    *get_env_value(char *name, t_env *env)
 
     if (!name )
         return (ft_strdup(""));
-
     temp = env;
     len = ft_strlen(name);
     while (temp)

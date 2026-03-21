@@ -3,6 +3,25 @@
 char	*get_pwd_value(char mode, t_shell *shell)
 {
 	char	*pwd;
+<<<<<<< HEAD
+=======
+
+	if (mode == 'P')
+		pwd = getcwd(NULL, 0);
+	else
+	{
+		pwd = get_env_value("PWD", shell->env);
+		if (pwd && pwd[0] == '\0')
+		{
+			free(pwd);
+			pwd = NULL;
+		}
+	}
+	if (!pwd)
+		pwd = getcwd(NULL, 0);
+	return (pwd);
+}
+>>>>>>> 5b98786 (built in)
 
 	if (mode == 'P')
 		pwd = getcwd(NULL, 0);
@@ -51,7 +70,6 @@ int	builtin_pwd(t_cmd *cmd, t_shell *shell)
 	if (!pwd)
 		return (1);
 	ft_putendl_fd(pwd, 1);
-	if (mode == 'P')
-		free(pwd);
+	free(pwd);
 	return (0);
 }

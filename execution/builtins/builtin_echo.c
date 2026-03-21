@@ -2,6 +2,7 @@
 #include "builtin.h"
 
 void print_args(char **args, int index, t_shell *shell)
+<<<<<<< HEAD
 {
     char *expanded;
 
@@ -20,10 +21,12 @@ void print_args(char **args, int index, t_shell *shell)
 }
 
 int  parse_n_flag(char **args, int *index)
+=======
+>>>>>>> 5b98786 (built in)
 {
-    int j;
-    int flag;
+    char *expanded;
 
+<<<<<<< HEAD
     flag = 0;
     while (args[*index])
     {
@@ -46,6 +49,23 @@ int  parse_n_flag(char **args, int *index)
     return (flag);
 }
 
+=======
+    while (args[index])
+    {
+        expanded = expand_string(args[index], shell->env, shell->last_exit_status);
+        if (!expanded)
+            expanded = args[index];
+        ft_putstr_fd(expanded, 1);
+        if (expanded != args[index])
+            free(expanded);
+        if (args[index + 1])
+            ft_putchar_fd(' ', 1);
+        index++;
+    }
+}
+
+
+>>>>>>> 5b98786 (built in)
 int builtin_echo(t_cmd *cmd, t_shell *shell)
 {
     char **args;
@@ -61,7 +81,11 @@ int builtin_echo(t_cmd *cmd, t_shell *shell)
         return (0);
     }
 
+<<<<<<< HEAD
     n_flag = parse_n_flag(args, &index);
+=======
+    n_flag = parse_char_flag(args, &index , 'n');
+>>>>>>> 5b98786 (built in)
     print_args(args, index, shell);
 
     if (!n_flag)
