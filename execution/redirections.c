@@ -1,10 +1,10 @@
 // edit this file after implement the heardoc redirection 
 
-
-
 #include "execution.h"
 
-int  apply_redirections(t_redirection *redirections)
+
+
+int  apply_redirections(t_redirection *redirections, t_shell *shell)
 {
     int opened_fd;
 
@@ -41,11 +41,18 @@ int  apply_redirections(t_redirection *redirections)
             }
             else if (redirections->type == TOKEN_HEREDOC)
             {
-                // Handle heredoc redirection (not implemented here)
+                opened_fd = handle_heredoc(redirections, shell);
+                if (opened_fd < 0)
+                    return (0); 
+                dup2(opened_fd, STDIN_FILENO);
+                close(opened_fd);
             }
 
         redirections = redirections->next;
     }
+
+
+
     return(1);
 }
 

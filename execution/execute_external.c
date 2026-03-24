@@ -24,9 +24,9 @@ int handle_command_not_found(char *cmd_path, char **envp)
     return (127);
 }
 
-void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp)
+void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
 {
-    if (!apply_redirections(cmd->redirections))
+    if (!apply_redirections(cmd->redirections, shell))
     {
         free(cmd_path);
         free_envp(envp);
@@ -74,7 +74,7 @@ int execute_external(t_cmd *cmd, t_shell *shell)
         return (1);
     }
     if (pid == 0)
-        execute_child_process(cmd, cmd_path, envp);
+        execute_child_process(cmd, cmd_path, envp, shell);
     free(cmd_path);
     free_envp(envp);
     return (wait_for_child(pid));

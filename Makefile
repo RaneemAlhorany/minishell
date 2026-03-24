@@ -2,7 +2,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-INCS = -I. -Iblack_box_project/Libft -Iblack_box_project/pipex
+INCS = -I. -Icomponent/Libft -Icomponent/pipex
 
 # Source files
 SRCS = lexer/lexer.c \
@@ -18,11 +18,11 @@ parser/build_command_2.c \
 parser/build_command_3.c \
 parser/parser_helper.c\
 parser/syntax_check_lexer.c \
-black_box_project/pipex/utils_bonus.c \
-black_box_project/pipex/pipe_and_fork_bonus.c \
-black_box_project/pipex/handel_errors_bonus_1.c \
-black_box_project/pipex/handel_errors_bonus_2.c \
-black_box_project/pipex/files_bonus.c \
+component/pipex/utils_bonus.c \
+component/pipex/pipe_and_fork_bonus.c \
+component/pipex/handel_errors_bonus_1.c \
+component/pipex/handel_errors_bonus_2.c \
+component/pipex/files_bonus.c \
 shell/shell.c \
 env/env_list.c \
 env/env_helper.c \
@@ -48,13 +48,13 @@ execution/builtins/builtin_pwd.c \
 execution/builtins/builtin_unset.c\
 execution/builtins/shared_method.c\
 execution/execute_command.c
-LIBFT = black_box_project/Libft/libft.a
+LIBFT = component/Libft/libft.a
 
 all: libft $(NAME)
 
 
 libft:
-	$(MAKE) -C black_box_project/Libft
+	$(MAKE) -C component/Libft
 
 OBJS = $(SRCS:.c=.o)
 
@@ -69,7 +69,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS)
-	$(MAKE) -C black_box_project/Libft clean
+	$(MAKE) -C component/Libft clean
 
 fclean: clean
 	rm -f $(NAME)

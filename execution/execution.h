@@ -45,7 +45,7 @@ int execute_command_node(t_ast *node, t_shell *shell);
 
 char *resolve_command_path(t_cmd *cmd, t_shell *shell);
 int handle_command_not_found(char *cmd_path, char **envp);
-void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp);
+void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell);
 int wait_for_child(pid_t pid);
 int execute_external(t_cmd *cmd, t_shell *shell);
 
@@ -60,8 +60,14 @@ pid_t fork_right_process(t_ast *node, t_shell *shell, int pipe_fd[2], pid_t left
 int execute_pipe_node(t_ast *node, t_shell *shell);
 
 
+ // here add the heardoc file after edit it + redirections 
+//
+
+
+
+
 int fail_redirection ( char *filename);
-int  apply_redirections(t_redirection *redirections);
+int  apply_redirections(t_redirection *redirections , t_shell *shell);
 
 
 int execute_ast(t_ast *node , t_shell *shell);
