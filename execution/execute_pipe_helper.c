@@ -9,24 +9,28 @@ int is_valid_pipe_node(t_ast *node)
         return (0);
     return (1);
 }
+
 void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
+    setup_child_signals();//babo edit
     dup2(pipe_fd[1], STDOUT_FILENO);
     close(pipe_fd[0]);
     close(pipe_fd[1]);
-    _exit(execute_ast(node->pipe.left, shell));
+    exit(execute_ast(node->pipe.left, shell));
 }
 
 
 
 void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
+    setup_child_signals();//babo edit
     dup2(pipe_fd[0], STDIN_FILENO);
     close(pipe_fd[1]);
     close(pipe_fd[0]);
-    _exit(execute_ast(node->pipe.right, shell));
+    exit(execute_ast(node->pipe.right, shell));
 }
-
+//لسا مش مرتاحلها بس هيك لازم تكون عشان ال signal handling في الpipe لما يكون في pipe لازم كل child process يتعامل مع ال signals بشكل منفصل عشان ما يأثروا على بعض وعلى الparent process
+//لسا حاس ال while افضل 
 int wait_for_pipe(pid_t left_pid, pid_t right_pid)
 {
     int status;
@@ -37,12 +41,8 @@ int wait_for_pipe(pid_t left_pid, pid_t right_pid)
 
     if (WIFEXITED(status))
         return (WEXITSTATUS(status));
+    if (WIFSIGNALED(status))//babo edit
+        return (128 + WTERMSIG(status));//babo edit
     return (1);
 }
 
-int create_pipe(int pipe_fd[2])
-{
-    if (pipe(pipe_fd) == -1)
-        return (1);
-    return (0);
-}

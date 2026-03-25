@@ -7,6 +7,7 @@
 #include "./parser/parsing.h"
 #include "./execution/execution.h"
 
+
 typedef struct s_redirection
 {
     char    *filename;
@@ -58,6 +59,7 @@ typedef struct s_shell
 
 
 t_shell * init_shell(char **envp);
+void free_2D(char **dirs);
 
 
 

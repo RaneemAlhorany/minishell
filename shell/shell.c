@@ -24,5 +24,19 @@ t_shell * init_shell(char **envp)
 
 
 
+void free_2D(char **dirs)
+{
+    int i;
+
+    if (!dirs)
+        return;
+    i = 0;
+    while (dirs[i])
+        free(dirs[i++]);
+    free(dirs);
+}
+
+
+
 
 

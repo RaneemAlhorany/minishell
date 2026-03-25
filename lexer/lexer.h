@@ -1,7 +1,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-# include "../black_box_project/Libft/libft.h"
+# include "../component/Libft/libft.h"
 #include <stdlib.h>
 #include <unistd.h>
 

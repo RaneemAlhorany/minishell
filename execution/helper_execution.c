@@ -1,23 +1,6 @@
 #include "execution.h"
 
 
-
-char *join_path(const char *dir, const char *cmd)
-{
-    char *tmp;
-    char *full;
-
-    if (!dir || !cmd)
-        return (NULL);
-    tmp = ft_strjoin(dir, "/");
-    if (!tmp)
-        return (NULL);
-    full = ft_strjoin(tmp, cmd);
-    free(tmp);
-    return (full);
-}
-
-
 int is_valid_external_cmd(t_cmd *cmd, t_shell *shell)
 {
     if (!cmd || !cmd->args || !cmd->args[0] || !shell)
@@ -26,17 +9,20 @@ int is_valid_external_cmd(t_cmd *cmd, t_shell *shell)
 }
 
 
-void free_dirs(char **dirs)
-{
-    int i;
 
+char *find_program_on_path(char *name, t_shell *shell)
+{
+    char    **dirs;
+    char    *result;
+
+    dirs = get_path_dirs(shell);
     if (!dirs)
-        return;
-    i = 0;
-    while (dirs[i])
-        free(dirs[i++]);
-    free(dirs);
+        return (NULL);
+    result = search_in_dirs(dirs, name);
+    free_2D(dirs);
+    return (result);
 }
+
 
 char **get_path_dirs(t_shell *shell)
 {
@@ -72,18 +58,19 @@ char *search_in_dirs(char **dirs, char *name)
     return (NULL);
 }
 
-
-char *find_program_on_path(char *name, t_shell *shell)
+char *join_path(const char *dir, const char *cmd)
 {
-    char    **dirs;
-    char    *result;
+    char *tmp;
+    char *full;
 
-    dirs = get_path_dirs(shell);
-    if (!dirs)
+    if (!dir || !cmd)
         return (NULL);
-
-    result = search_in_dirs(dirs, name);
-    free_dirs(dirs);
-    return (result);
+    tmp = ft_strjoin(dir, "/");
+    if (!tmp)
+        return (NULL);
+    full = ft_strjoin(tmp, cmd);
+    free(tmp);
+    return (full);
 }
+
 

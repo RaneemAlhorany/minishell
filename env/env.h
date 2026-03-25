@@ -2,7 +2,7 @@
 # define ENV_H
 
 #include <stdlib.h>
-#include "black_box_project/Libft/libft.h" 
+#include "component/Libft/libft.h" 
 #include "../minishell.h"
 
 typedef struct s_env
@@ -26,7 +26,5 @@ t_env *create_env_node(char *env_str);
 t_env *find_env(t_env *env, char *key);
 void    update_env(t_shell *shell, char *key, char *value);
 char **env_list_to_envp(t_env *env);
-void free_envp(char **envp);
-
 
 #endif

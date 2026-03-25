@@ -29,19 +29,19 @@ t_builtin_type get_builtin_type(char *cmd)
 {
     if (!cmd)
         return BUILTIN_NONE;
-    if (strcmp(cmd, "echo") == 0)
+    if (ft_strncmp(cmd, "echo" , 5) == 0)
         return BUILTIN_ECHO;
-    else if (strcmp(cmd, "cd") == 0)
+    else if (ft_strncmp(cmd, "cd", 3) == 0)
         return BUILTIN_CD;
-    else if (strcmp(cmd, "pwd") == 0)
+    else if (ft_strncmp(cmd, "pwd", 4) == 0)
         return BUILTIN_PWD;
-    else if (strcmp(cmd, "export") == 0)
+    else if (ft_strncmp(cmd, "export", 7) == 0)
         return BUILTIN_EXPORT;
-    else if (strcmp(cmd, "unset") == 0)
+    else if (ft_strncmp(cmd, "unset", 6) == 0)
         return BUILTIN_UNSET;
-    else if (strcmp(cmd, "env") == 0)
+    else if (ft_strncmp(cmd, "env", 4) == 0)
         return BUILTIN_ENV;
-    else if (strcmp(cmd, "exit") == 0)
+    else if (ft_strncmp(cmd, "exit", 5) == 0)
         return BUILTIN_EXIT;
     else
         return BUILTIN_NONE;

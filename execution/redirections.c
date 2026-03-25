@@ -7,10 +7,13 @@
 int  apply_redirections(t_redirection *redirections, t_shell *shell)
 {
     int opened_fd;
+    int saved_stdin;//babo edit
 
     if (!redirections)
-        return ;
-
+        return (1);
+    saved_stdin = dup(STDIN_FILENO);//babo edit
+    if (saved_stdin < 0)//babo edit
+        return (0);//babo edit
     while (redirections)
     {
 
@@ -41,9 +44,17 @@ int  apply_redirections(t_redirection *redirections, t_shell *shell)
             }
             else if (redirections->type == TOKEN_HEREDOC)
             {
+                if (dup2(saved_stdin, STDIN_FILENO) < 0)//babo edit
+                {
+                    close(saved_stdin);
+                    return (0);
+                }
                 opened_fd = handle_heredoc(redirections, shell);
-                if (opened_fd < 0)
+                if (opened_fd < 0)//babo edit
+                {
+                    close(saved_stdin);
                     return (0); 
+                }
                 dup2(opened_fd, STDIN_FILENO);
                 close(opened_fd);
             }
@@ -51,6 +62,7 @@ int  apply_redirections(t_redirection *redirections, t_shell *shell)
         redirections = redirections->next;
     }
 
+	close(saved_stdin);//babo edit
 
 
     return(1);

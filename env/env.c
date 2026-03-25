@@ -1,4 +1,4 @@
-
+#include "env.h"
 
 char **env_list_to_envp(t_env *env)
 {
@@ -45,18 +45,4 @@ char **env_list_to_envp(t_env *env)
     }
     envp[i] = NULL;
     return (envp);
-}
-
-
-
-void free_envp(char **envp)
-{
-    int i;
-
-    if (!envp)
-        return;
-    i = 0;
-    while (envp[i])
-        free(envp[i++]);
-    free(envp);
 }

@@ -19,20 +19,21 @@ int handle_command_not_found(char *cmd_path, char **envp)
 {
     if (cmd_path)
         free(cmd_path);
-    free_envp(envp);
-    perror(cmd->args[0]);
+    free_2D(envp);
+    perror(cmd_path);
     return (127);
+    
 }
 
 void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
-{
+{//babo edit
+    setup_child_signals();
     if (!apply_redirections(cmd->redirections, shell))
     {
         free(cmd_path);
-        free_envp(envp);
+        free_2D(envp);
         _exit(1);
     }
-
     if (execve(cmd_path, cmd->args, envp) == -1)
     {
         perror(cmd->args[0]);
@@ -70,13 +71,13 @@ int execute_external(t_cmd *cmd, t_shell *shell)
     {
         perror("fork");
         free(cmd_path);
-        free_envp(envp);
+        free_2D(envp);
         return (1);
     }
     if (pid == 0)
         execute_child_process(cmd, cmd_path, envp, shell);
     free(cmd_path);
-    free_envp(envp);
+    free_2D(envp);
     return (wait_for_child(pid));
 }
 

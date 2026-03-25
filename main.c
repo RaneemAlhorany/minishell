@@ -1,65 +1,296 @@
 
 #include "minishell.h"
-#include <stdio.h>
 
-// دالة مساعدة لإنشاء عقدة أمر يدوياً للاختبار
-t_ast *current_test_cmd(char **args, t_redirection *redirs)
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include "signals/signals.h"
+
+typedef struct s_test_case
 {
-    t_ast *node = malloc(sizeof(t_ast));
-    node->type = NODE_COMMAND;
-    node->cmd = malloc(sizeof(t_cmd));
-    node->cmd->args = args;
-    node->cmd->redirections = redirs;
-    return (node);
+    const char	*name;
+    const char	*line;
+    const char	*stdin_data;
+    int			expect_status;
+    int			run_in_child;
+}   t_test_case;
+
+static int	is_blank_line(const char *s)
+{
+    if (!s)
+        return (1);
+    while (*s)
+    {
+        if (*s != ' ' && *s != '\t' && *s != '\n' && *s != '\r')
+            return (0);
+        s++;
+    }
+    return (1);
 }
 
-int main(int argc, char **argv, char **envp)
+static int	expand_tokens(t_token *tokens, t_shell *shell)
 {
-    t_shell *shell;
-    t_ast   *test_node;
-    int     status;
+    char	*expanded;
 
-    (void)argc;
-    (void)argv;
+    while (tokens)
+    {
+        if (tokens->type == TOKEN_WORD)
+        {
+            expanded = expand_string(tokens->value, shell->env, shell->last_exit_status);
+            if (!expanded)
+                return (0);
+            free(tokens->value);
+            tokens->value = expanded;
+        }
+        tokens = tokens->next;
+    }
+    return (1);
+}
 
-    // 1. تهيئة الشيل والبيئة
+static int	execute_line(t_shell *shell, const char *line)
+{
+    char	*input;
+    t_token	*tokens;
+    t_token	*tokens_head;
+    t_ast	*ast;
+    int		status;
+
+    if (!shell || !line || is_blank_line(line))
+        return (0);
+    input = ft_strdup(line);
+    if (!input)
+        return (1);
+    tokens = lexer(input);
+    free(input);
+    if (!tokens)
+        return (2);
+    tokens_head = tokens;
+    if (!expand_tokens(tokens, shell))
+    {
+        free_tokens(tokens_head);
+        return (1);
+    }
+    if (!syntax_check(tokens))
+    {
+        free_tokens(tokens_head);
+        return (2);
+    }
+    ast = parse_pipeline(&tokens);
+    if (!ast)
+    {
+        free_tokens(tokens_head);
+        return (2);
+    }
+    status = execute_ast(ast, shell);
+    shell->last_exit_status = status;
+    free_ast(ast);
+    free_tokens(tokens_head);
+    return (status);
+}
+
+static int	execute_line_in_child(char **envp, const char *line, const char *stdin_data)
+{
+    pid_t	pid;
+    int		wstatus;
+    int		pipe_fd[2];
+    t_shell	*shell;
+
+    pid = fork();
+    if (pid < 0)
+        return (1);
+    if (pid == 0)
+    {
+        if (stdin_data)
+        {
+            if (pipe(pipe_fd) == 0)
+            {
+                (void)!write(pipe_fd[1], stdin_data, ft_strlen(stdin_data));
+                close(pipe_fd[1]);
+                dup2(pipe_fd[0], STDIN_FILENO);
+                close(pipe_fd[0]);
+            }
+        }
+        shell = init_shell(envp);
+        if (!shell)
+            exit(1);
+        exit(execute_line(shell, line));
+    }
+    if (waitpid(pid, &wstatus, 0) < 0)
+        return (1);
+    if (WIFEXITED(wstatus))
+        return (WEXITSTATUS(wstatus));
+    if (WIFSIGNALED(wstatus))
+        return (128 + WTERMSIG(wstatus));
+    return (1);
+}
+
+static void	print_usage(const char *prog)
+{
+    fprintf(stderr, "Usage:\n");
+    fprintf(stderr, "  %s                 # interactive\n", prog);
+    fprintf(stderr, "  %s --test           # run built-in test suite\n", prog);
+    fprintf(stderr, "  %s --cmd  <line>    # run one command line\n", prog);
+    fprintf(stderr, "  %s --file <path>    # run script file (one command per line)\n", prog);
+}
+
+static char	*trim_newline(char *s)
+{
+    size_t	len;
+
+    if (!s)
+        return (NULL);
+    len = strlen(s);
+    while (len > 0 && (s[len - 1] == '\n' || s[len - 1] == '\r'))
+    {
+        s[len - 1] = '\0';
+        len--;
+    }
+    return (s);
+}
+
+static int	run_script_file(t_shell *shell, const char *path)
+{
+    FILE	*fp;
+    char	buf[4096];
+    int		status;
+
+    status = 0;
+    fp = fopen(path, "r");
+    if (!fp)
+    {
+        fprintf(stderr, "minishell: cannot open %s: %s\n", path, strerror(errno));
+        return (1);
+    }
+    while (fgets(buf, (int)sizeof(buf), fp))
+    {
+        trim_newline(buf);
+        if (buf[0] == '#' || is_blank_line(buf))
+            continue;
+        status = execute_line(shell, buf);
+    }
+    fclose(fp);
+    return (status);
+}
+
+static int	run_test_suite(t_shell *shell, char **envp)
+{
+    const t_test_case	tests[] = {
+        {"echo builtin", "echo hello", NULL, 0, 0},
+        {"double quotes + expansion", "echo \"$USER\"", NULL, 0, 0},
+        {"single quotes no expansion", "echo '$USER'", NULL, 0, 0},
+        {"export var", "export TEST_MINISHELL=42", NULL, 0, 0},
+        {"expand var", "echo $TEST_MINISHELL", NULL, 0, 0},
+        {"unset var", "unset TEST_MINISHELL", NULL, 0, 0},
+        {"pipe", "echo hello | wc -c", NULL, 0, 0},
+        {"redir out", "echo first > test_output.txt", NULL, 0, 0},
+        {"redir append", "echo second >> test_output.txt", NULL, 0, 0},
+        {"redir in + pipe", "cat < test_output.txt | wc -l", NULL, 0, 0},
+        {"syntax error", "| ls", NULL, 2, 0},
+        {"heredoc", "cat << EOF | wc -c", "abc\nEOF\n", 0, 1},
+        {"exit builtin (child)", "exit 7", NULL, 7, 1},
+    };
+    int				pass;
+    int				fail;
+    int				status;
+    size_t			i;
+
+    pass = 0;
+    fail = 0;
+    i = 0;
+    printf("--- minishell: test suite ---\n");
+    while (i < (sizeof(tests) / sizeof(tests[0])))
+    {
+        if (tests[i].run_in_child)
+            status = execute_line_in_child(envp, tests[i].line, tests[i].stdin_data);
+        else
+            status = execute_line(shell, tests[i].line);
+        if (tests[i].expect_status != -1 && status != tests[i].expect_status)
+        {
+            printf("[FAIL] %s: `%s` -> got %d (expected %d)\n",
+                tests[i].name, tests[i].line, status, tests[i].expect_status);
+            fail++;
+        }
+        else
+        {
+            printf("[PASS] %s\n", tests[i].name);
+            pass++;
+        }
+        i++;
+    }
+    printf("--- summary: %d pass, %d fail ---\n", pass, fail);
+    return (fail == 0);
+}
+
+static int	interactive_loop(t_shell *shell)
+{
+    char	*input;
+
+    setup_signals();
+    while (shell->is_running)
+    {
+        set_interactive_readline_mode(1);
+        input = readline("minishell$ ");
+        set_interactive_readline_mode(0);
+        if (!input)
+        {
+            if (g_last_signal == SIGINT)
+            {
+                clear_last_signal();
+                continue;
+            }
+            printf("exit\n");
+            break ;
+        }
+        if (get_last_signal() == SIGINT)
+        {
+            shell->last_exit_status = 130;
+            clear_last_signal();
+        }
+        if (*input)
+            add_history(input);
+        if (!is_blank_line(input))
+            shell->last_exit_status = execute_line(shell, input);
+        free(input);
+    }
+    return (shell->last_exit_status);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+    t_shell	*shell;
+    int		status;
+
     shell = init_shell(envp);
-    shell->is_running = 1;
-
-    printf("--- Start Minishell Executor Test ---\n");
-
-    /* اختبار 1: تنفيذ أمر خارجي مع إعادة توجيه
-       الأمر المحاكى: ls -l > test_output.txt
-    */
-    char *args1[] = {"ls", "-l", NULL};
-    t_redirection redir1 = {"test_output.txt", NULL, TOKEN_REDIRECT_OUT};
-    
-    test_node = current_test_cmd(args1, &redir1);
-    
-    printf("Executing: ls -l > test_output.txt\n");
-    status = execute_ast(test_node, shell);
-    printf("Exit Status: %d\n", status);
-    
-    free(test_node->cmd);
-    free(test_node);
-
-    printf("-------------------------------------\n");
-
-    /* اختبار 2: تنفيذ أمر Built-in (pwd)
-    */
-    char *args2[] = {"pwd", NULL};
-    test_node = current_test_cmd(args2, NULL);
-    
-    printf("Executing: pwd\n");
-    status = execute_ast(test_node, shell);
-    printf("Exit Status: %d\n", status);
-
-    free(test_node->cmd);
-    free(test_node);
-
-    printf("--- Test Finished ---\n");
-
-    return (0);
+    if (!shell)
+        return (1);
+    status = 0;
+    if (argc >= 2 && strcmp(argv[1], "--test") == 0)
+    {
+        status = (run_test_suite(shell, envp) ? 0 : 1);
+    }
+    else if (argc >= 3 && strcmp(argv[1], "--cmd") == 0)
+    {
+        status = execute_line(shell, argv[2]);
+    }
+    else if (argc >= 3 && strcmp(argv[1], "--file") == 0)
+    {
+        status = run_script_file(shell, argv[2]);
+    }
+    else if (argc == 1)
+    {
+        status = interactive_loop(shell);
+    }
+    else
+    {
+        print_usage(argv[0]);
+        status = 2;
+    }
+    free_env_list(shell->env);
+    free(shell);
+    return (status);
 }
 
 

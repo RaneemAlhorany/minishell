@@ -27,7 +27,7 @@ int execute_builtin_with_redirection(t_ast *node, t_shell *shell, t_builtin_type
     save_stdin = dup(STDIN_FILENO);
     save_stdout = dup(STDOUT_FILENO);
 
-    if (!apply_redirections(node->cmd->redirections))
+    if (!apply_redirections(node->cmd->redirections, shell))
     {
         restore_fds(save_stdin, save_stdout);
         return (1);
