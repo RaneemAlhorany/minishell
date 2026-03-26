@@ -19,6 +19,7 @@ char	*get_cd_path(t_cmd *cmd, t_shell *shell);
 char *expand_path(char *path, t_shell *shell);
 int change_dir_and_update(t_shell *shell, char *path, char *pwd);
 int builtin_cd(t_cmd *cmd, t_shell *shell);
+char    *get_parent_path(char *pwd);
 
 
 int  parse_char_flag(char **args, int *index , char character);

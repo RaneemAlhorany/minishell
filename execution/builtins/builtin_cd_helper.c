@@ -52,8 +52,9 @@ char	*get_oldpwd_path(t_shell *shell)
 	char	*path;
 
 	path = get_env_value("OLDPWD", shell->env);
-	if (!path)
+	if (!path || path[0] == '\0') // here add check for empty string as well, because some shells treat empty OLDPWD as unset
 	{
+		free(path);
 		ft_putendl_fd("cd: OLDPWD not set", 2);
 		return (NULL);
 	}
@@ -68,8 +69,9 @@ char	*get_home_path(t_shell *shell)
 	char	*path;
 
 	path = get_env_value("HOME", shell->env);
-	if (!path)
+	if (!path || path[0] == '\0') // here add check for empty string as well, because some shells treat empty HOME as unset
 	{
+		free(path);
 		ft_putendl_fd("cd: HOME not set", 2);
 		return (NULL);
 	}
@@ -90,4 +92,22 @@ char *expand_path(char *path, t_shell *shell)
 }
 
 
+
+char    *get_parent_path(char *pwd)
+{
+    int     i;
+    char    *parent;
+
+    if (!pwd || pwd[0] == '\0')
+        return (NULL);
+    i = ft_strlen(pwd) - 1;
+    while (i > 0 && pwd[i] == '/')
+        i--;
+    while (i > 0 && pwd[i] != '/')
+        i--;
+    if (i == 0)
+        return (ft_strdup("/"));
+    parent = ft_substr(pwd, 0, i);
+    return (parent);
+}
 
