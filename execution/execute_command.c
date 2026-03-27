@@ -38,13 +38,36 @@ int execute_builtin_with_redirection(t_ast *node, t_shell *shell, t_builtin_type
     return (status);
 }
 
-
+//babo edit
 int execute_command_node(t_ast *node, t_shell *shell)
 {
     t_builtin_type builtin_type;
+    int save_stdin;
+    int save_stdout;
 
-    if (!is_valid_command(node))
+    if (!node || !node->cmd)
         return (0);
+
+    if (!node->cmd->args || !node->cmd->args[0])
+    {
+        save_stdin = dup(STDIN_FILENO);
+        save_stdout = dup(STDOUT_FILENO);
+        if (save_stdin < 0 || save_stdout < 0)
+        {
+            if (save_stdin >= 0)
+                close(save_stdin);
+            if (save_stdout >= 0)
+                close(save_stdout);
+            return (1);
+        }
+        if (!apply_redirections(node->cmd->redirections, shell))
+        {
+            restore_fds(save_stdin, save_stdout);
+            return (1);
+        }
+        restore_fds(save_stdin, save_stdout);
+        return (0);
+    }
 
     builtin_type = get_builtin_type(node->cmd->args[0]);
 

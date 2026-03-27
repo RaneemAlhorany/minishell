@@ -32,8 +32,9 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 //لسا مش مرتاحلها بس هيك لازم تكون عشان ال signal handling في الpipe لما يكون في pipe لازم كل child process يتعامل مع ال signals بشكل منفصل عشان ما يأثروا على بعض وعلى الparent process
 //لسا حاس ال while افضل 
 int wait_for_pipe(pid_t left_pid, pid_t right_pid)
-{
+{//babo edit
     int status;
+    int sig;
 
     waitpid(left_pid, NULL, 0);
     if (waitpid(right_pid, &status, 0) == -1)
@@ -42,7 +43,12 @@ int wait_for_pipe(pid_t left_pid, pid_t right_pid)
     if (WIFEXITED(status))
         return (WEXITSTATUS(status));
     if (WIFSIGNALED(status))//babo edit
-        return (128 + WTERMSIG(status));//babo edit
+    {
+        sig = WTERMSIG(status);
+        if (sig == SIGQUIT)
+            write(STDERR_FILENO, "Quit (core dumped)\n", 19);
+        return (128 + sig);//babo edit
+    }
     return (1);
 }
 

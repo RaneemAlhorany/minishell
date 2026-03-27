@@ -30,6 +30,7 @@ SRCS = lexer/lexer.c \
 	component/pipex/files_bonus.c \
 	shell/shell.c \
 	main.c \
+	main_helper.c \
 	execution/execute_ast.c \
 	execution/execute_builtin.c \
 	execution/execute_command.c \

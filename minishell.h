@@ -7,6 +7,17 @@
 #include "./parser/parsing.h"
 #include "./execution/execution.h"
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "signals/signals.h"
+
+
 
 typedef struct s_redirection
 {
@@ -65,5 +76,26 @@ void free_2D(char **dirs);
 
 int    executor(t_cmd *cmds, char **envp);
 t_shell * init_shell(char **envp);
+
+
+
+
+
+
+
+//////////////////////////////////////////
+
+int	is_blank_line(const char *s);
+t_ast	*prepare_execution(t_shell *shell,char *line, t_token **tokens_head);
+int	execute_line(t_shell *shell,char *line);
+void	shell_interactive(t_shell *shell);
+
+void	free_shell(t_shell *shell);
+int	expand_tokens(t_token *tokens, t_shell *shell);
+
+
+
+
+
 
 #endif 
