@@ -10,9 +10,9 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
     if (chdir(path) != 0)
     {
         ft_putstr_fd("cd: ", 2);
-        perror(NULL);
-        ft_putstr_fd(": ", 2);
         ft_putstr_fd(path, 2);
+        ft_putstr_fd(": ", 2);
+        ft_putendl_fd(strerror(errno), 2);
         free(pwd);
         return (1);
     }
