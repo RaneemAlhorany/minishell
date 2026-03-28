@@ -1,6 +1,22 @@
 #include "builtin.h"
 
+char *resolve_new_pwd(char *path, char *pwd)
+{
+    char *new_pwd;
 
+    new_pwd = getcwd(NULL, 0);
+    if (new_pwd)
+        return (new_pwd);
+    if (path[0] == '/')
+        return (ft_strdup(path));
+    if (pwd && pwd[0] != '\0')
+    {
+        if (ft_strncmp(path, "..", 3) == 0)
+            return (get_parent_path(pwd));
+        return (ft_strdup(pwd));
+    }
+    return (NULL);
+}
 
 
 int change_dir_and_update(t_shell *shell, char *path, char *pwd)
@@ -16,21 +32,7 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
         free(pwd);
         return (1);
     }
-    new_pwd = getcwd(NULL, 0);
-    if (!new_pwd)
-    {
-        if (path[0] == '/')
-            new_pwd = ft_strdup(path);
-        else if (pwd && pwd[0] != '\0')
-        {
-            if (ft_strncmp(path, "..", 3) == 0)
-                new_pwd = get_parent_path(pwd);
-            else
-                new_pwd = ft_strdup(pwd);
-        }
-        else
-            new_pwd = NULL;
-    }
+    new_pwd = resolve_new_pwd(path, pwd);
     if (!new_pwd)
     {
         free(pwd);
@@ -42,7 +44,6 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
     free(new_pwd);
     return (0);
 }
-
 char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
 	char	*path;
@@ -50,11 +51,11 @@ char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 	if (!cmd || !cmd->args || !shell)
 		return (NULL);
 	if (!cmd->args[1])
-		path = get_home_path(shell);
+		path = get_depending_path(shell, "HOME");
 	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
-		path = get_oldpwd_path(shell);
+		path = get_depending_path(shell, "OLDPWD");
 	else if (ft_strncmp(cmd->args[1], "~", 2) == 0)
-		path = get_home_path(shell);
+		path = get_depending_path(shell, "HOME");
 	else if (ft_strncmp(cmd->args[1], "--help", 7) == 0)
 	{
 		print_cd_help_part_1();
@@ -66,11 +67,28 @@ char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 }
 
 
+
+
+char *get_pwd_safe(t_shell *shell)
+{
+    char *pwd;
+
+    pwd = getcwd(NULL, 0);
+    if (!pwd)
+        pwd = get_env_value("PWD", shell->env);
+    if (pwd && pwd[0] == '\0')
+    {
+        free(pwd);
+        return (NULL);
+    }
+    return (pwd);
+}
+
 int builtin_cd(t_cmd *cmd, t_shell *shell)
 {
-    char *path;
-    char *pwd;
-    int status;
+    char    *path;
+    char    *pwd;
+    int     status;
 
     if (!cmd || !shell)
         return (1);
@@ -79,14 +97,7 @@ int builtin_cd(t_cmd *cmd, t_shell *shell)
         ft_putendl_fd("cd: too many arguments", 2);
         return (1);
     }
-    pwd = getcwd(NULL, 0);
-    if (!pwd) 
-        pwd = get_env_value("PWD", shell->env); // fallback to PWD if getcwd fails, some shells do this to handle certain edge cases
-    if (pwd && pwd[0] == '\0') // handle case where getcwd returns empty string, treat it as failure
-    {
-        free(pwd);
-        pwd = NULL;
-    }
+    pwd = get_pwd_safe(shell);
     path = get_cd_path(cmd, shell);
     if (!path)
     {

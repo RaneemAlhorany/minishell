@@ -1,8 +1,6 @@
 #include "execution.h"
 
 
-// redirections has the priority over pipes, so we execute redirections first, then pipes
-
 
 
 int execute_ast(t_ast *node , t_shell *shell)
@@ -16,14 +14,4 @@ int execute_ast(t_ast *node , t_shell *shell)
         return (execute_pipe_node(node, shell));
     return (0);
 }
-
-
-
-
-
-
-
-
-
-
 

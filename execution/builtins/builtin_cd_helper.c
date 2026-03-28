@@ -2,6 +2,24 @@
 #include "builtin.h"
 
 
+char	*get_depending_path(t_shell *shell , char *goal)
+{
+	char	*path;
+
+	path = get_env_value(goal, shell->env);
+	if (!path || path[0] == '\0')
+	{
+		free(path);
+		ft_putstr_fd("cd: ", 2);
+		ft_putstr_fd(goal, 2);
+		ft_putendl_fd(" not set", 2);
+		return (NULL);
+	}
+	if (ft_strncmp(goal, "OLDPWD", 7) == 0)
+		ft_putendl_fd(path , 1);
+	return (path);
+}
+
 void	print_cd_help_part_1()
 {
 	ft_putendl_fd("cd: cd [-L|[-P [-e]] [-@]] [dir]", 1);
@@ -47,38 +65,6 @@ void	print_cd_help_part_2()
 
 
 
-char	*get_oldpwd_path(t_shell *shell)
-{
-	char	*path;
-
-	path = get_env_value("OLDPWD", shell->env);
-	if (!path || path[0] == '\0') // here add check for empty string as well, because some shells treat empty OLDPWD as unset
-	{
-		free(path);
-		ft_putendl_fd("cd: OLDPWD not set", 2);
-		return (NULL);
-	}
-
-	ft_putendl_fd(path , 1);
-	return (path);
-}
-
-
-char	*get_home_path(t_shell *shell)
-{
-	char	*path;
-
-	path = get_env_value("HOME", shell->env);
-	if (!path || path[0] == '\0') // here add check for empty string as well, because some shells treat empty HOME as unset
-	{
-		free(path);
-		ft_putendl_fd("cd: HOME not set", 2);
-		return (NULL);
-	}
-	return (path);
-}
-
-
 char *expand_path(char *path, t_shell *shell)
 {
     char *expanded;
@@ -87,7 +73,7 @@ char *expand_path(char *path, t_shell *shell)
         return (NULL);
     expanded = expand_string(path, shell->env, shell->last_exit_status);
     if (!expanded)
-        return ft_strdup(path); // fallback if expand_string fails
+        return ft_strdup(path);
     return expanded;
 }
 

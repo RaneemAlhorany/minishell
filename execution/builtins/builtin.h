@@ -13,13 +13,12 @@ typedef struct s_ast t_ast;
 
 void	print_cd_help_part_1();
 void	print_cd_help_part_2();
-char	*get_home_path(t_shell *shell);
-char	*get_oldpwd_path(t_shell *shell);
 char	*get_cd_path(t_cmd *cmd, t_shell *shell);
 char *expand_path(char *path, t_shell *shell);
 int change_dir_and_update(t_shell *shell, char *path, char *pwd);
 int builtin_cd(t_cmd *cmd, t_shell *shell);
 char    *get_parent_path(char *pwd);
+char	*get_depending_path(t_shell *shell , char *goal);
 
 
 int  parse_char_flag(char **args, int *index , char character);
