@@ -1,83 +1,24 @@
-
 #include "execution.h"
 
 
-char *resolve_command_path(t_cmd *cmd, t_shell *shell)
+
+int is_path_available(t_shell *shell)
 {
-    char *cmd_path;
-
-    if (ft_strchr(cmd->args[0], '/'))
-        cmd_path = ft_strdup(cmd->args[0]);
-    else
-        cmd_path = find_program_on_path(cmd->args[0], shell);
-    return (cmd_path);
-}
-
-//babo edit
-
-int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp)
-{
-    if (cmd_path)
-        free(cmd_path);
-    free_2D(envp);
-    if (cmd_name && *cmd_name)
-    {
-        ft_putendl_fd(cmd_name, 2);
-        ft_putendl_fd("command not found\n", 2);
-    }
-    else
-        ft_putendl_fd("command not found\n", 2);
-    return (127);
-}
-
-void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
-{//babo edit
-    setup_child_signals();
-    if (!apply_redirections(cmd->redirections, shell))
-    {
-        free(cmd_path);
-        free_2D(envp);
-        _exit(1);
-    }
-    if (execve(cmd_path, cmd->args, envp) == -1)
-    {
-        perror(cmd->args[0]);
-        _exit(127);
-    }
-}
-//babo edit
-int wait_for_child(pid_t pid)
-{
-    int status;
-    int sig;
-
-    waitpid(pid, &status, 0);
-    if (WIFEXITED(status))
-        return (WEXITSTATUS(status));
-    sig = WTERMSIG(status);
-    if (sig == SIGQUIT)
-        write(STDERR_FILENO, "Quit (core dumped)\n", 19);
-    return (128 + sig);
-}
-
-
-int execute_external(t_cmd *cmd, t_shell *shell)
-{//babo edit
-    pid_t   pid;
-    char    *cmd_path;
-    char    **envp;
-    char    *path_value;
-    int     path_available;
-
-    if (!is_valid_external_cmd(cmd, shell))
-        return (127);
-    envp = env_list_to_envp(shell->env);
-    if (!envp)
-        return (1);
+    char *path_value;
+    int  available;
 
     path_value = get_env_value("PATH", shell->env);
-    path_available = (path_value && *path_value);
+    available = (path_value && *path_value);
     free(path_value);
+    return (available);
+}
+
+
+
+
+char *resolve_path_or_fail(t_cmd *cmd, t_shell *shell,char **envp, int path_available)
+{
+    char *cmd_path;
 
     cmd_path = resolve_command_path(cmd, shell);
     if (!cmd_path)
@@ -87,19 +28,36 @@ int execute_external(t_cmd *cmd, t_shell *shell)
             errno = ENOENT;
             perror(cmd->args[0]);
             free_2D(envp);
-            return (127);
+            return (NULL);
         }
-        return (handle_command_not_found(cmd->args[0], cmd_path, envp));
+        handle_command_not_found(cmd->args[0], cmd_path, envp);
+        return (NULL);
     }
+    return (cmd_path);
+}
+
+
+int validate_command_access(char *cmd_path, t_cmd *cmd, char **envp)
+{
     if (access(cmd_path, X_OK) != 0)
     {
         perror(cmd->args[0]);
         free(cmd_path);
         free_2D(envp);
+
         if (errno == ENOENT)
             return (127);
         return (126);
     }
+    return (0);
+}
+
+
+
+int execute_with_fork(t_cmd *cmd, t_shell *shell,char *cmd_path, char **envp)
+{
+    pid_t pid;
+
     pid = fork();
     if (pid < 0)
     {
@@ -110,8 +68,44 @@ int execute_external(t_cmd *cmd, t_shell *shell)
     }
     if (pid == 0)
         execute_child_process(cmd, cmd_path, envp, shell);
+
+    return (pid);
+}
+
+
+
+int execute_external(t_cmd *cmd, t_shell *shell)
+{
+    char    **envp;
+    char    *cmd_path;
+    int     path_available;
+    int     status;
+    pid_t   pid;
+
+    if (!is_valid_external_cmd(cmd, shell))
+        return (127);
+    envp = prepare_envp(shell);
+    if (!envp)
+        return (1);
+    path_available = is_path_available(shell);
+    cmd_path = resolve_path_or_fail(cmd, shell, envp, path_available);
+    if (!cmd_path)
+        return (127);
+    status = validate_command_access(cmd_path, cmd, envp);
+    if (status != 0)
+        return (status);
+    pid = execute_with_fork(cmd, shell, cmd_path, envp);
     free(cmd_path);
     free_2D(envp);
+    if (pid < 0)
+        return (1);
     return (wait_for_child(pid));
 }
+
+
+
+
+
+
+
 

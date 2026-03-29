@@ -6,6 +6,8 @@
 #include "./expansion/expand.h"
 #include "./parser/parsing.h"
 #include "./execution/execution.h"
+#include "./signals/signals.h"
+#include "./shell/shell.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -62,40 +64,6 @@ typedef struct s_shell
     int         is_running;
     int         last_exit_status;
 } t_shell;
-
-///////////////////////////////////
-//! everything bellow need to edit 
-
-// #include "./A_edit_that_we_will_use_it_in_the_futeure/src/tree/tree.h"
-
-
-t_shell * init_shell(char **envp);
-void free_2D(char **dirs);
-
-
-
-int    executor(t_cmd *cmds, char **envp);
-t_shell * init_shell(char **envp);
-
-
-
-
-
-
-
-//////////////////////////////////////////
-
-int	is_blank_line(const char *s);
-t_ast	*prepare_execution(t_shell *shell,char *line, t_token **tokens_head);
-int	execute_line(t_shell *shell,char *line);
-void	shell_interactive(t_shell *shell);
-
-void	free_shell(t_shell *shell);
-int	expand_tokens(t_token *tokens, t_shell *shell);
-
-
-
-
 
 
 #endif 

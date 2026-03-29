@@ -1,38 +1,49 @@
 #include "env.h"
-//bablo edit
-t_env *env_new(char *key, char *value)
-{
-    t_env *new_node;
 
-    new_node = malloc(sizeof(t_env));
-    if (!new_node)
-        return NULL; // Handle memory allocation failure
-    new_node->key = ft_strdup(key);
-    if (!new_node->key)
-    {
-        free(new_node);
-        return NULL;
-    }
-    if (value)
-    {
-        new_node->value = ft_strdup(value);
-        new_node->has_value = 1;
-    }
-    else
-    {
-        new_node->value = NULL;
-        new_node->has_value = 0;
-    }
-    new_node->is_exported = 1;
-    if (value && !new_node->value)
-    {
-        free(new_node->key);
-        free(new_node);
-        return NULL;
-    }
-    new_node->next = NULL;
-    return (new_node);
+
+
+int	init_env_value(t_env *node, char *value)
+{
+	if (value)
+	{
+		node->value = ft_strdup(value);
+		if (!node->value)
+			return (1);
+		node->has_value = 1;
+	}
+	else
+	{
+		node->value = NULL;
+		node->has_value = 0;
+	}
+	return (0);
 }
+
+t_env	*env_new(char *key, char *value)
+{
+	t_env	*new_node;
+
+	new_node = malloc(sizeof(t_env));
+	if (!new_node)
+		return (NULL);
+	new_node->key = ft_strdup(key);
+	if (!new_node->key)
+	{
+		free(new_node);
+		return (NULL);
+	}
+	if (init_env_value(new_node, value))
+	{
+		free(new_node->key);
+		free(new_node);
+		return (NULL);
+	}
+	new_node->is_exported = 1;
+	new_node->next = NULL;
+	return (new_node);
+}
+
+
 
 
 void env_add_back(t_env **head, t_env *new)
@@ -53,21 +64,6 @@ void env_add_back(t_env **head, t_env *new)
 }
 
 
-void free_env_list(t_env *head)
-{
-    t_env *temp;
-
-    while (head)
-    {
-        temp = head;
-        head = head->next;
-        if (temp->key)
-            free(temp->key);
-        if (temp->value)
-            free(temp->value);
-        free(temp);
-    }
-}
 
 
 t_env *create_env_node(char *env_str)

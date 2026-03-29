@@ -1,48 +1,70 @@
 #include "env.h"
 
+
+int count_valid_env(t_env *env)
+{
+    int count = 0;
+
+    while (env)
+    {
+        if (env->is_exported && env->has_value)
+            count++;
+        env = env->next;
+    }
+    return count;
+}
+
+
+char *build_env_line(t_env *env)
+{
+    char *tmp;
+    char *line;
+
+    tmp = ft_strjoin(env->key, "=");
+    if (!tmp)
+        return NULL;
+
+    line = ft_strjoin(tmp, env->value ? env->value : "");
+    free(tmp);
+
+    return line;
+}
+
+
+void free_envp_partial(char **envp, int i)
+{
+    while (i--)
+        free(envp[i]);
+    free(envp);
+}
+
+
 char **env_list_to_envp(t_env *env)
 {
-    int        i;
-    int        len;
-    t_env      *cur;
-    char       **envp;
-    char       *line;
+    char    **envp;
+    int     len;
+    int     i;
 
-    len = 0;
-    cur = env;
-    while (cur)
-    {
-        if (cur->is_exported && cur->has_value)
-            len++;
-        cur = cur->next;
-    }
+    len = count_valid_env(env);
     envp = malloc(sizeof(char *) * (len + 1));
     if (!envp)
-        return (NULL);
+        return NULL;
     i = 0;
-    cur = env;
-    while (cur)
+    while (env)
     {
-        if (cur->is_exported && cur->has_value)
+        if (env->is_exported && env->has_value)
         {
-            line = ft_strjoin(cur->key, "=");
-            if (!line)
-                break;
-            envp[i] = ft_strjoin(line, cur->value ? cur->value : "");
-            free(line);
+            envp[i] = build_env_line(env);
             if (!envp[i])
-                break;
+            {
+                free_envp_partial(envp, i);
+                return NULL;
+            }
             i++;
         }
-        cur = cur->next;
-    }
-    if (i != len)
-    {
-        while (i--)
-            free(envp[i]);
-        free(envp);
-        return (NULL);
+        env = env->next;
     }
     envp[i] = NULL;
-    return (envp);
+    return envp;
 }
+

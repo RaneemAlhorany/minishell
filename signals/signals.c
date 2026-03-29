@@ -4,6 +4,7 @@
 
 volatile sig_atomic_t	g_last_signal = 0;
  
+
 void	handle_sigint_exec_mode(int signum)
 {
 	(void)signum;
@@ -45,3 +46,4 @@ void	setup_signals(void)
 	sa_quit.sa_flags = 0;
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
+

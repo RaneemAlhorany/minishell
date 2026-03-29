@@ -2,7 +2,7 @@ NAME = minishell
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-INCS = -I. -Icomponent/Libft -Icomponent/pipex
+INCS = -I. -I./Libft 
 
 # Source files
 SRCS = lexer/lexer.c \
@@ -23,14 +23,9 @@ SRCS = lexer/lexer.c \
 	parser/syntax_check_lexer.c \
 	signals/signals.c \
 	signals/signals_utils.c \
-	component/pipex/utils_bonus.c \
-	component/pipex/pipe_and_fork_bonus.c \
-	component/pipex/handel_errors_bonus_1.c \
-	component/pipex/handel_errors_bonus_2.c \
-	component/pipex/files_bonus.c \
 	shell/shell.c \
+	shell/helper.c \
 	main.c \
-	main_helper.c \
 	execution/execute_ast.c \
 	execution/execute_builtin.c \
 	execution/execute_command.c \
@@ -38,7 +33,9 @@ SRCS = lexer/lexer.c \
 	execution/execute_pipe_helper.c \
 	execution/execute_pipe.c \
 	execution/heardoc.c \
-	execution/helper_execution.c \
+	execution/helper_execution_1.c \
+	execution/helper_execution_2.c \
+	execution/helper_execution_3.c \
 	execution/redirections.c \
 	execution/builtins/builtin_cd.c \
 	execution/builtins/builtin_cd_helper.c \
@@ -54,13 +51,13 @@ SRCS = lexer/lexer.c \
 	execution/builtins/builtin_unset.c \
 	execution/builtins/shared_method.c
 
-LIBFT = component/Libft/libft.a
+LIBFT = ./Libft/libft.a
 OBJS = $(SRCS:.c=.o)
 
 all: libft $(NAME)
 
 libft:
-	$(MAKE) -C component/Libft
+	$(MAKE) -C ./Libft
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCS) -c $< -o $@
@@ -73,7 +70,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS)
-	$(MAKE) -C component/Libft clean
+	$(MAKE) -C ./Libft clean
 
 fclean: clean
 	rm -f $(NAME)

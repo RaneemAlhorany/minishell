@@ -1,5 +1,5 @@
 
-#include "minishell.h"
+#include "shell.h"
 
 t_shell * init_shell(char **envp)
 {
@@ -21,21 +21,41 @@ t_shell * init_shell(char **envp)
 }
 
 
-
-
-
-void free_2D(char **dirs)
+void	free_shell(t_shell *shell)
 {
-    int i;
-
-    if (!dirs)
-        return;
-    i = 0;
-    while (dirs[i])
-        free(dirs[i++]);
-    free(dirs);
+	if (!shell)
+		return;
+	if (shell->env)
+		free_env_list(shell->env);
+	free(shell);
 }
 
+
+void	shell_interactive(t_shell *shell)
+{
+	char	*line;
+
+	while (shell && shell->is_running)
+	{
+		clear_last_signal();
+		set_interactive_readline_mode(1);
+		line = readline("minishell$ ");
+		if (!line)
+			break;		
+		if (get_last_signal() == SIGINT)
+		{
+			shell->last_exit_status = 130;
+			clear_last_signal();
+		}
+		if (line[0] != '\0')
+		{
+			add_history(line);
+			set_interactive_readline_mode(0);
+			shell->last_exit_status = execute_line(shell, line);
+		}
+		free(line);
+	}
+}
 
 
 

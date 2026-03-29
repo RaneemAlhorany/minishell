@@ -1,7 +1,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-# include "../component/Libft/libft.h"
+# include ".././Libft/libft.h"
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -14,6 +14,7 @@ typedef enum e_token_type
     TOKEN_REDIRECT_APPEND,
     TOKEN_HEREDOC
 } t_token_type;
+
 
 typedef struct s_token
 {
@@ -38,8 +39,6 @@ t_token    *operator_detection(char **input);
 t_token    *create_token(char *value, t_token_type type);
 void        append_token(t_token **head, t_token *new_token);
 void        free_tokens(t_token *head);
-
-
 
 
 #endif

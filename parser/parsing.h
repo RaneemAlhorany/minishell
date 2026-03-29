@@ -35,7 +35,7 @@ int handle_redirection_token(t_cmd *cmd,t_token **tokens, t_redirection **last);
 int fill_command_data(t_ast *node, t_token **tokens);
 t_ast *build_command(t_token **tokens);
 int process_single_token(t_ast *node, t_token **tokens);
-int process_redirection(t_ast *node, t_token **tokens);
+//int process_redirection(t_ast *node, t_token **tokens);
 int process_word(t_ast *node, t_token **tokens);
 
 

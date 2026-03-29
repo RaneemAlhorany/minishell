@@ -18,33 +18,66 @@ t_env *find_env(t_env *env, char *key)
 }
 
 
-//bablo edit
-void    update_env(t_shell *shell, char *key, char *value)
+void update_existing_env(t_env *node, char *value)
 {
-    t_env    *node;
-    t_env    *new_node;
+    if (node->value)
+        free(node->value);
 
+    if (value)
+    {
+        node->value = ft_strdup(value);
+        node->has_value = 1;
+    }
+    else
+    {
+        node->value = NULL;
+        node->has_value = 0;
+    }
+
+    node->is_exported = 1;
+}
+
+void add_new_env(t_shell *shell, char *key, char *value)
+{
+    t_env *new_node;
+
+    new_node = env_new(key, value);
+    if (!new_node)
+        return;
+
+    new_node->is_exported = 1;
+    env_add_back(&shell->env, new_node);
+}
+
+void update_env(t_shell *shell, char *key, char *value)
+{
+    t_env *node;
+
+    if (!shell || !key)
+        return;
     node = find_env(shell->env, key);
     if (node)
     {
-        if (node->value)
-            free(node->value);
-        if (value)
-        {
-            node->value = ft_strdup(value);
-            node->has_value = 1;
-        }
-        else
-        {
-            node->value = NULL;
-            node->has_value = 0;
-        }
-        node->is_exported = 1;
-        return ;
+        update_existing_env(node, value);
+        return;
     }
-    new_node = env_new(key, value);
-    if (!new_node)
-        return ;
-    new_node->is_exported = 1;
-    env_add_back(&shell->env, new_node);
+    add_new_env(shell, key, value);
+}
+
+
+
+void free_env_list(t_env *head)
+{
+    t_env *temp;
+
+    while (head)
+    {
+        temp = head;
+        head = head->next;
+        if (temp->key)
+            free(temp->key);
+        if (temp->value)
+            free(temp->value);
+        free(temp);
+    }
 }
