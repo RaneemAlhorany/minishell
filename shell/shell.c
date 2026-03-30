@@ -22,6 +22,7 @@ static void	increment_shlvl(t_shell *shell)
 {
 	t_env	*shlvl_node;
 	int		level;
+	int		next_level;
 	char	*new_level;
 
 	if (!shell)
@@ -30,9 +31,20 @@ static void	increment_shlvl(t_shell *shell)
 	if (!shlvl_node || !shlvl_node->has_value || !is_str_numeric(shlvl_node->value))
 		level = 1;
 	else
-		level = ft_atoi(shlvl_node->value) + 1;
-	if (level < 1)
-		level = 1;
+	{
+		next_level = ft_atoi(shlvl_node->value) + 1;
+		if (next_level < 0)
+			level = 0;
+		else if (next_level >= 1000)
+		{
+			ft_putstr_fd("minishell: warning: shell level (", 2);
+			ft_putnbr_fd(next_level, 2);
+			ft_putendl_fd(") too high, resetting to 1", 2);
+			level = 1;
+		}
+		else
+			level = next_level;
+	}
 	new_level = ft_itoa(level);
 	if (!new_level)
 		return ;
