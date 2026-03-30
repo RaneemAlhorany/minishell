@@ -100,11 +100,13 @@ int	execute_line(t_shell *shell,char *line)
 	tokens_head = NULL;
 	ast = prepare_execution(shell, line, &tokens_head);
 	shell->active_tokens = tokens_head;
+	shell->active_ast = ast;
 	if (!ast)
 	{
 		if (tokens_head)
 			free_tokens(tokens_head);
 		shell->active_tokens = NULL;
+		shell->active_ast = NULL;
 		return (2);
 	}
 	status = execute_ast(ast, shell);
@@ -112,6 +114,7 @@ int	execute_line(t_shell *shell,char *line)
 	free_ast(ast);
 	free_tokens(tokens_head);
 	shell->active_tokens = NULL;
+	shell->active_ast = NULL;
 	return (status);
 }
 

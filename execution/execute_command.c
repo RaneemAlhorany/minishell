@@ -69,6 +69,8 @@ int execute_command_node(t_ast *node, t_shell *shell)
 
     if (!node->cmd->args || !node->cmd->args[0])
         return (handle_empty_command(node, shell));
+    if (node->cmd->args[0][0] == '\0' && !node->cmd->args[1])
+        return (handle_empty_command(node, shell));
 
     return (handle_command_execution(node, shell));
 }

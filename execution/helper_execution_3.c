@@ -1,5 +1,23 @@
 #include "execution.h"
 
+static void	cleanup_child_state(t_shell *shell)
+{
+    if (!shell)
+        return ;
+    if (shell->active_tokens)
+    {
+        free_tokens(shell->active_tokens);
+        shell->active_tokens = NULL;
+    }
+    if (shell->active_ast)
+    {
+        free_ast(shell->active_ast);
+        shell->active_ast = NULL;
+    }
+    free_shell(shell);
+    rl_clear_history();
+}
+
 
 
 void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
@@ -9,6 +27,7 @@ void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *sh
     {
         free(cmd_path);
         free_2D(envp);
+        cleanup_child_state(shell);
         _exit(1);
     }
     if (execve(cmd_path, cmd->args, envp) == -1)
@@ -16,6 +35,7 @@ void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *sh
         perror(cmd->args[0]);
         free(cmd_path);
         free_2D(envp);
+        cleanup_child_state(shell);
         _exit(127);
     }
 }
