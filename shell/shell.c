@@ -1,6 +1,45 @@
 
 #include "shell.h"
 
+static int	is_str_numeric(const char *s)
+{
+	if (!s || !*s)
+		return (0);
+	if (*s == '+' || *s == '-')
+		s++;
+	if (!*s)
+		return (0);
+	while (*s)
+	{
+		if (!ft_isdigit(*s))
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
+static void	increment_shlvl(t_shell *shell)
+{
+	t_env	*shlvl_node;
+	int		level;
+	char	*new_level;
+
+	if (!shell)
+		return ;
+	shlvl_node = find_env(shell->env, "SHLVL");
+	if (!shlvl_node || !shlvl_node->has_value || !is_str_numeric(shlvl_node->value))
+		level = 1;
+	else
+		level = ft_atoi(shlvl_node->value) + 1;
+	if (level < 1)
+		level = 1;
+	new_level = ft_itoa(level);
+	if (!new_level)
+		return ;
+	update_env(shell, "SHLVL", new_level);
+	free(new_level);
+}
+
 t_shell * init_shell(char **envp)
 {
     t_shell *shell;
@@ -18,6 +57,7 @@ t_shell * init_shell(char **envp)
 	shell->active_ast = NULL;
     shell -> is_running = 1; // Set the shell to running state
     shell -> last_exit_status = 0; // Initialize last exit status to 0
+	increment_shlvl(shell);
 
     return (shell);
 }

@@ -24,6 +24,11 @@ char *handle_special_dollar(char *input, int *i, int last_status)
         (*i)++;
         return (ft_itoa(last_status));
     }
+    if (input[*i] == '0')
+    {
+        (*i)++;
+        return (ft_strdup("minishell"));
+    }
     if (ft_isdigit(input[*i]))
     {
         (*i)++;
