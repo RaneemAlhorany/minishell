@@ -24,7 +24,13 @@ void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2])
         free_tokens(shell->active_tokens);
         shell->active_tokens = NULL;
     }
-    free_ast(node);
+    if (shell->active_ast)
+    {
+        free_ast(shell->active_ast);
+        shell->active_ast = NULL;
+    }
+    else
+        free_ast(node);
     free_shell(shell);
     rl_clear_history();
     _exit(status);
@@ -46,7 +52,13 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
         free_tokens(shell->active_tokens);
         shell->active_tokens = NULL;
     }
-    free_ast(node);
+    if (shell->active_ast)
+    {
+        free_ast(shell->active_ast);
+        shell->active_ast = NULL;
+    }
+    else
+        free_ast(node);
     free_shell(shell);
     rl_clear_history();
     _exit(status);

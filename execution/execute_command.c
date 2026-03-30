@@ -1,5 +1,16 @@
 #include "execution.h"
 
+static int	handle_dot_command(t_cmd *cmd)
+{
+    if (ft_strncmp(cmd->args[0], ".", 2) != 0)
+        return (-1);
+    if (cmd->args[1])
+        return (-1);
+    ft_putendl_fd("minishell: .: filename argument required", 2);
+    ft_putendl_fd(".: usage: . filename [arguments]", 2);
+    return (2);
+}
+
 
 
 int execute_builtin_with_redirection(t_ast *node, t_shell *shell, t_builtin_type type)
@@ -51,6 +62,11 @@ int handle_empty_command(t_ast *node, t_shell *shell)
 int handle_command_execution(t_ast *node, t_shell *shell)
 {
     t_builtin_type builtin_type;
+    int            dot_status;
+
+    dot_status = handle_dot_command(node->cmd);
+    if (dot_status != -1)
+        return (dot_status);
 
     builtin_type = get_builtin_type(node->cmd->args[0]);
 

@@ -14,6 +14,8 @@ void free_redirections(t_redirection *r)
         r = tmp;
     }
 }
+
+
 void free_command(t_cmd *cmd)
 {
     int i;

@@ -108,3 +108,4 @@ int builtin_cd(t_cmd *cmd, t_shell *shell)
     free(path);
     return (status);
 }
+

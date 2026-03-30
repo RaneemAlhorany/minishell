@@ -81,3 +81,6 @@ void free_env_list(t_env *head)
         free(temp);
     }
 }
+
+
+

@@ -1,5 +1,20 @@
 #include "execution.h"
 
+static int	is_executable_non_directory(char *path)
+{
+    struct stat	st;
+
+    if (!path)
+        return (0);
+    if (access(path, X_OK) != 0)
+        return (0);
+    if (stat(path, &st) != 0)
+        return (0);
+    if (S_ISDIR(st.st_mode))
+        return (0);
+    return (1);
+}
+
 
 int is_valid_external_cmd(t_cmd *cmd, t_shell *shell)
 {
@@ -50,7 +65,7 @@ char *search_in_dirs(char **dirs, char *name)
     while (dirs[i])
     {
         candidate = join_path(dirs[i], name);
-        if (candidate && access(candidate, X_OK) == 0)
+        if (is_executable_non_directory(candidate))
             return (candidate);
         free(candidate);
         i++;
