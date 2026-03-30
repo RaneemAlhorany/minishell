@@ -1,6 +1,34 @@
 
 #include "shell.h"
 
+static char	*get_last_arg_from_cmd(t_cmd *cmd)
+{
+	int		i;
+	char	*last;
+
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (NULL);
+	i = 0;
+	last = cmd->args[0];
+	while (cmd->args[i])
+	{
+		last = cmd->args[i];
+		i++;
+	}
+	return (last);
+}
+
+static char	*get_last_arg_from_ast(t_ast *ast)
+{
+	if (!ast)
+		return (NULL);
+	if (ast->type == NODE_COMMAND)
+		return (get_last_arg_from_cmd(ast->cmd));
+	if (ast->type == NODE_PIPE)
+		return (get_last_arg_from_ast(ast->pipe.right));
+	return (NULL);
+}
+
 
 
 void free_2D(char **dirs)
@@ -95,6 +123,7 @@ int	execute_line(t_shell *shell,char *line)
 {
 	t_token	*tokens_head;
 	t_ast	*ast;
+	char	*last_arg;
 	int		status;
 
 	tokens_head = NULL;
@@ -109,7 +138,10 @@ int	execute_line(t_shell *shell,char *line)
 		shell->active_ast = NULL;
 		return (2);
 	}
+	last_arg = get_last_arg_from_ast(ast);
 	status = execute_ast(ast, shell);
+	if (last_arg)
+		update_env(shell, "_", last_arg);
 	shell->last_exit_status = status;
 	free_ast(ast);
 	free_tokens(tokens_head);
