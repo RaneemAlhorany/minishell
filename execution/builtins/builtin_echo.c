@@ -1,6 +1,42 @@
 
 #include "builtin.h"
 
+static int	is_echo_option(const char *arg)
+{
+    int	j;
+
+    if (!arg || arg[0] != '-' || arg[1] == '\0')
+        return (0);
+    j = 1;
+    while (arg[j])
+    {
+        if (arg[j] != 'n' && arg[j] != 'e' && arg[j] != 'E')
+            return (0);
+        j++;
+    }
+    return (1);
+}
+
+static int	parse_echo_options(char **args, int *index)
+{
+    int	j;
+    int	n_flag;
+
+    n_flag = 0;
+    while (args[*index] && is_echo_option(args[*index]))
+    {
+        j = 1;
+        while (args[*index][j])
+        {
+            if (args[*index][j] == 'n')
+                n_flag = 1;
+            j++;
+        }
+        (*index)++;
+    }
+    return (n_flag);
+}
+
 void print_args(char **args, int index, t_shell *shell)
 {
     char *expanded;
@@ -35,7 +71,7 @@ int builtin_echo(t_cmd *cmd, t_shell *shell)
         return (0);
     }
 
-    n_flag = parse_char_flag(args, &index , 'n');
+    n_flag = parse_echo_options(args, &index);
     print_args(args, index, shell);
 
     if (!n_flag)

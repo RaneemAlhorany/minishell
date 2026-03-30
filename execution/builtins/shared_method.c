@@ -1,6 +1,22 @@
 
 #include "builtin.h"
 
+static int	is_echo_n_option(const char *arg)
+{
+    int	j;
+
+    if (!arg || arg[0] != '-' || arg[1] == '\0')
+        return (0);
+    j = 1;
+    while (arg[j])
+    {
+        if (arg[j] != 'n')
+            return (0);
+        j++;
+    }
+    return (1);
+}
+
 void update_env_list(t_env **env, char *key, char *value)
 {
     t_env *existing;
@@ -45,6 +61,8 @@ int  parse_char_flag(char **args, int *index , char character)
     flag = 0;
     while (args[*index])
     {
+        if (character == 'n' && !is_echo_n_option(args[*index]))
+            break;
         if (args[*index][0] != '-')
             break;
         if (args[*index][1] != character)

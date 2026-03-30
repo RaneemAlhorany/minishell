@@ -67,7 +67,8 @@ int builtin_exit(t_cmd *cmd, t_shell *shell)
     int status;
     char *trimmed;
 
-    ft_putendl_fd("exit", 1);
+    if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
+        ft_putendl_fd("exit", 1);
     if (!cmd->args[1])
     {
         shell->is_running = 0;
