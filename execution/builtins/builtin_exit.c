@@ -69,7 +69,10 @@ int builtin_exit(t_cmd *cmd, t_shell *shell)
 
     ft_putendl_fd("exit", 1);
     if (!cmd->args[1])
-        exit(shell->last_exit_status);
+    {
+        shell->is_running = 0;
+        return (shell->last_exit_status);
+    }
     trimmed = ft_strtrim(cmd->args[1], " \t\n\"");
     if (!trimmed || !is_numeric(trimmed)  )
     {
@@ -77,7 +80,8 @@ int builtin_exit(t_cmd *cmd, t_shell *shell)
         ft_putstr_fd(cmd->args[1], 2);
         ft_putendl_fd(": numeric argument required", 2);
         free(trimmed);
-        exit(2);
+        shell->is_running = 0;
+        return (2);
     }
     if (cmd->args[2])
     {
@@ -88,5 +92,6 @@ int builtin_exit(t_cmd *cmd, t_shell *shell)
     }
     status = ft_atoi(trimmed);
     free(trimmed);
-    exit((unsigned char)status);
+    shell->is_running = 0;
+    return ((unsigned char)status);
 }

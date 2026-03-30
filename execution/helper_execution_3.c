@@ -14,6 +14,8 @@ void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *sh
     if (execve(cmd_path, cmd->args, envp) == -1)
     {
         perror(cmd->args[0]);
+        free(cmd_path);
+        free_2D(envp);
         _exit(127);
     }
 }

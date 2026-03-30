@@ -35,6 +35,7 @@ int	count_words_in_cmd(t_token *token)
 t_cmd *create_cmd(int argc)
 {
     t_cmd *cmd;
+    int   i;
 
     cmd = malloc(sizeof(t_cmd));
     if (!cmd)
@@ -46,7 +47,12 @@ t_cmd *create_cmd(int argc)
         free(cmd);
         return (NULL);
     }
-    cmd->args[argc] = NULL;
+    i = 0;
+    while (i <= argc)
+    {
+        cmd->args[i] = NULL;
+        i++;
+    }
     return (cmd);
 }
 

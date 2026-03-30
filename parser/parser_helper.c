@@ -33,6 +33,7 @@ void free_command(t_cmd *cmd)
     }
 
     free_redirections(cmd->redirections);
+    free(cmd);
 }
 
 

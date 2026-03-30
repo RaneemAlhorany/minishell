@@ -14,6 +14,7 @@ t_shell * init_shell(char **envp)
         free(shell);
         return (NULL);
     }
+	shell->active_tokens = NULL;
     shell -> is_running = 1; // Set the shell to running state
     shell -> last_exit_status = 0; // Initialize last exit status to 0
 

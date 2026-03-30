@@ -61,6 +61,7 @@ typedef struct s_ast
 typedef struct s_shell
 {
     t_env       *env; 
+    t_token     *active_tokens;
     int         is_running;
     int         last_exit_status;
 } t_shell;

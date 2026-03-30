@@ -88,16 +88,19 @@ int	execute_line(t_shell *shell,char *line)
 
 	tokens_head = NULL;
 	ast = prepare_execution(shell, line, &tokens_head);
+	shell->active_tokens = tokens_head;
 	if (!ast)
 	{
 		if (tokens_head)
 			free_tokens(tokens_head);
+		shell->active_tokens = NULL;
 		return (1);
 	}
 	status = execute_ast(ast, shell);
 	shell->last_exit_status = status;
 	free_ast(ast);
 	free_tokens(tokens_head);
+	shell->active_tokens = NULL;
 	return (status);
 }
 
