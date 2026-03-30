@@ -1,6 +1,19 @@
 
 #include "minishell.h"
 
+static int	token_has_quotes(const char *s)
+{
+    if (!s)
+        return (0);
+    while (*s)
+    {
+        if (*s == '\'' || *s == '"')
+            return (1);
+        s++;
+    }
+    return (0);
+}
+
 
 
 t_token* create_token(char *value , t_token_type type)
@@ -17,6 +30,7 @@ t_token* create_token(char *value , t_token_type type)
         return (NULL);
     }
     token -> type = type;
+    token->quoted = token_has_quotes(value);
     token -> next = NULL;
 
     return (token);

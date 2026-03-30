@@ -14,7 +14,7 @@ int	fill_command_data(t_ast *node, t_token **tokens)
 	return (1);
 }
 
- int handle_word_token(t_cmd *cmd, t_token *token, int *index)
+static int	append_quoted_word(t_cmd *cmd, t_token *token, int *index)
 {
     if (!token->value)
         return (0);
@@ -23,6 +23,42 @@ int	fill_command_data(t_ast *node, t_token **tokens)
         return (0);
     (*index)++;
     return (1);
+}
+
+static int	append_unquoted_words(t_cmd *cmd, t_token *token, int *index)
+{
+    char	*start;
+    char	*word;
+    int		len;
+
+    start = token->value;
+    if (!start)
+        return (0);
+    while (*start)
+    {
+        while (*start == ' ' || *start == '\t' || *start == '\n')
+            start++;
+        if (!*start)
+            break ;
+        len = 0;
+        while (start[len] && start[len] != ' ' && start[len] != '\t'
+            && start[len] != '\n')
+            len++;
+        word = ft_substr(start, 0, len);
+        if (!word)
+            return (0);
+        cmd->args[*index] = word;
+        (*index)++;
+        start += len;
+    }
+    return (1);
+}
+
+int handle_word_token(t_cmd *cmd, t_token *token, int *index)
+{
+    if (token->quoted)
+        return (append_quoted_word(cmd, token, index));
+    return (append_unquoted_words(cmd, token, index));
 }
 
 int handle_redirection_token(t_cmd *cmd,t_token **tokens, t_redirection **last)

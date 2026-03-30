@@ -1,6 +1,26 @@
 
 #include "parsing.h"
 
+static int	count_unquoted_words(const char *s)
+{
+    int	count;
+
+    count = 0;
+    if (!s)
+        return (0);
+    while (*s)
+    {
+        while (*s == ' ' || *s == '\t' || *s == '\n')
+            s++;
+        if (!*s)
+            break ;
+        count++;
+        while (*s && *s != ' ' && *s != '\t' && *s != '\n')
+            s++;
+    }
+    return (count);
+}
+
 
 void	init_cmd(t_cmd *cmd)
 {
@@ -20,7 +40,12 @@ int	count_words_in_cmd(t_token *token)
 	while (tmp && tmp->type != TOKEN_PIPE)
 	{
 		if (tmp->type == TOKEN_WORD)
-			count++;
+        {
+            if (tmp->quoted)
+                count++;
+            else
+                count += count_unquoted_words(tmp->value);
+        }
 		else if (is_redirection(tmp->type))
 		{
 			if (tmp->next)
