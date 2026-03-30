@@ -15,7 +15,7 @@ typedef enum e_node_type t_node_type;
 
 
 
-int     syntax_check(t_token *head);
+int     syntax_check(t_token *head, char **unexpected_token, int *unexpected_newline);
 int     is_command_token(t_token_type type);
 int     is_redirection(t_token_type type);
 

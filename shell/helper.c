@@ -58,6 +58,8 @@ t_ast	*prepare_execution(t_shell *shell,char *line, t_token **tokens_head)
 {
 	char	*input;
 	t_token	*tokens;
+	char	*unexpected;
+	int		unexpected_newline;
 
 	if (!shell || !line || is_blank_line(line))
 		return (NULL);
@@ -71,10 +73,17 @@ t_ast	*prepare_execution(t_shell *shell,char *line, t_token **tokens_head)
 	*tokens_head = tokens;
 	if (!expand_tokens(tokens, shell))
 		return (NULL);
-	if (!syntax_check(tokens))
+	unexpected = NULL;
+	unexpected_newline = 0;
+	if (!syntax_check(tokens, &unexpected, &unexpected_newline))
 	{
 		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
-		ft_putstr_fd(tokens->value, 2);
+		if (unexpected_newline)
+			ft_putstr_fd("newline", 2);
+		else if (unexpected)
+			ft_putstr_fd(unexpected, 2);
+		else
+			ft_putstr_fd("newline", 2);
 		ft_putendl_fd("'", 2);
 		return (NULL);
 	}
