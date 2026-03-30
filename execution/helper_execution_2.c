@@ -40,11 +40,11 @@ int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp)
     free_2D(envp);
     if (cmd_name && *cmd_name)
     {
-        ft_putendl_fd(cmd_name, 2);
-        ft_putendl_fd("command not found\n", 2);
+        ft_putstr_fd(cmd_name, 2);
+        ft_putendl_fd(" :command not found", 2);
     }
     else
-        ft_putendl_fd("command not found\n", 2);
+        ft_putendl_fd(" :command not found", 2);
     return (127);
 }
 

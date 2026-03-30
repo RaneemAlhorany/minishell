@@ -73,7 +73,9 @@ t_ast	*prepare_execution(t_shell *shell,char *line, t_token **tokens_head)
 		return (NULL);
 	if (!syntax_check(tokens))
 	{
-		ft_putendl_fd("minishell: syntax error\n", 2);
+		ft_putstr_fd("minishell: syntax error near unexpected token '", 2);
+		ft_putstr_fd(tokens->value, 2);
+		ft_putendl_fd("'", 2);
 		return (NULL);
 	}
 	return (parse_pipeline(&tokens));
@@ -94,7 +96,7 @@ int	execute_line(t_shell *shell,char *line)
 		if (tokens_head)
 			free_tokens(tokens_head);
 		shell->active_tokens = NULL;
-		return (1);
+		return (2);
 	}
 	status = execute_ast(ast, shell);
 	shell->last_exit_status = status;
