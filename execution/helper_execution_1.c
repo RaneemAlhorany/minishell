@@ -1,6 +1,6 @@
 #include "execution.h"
 
-static int	is_executable_non_directory(char *path)
+int	is_executable_non_directory(char *path)
 {
     struct stat	st;
 
@@ -15,13 +15,6 @@ static int	is_executable_non_directory(char *path)
     return (1);
 }
 
-
-int is_valid_external_cmd(t_cmd *cmd, t_shell *shell)
-{
-    if (!cmd || !cmd->args || !cmd->args[0] || !shell)
-        return (0);
-    return (1);
-}
 
 
 

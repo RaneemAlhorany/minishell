@@ -44,6 +44,8 @@ int change_dir_and_update(t_shell *shell, char *path, char *pwd)
     free(new_pwd);
     return (0);
 }
+
+
 char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
 	char	*path;

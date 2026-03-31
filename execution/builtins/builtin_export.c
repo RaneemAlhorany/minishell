@@ -1,5 +1,6 @@
 #include "builtin.h"
 
+
 int	parse_export_options(char **args, int *i, int *flag_p, int *flag_n)
 {
     int	ret;
@@ -22,6 +23,8 @@ int	parse_export_options(char **args, int *i, int *flag_p, int *flag_n)
     }
     return (1);
 }
+
+
 int	is_only_pn_options(const char *s, int *flag_p, int *flag_n)
 {
     int	j;
@@ -71,5 +74,11 @@ int	builtin_export(t_cmd *cmd, t_shell *shell)
 	}
 	return (handle_export_flow(cmd, shell, i, flag_n));
 }
+
+
+
+
+
+
 
 

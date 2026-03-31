@@ -1,6 +1,8 @@
 #include "execution.h"
 
-static void	cleanup_child_state(t_shell *shell)
+
+
+void	cleanup_child_state(t_shell *shell)
 {
     if (!shell)
         return ;

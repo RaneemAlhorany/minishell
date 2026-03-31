@@ -37,6 +37,7 @@ void update_existing_env(t_env *node, char *value)
     node->is_exported = 1;
 }
 
+
 void add_new_env(t_shell *shell, char *key, char *value)
 {
     t_env *new_node;

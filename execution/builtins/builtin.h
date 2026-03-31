@@ -35,10 +35,17 @@ int builtin_env(t_cmd *cmd, t_shell *shell);
 void handle_existing(t_env *existing, char *value);
 
 
-char *remove_quotes(char *str);
+//////// exit
 int check_digits(char *str);
+char *remove_quotes(char *str);
+int handle_no_args(t_shell *shell);
+int handle_numeric_error(char *arg, char *trimmed, t_shell *shell);
+int handle_too_many_args(t_shell *shell, char *trimmed);
 int is_numeric(char *str);
+void print_exit_if_interactive(void);
+int get_exit_status(char *trimmed, t_shell *shell);
 int builtin_exit(t_cmd *cmd, t_shell *shell);
+
 
 
 //////////export
@@ -82,6 +89,7 @@ char *strip_quotes(char *str);
 int handle_unset_option(t_cmd *cmd, int *i);
 void process_unset_args(t_cmd *cmd, t_shell *shell, int i);
 int builtin_unset(t_cmd *cmd, t_shell *shell);
+
 
 
 #endif

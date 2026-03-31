@@ -13,11 +13,20 @@ typedef enum e_node_type t_node_type;
 
 
 
-
-
-int     syntax_check(t_token *head, char **unexpected_token, int *unexpected_newline);
+// syntax_check_lexer_1
 int     is_command_token(t_token_type type);
 int     is_redirection(t_token_type type);
+int set_unexpected(char **unexpected_token, int *unexpected_newline,char *token_value, int is_newline);
+int is_same_redir_char_token(t_token *token, char c);
+int redir_run_len(t_token *token, char c);
+
+// syntax_check_lexer_2
+int set_redir_unexpected(t_token *current,char **unexpected_token, int *unexpected_newline);
+void init_syntax_flags(char **unexpected_token, int *unexpected_newline);
+int check_pipe_syntax(t_token *current, t_token *pre,char **unexpected_token, int *unexpected_newline);
+int check_redirection_syntax(t_token *current,char **unexpected_token, int *unexpected_newline);
+int syntax_check(t_token *head, char **unexpected_token, int *unexpected_newline);
+
 
 t_ast *create_ast_node(t_node_type type);
 t_ast *parse_pipeline(t_token **tokens);
@@ -37,6 +46,8 @@ t_ast *build_command(t_token **tokens);
 int process_single_token(t_ast *node, t_token **tokens);
 //int process_redirection(t_ast *node, t_token **tokens);
 int process_word(t_ast *node, t_token **tokens);
+
+
 
 
 

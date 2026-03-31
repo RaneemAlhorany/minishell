@@ -1,7 +1,6 @@
 #include "env.h"
 
 
-
 int	init_env_value(t_env *node, char *value)
 {
 	if (value)
@@ -18,6 +17,7 @@ int	init_env_value(t_env *node, char *value)
 	}
 	return (0);
 }
+
 
 t_env	*env_new(char *key, char *value)
 {
@@ -115,3 +115,5 @@ t_env *build_env_list(char **envp)
     }
     return (env_list);
 }
+
+

@@ -2,6 +2,13 @@
 
 
 
+int is_valid_external_cmd(t_cmd *cmd, t_shell *shell)
+{
+    if (!cmd || !cmd->args || !cmd->args[0] || !shell)
+        return (0);
+    return (1);
+}
+
 int is_valid_command(t_ast *node)
 {
     if (!node || !node->cmd || !node->cmd->args || !node->cmd->args[0])

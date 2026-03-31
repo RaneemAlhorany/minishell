@@ -1,56 +1,7 @@
 
 #include "shell.h"
 
-static int	is_str_numeric(const char *s)
-{
-	if (!s || !*s)
-		return (0);
-	if (*s == '+' || *s == '-')
-		s++;
-	if (!*s)
-		return (0);
-	while (*s)
-	{
-		if (!ft_isdigit(*s))
-			return (0);
-		s++;
-	}
-	return (1);
-}
 
-static void	increment_shlvl(t_shell *shell)
-{
-	t_env	*shlvl_node;
-	int		level;
-	int		next_level;
-	char	*new_level;
-
-	if (!shell)
-		return ;
-	shlvl_node = find_env(shell->env, "SHLVL");
-	if (!shlvl_node || !shlvl_node->has_value || !is_str_numeric(shlvl_node->value))
-		level = 1;
-	else
-	{
-		next_level = ft_atoi(shlvl_node->value) + 1;
-		if (next_level < 0)
-			level = 0;
-		else if (next_level >= 1000)
-		{
-			ft_putstr_fd("minishell: warning: shell level (", 2);
-			ft_putnbr_fd(next_level, 2);
-			ft_putendl_fd(") too high, resetting to 1", 2);
-			level = 1;
-		}
-		else
-			level = next_level;
-	}
-	new_level = ft_itoa(level);
-	if (!new_level)
-		return ;
-	update_env(shell, "SHLVL", new_level);
-	free(new_level);
-}
 
 t_shell * init_shell(char **envp)
 {
@@ -74,42 +25,49 @@ t_shell * init_shell(char **envp)
     return (shell);
 }
 
-
-void	free_shell(t_shell *shell)
+ int get_current_level(t_env *shlvl_node)
 {
-	if (!shell)
-		return;
-	if (shell->env)
-		free_env_list(shell->env);
-	free(shell);
+    if (!shlvl_node || !shlvl_node->has_value
+        || !is_str_numeric(shlvl_node->value))
+        return (1);
+    return (ft_atoi(shlvl_node->value));
+}
+
+void print_shlvl_warning(int level)
+{
+    ft_putstr_fd("minishell: warning: shell level (", 2);
+    ft_putnbr_fd(level, 2);
+    ft_putendl_fd(") too high, resetting to 1", 2);
+}
+
+int compute_next_level(int current_level)
+{
+    int next_level;
+
+    next_level = current_level + 1;
+
+    if (next_level < 0)
+        return (0);
+    if (next_level >= 1000)
+    {
+        print_shlvl_warning(next_level);
+        return (1);
+    }
+    return (next_level);
+}
+
+void update_shlvl_value(t_shell *shell, int level)
+{
+    char *new_level;
+
+    new_level = ft_itoa(level);
+    if (!new_level)
+        return ;
+    update_env(shell, "SHLVL", new_level);
+    free(new_level);
 }
 
 
-void	shell_interactive(t_shell *shell)
-{
-	char	*line;
-
-	while (shell && shell->is_running)
-	{
-		clear_last_signal();
-		set_interactive_readline_mode(1);
-		line = readline("minishell$ ");
-		if (!line)
-			break;		
-		if (get_last_signal() == SIGINT)
-		{
-			shell->last_exit_status = 130;
-			clear_last_signal();
-		}
-		if (line[0] != '\0')
-		{
-			add_history(line);
-			set_interactive_readline_mode(0);
-			shell->last_exit_status = execute_line(shell, line);
-		}
-		free(line);
-	}
-}
 
 
 
