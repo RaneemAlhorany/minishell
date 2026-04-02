@@ -78,6 +78,11 @@ void	shell_interactive(t_shell *shell)
 	{
 		clear_last_signal();
 		set_interactive_readline_mode(1);
+		if (shell->prompt_needs_newline)
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			shell->prompt_needs_newline = 0;
+		}
 		line = readline("minishell$ ");
 		if (!line)
 			break;		
@@ -113,4 +118,3 @@ void increment_shlvl(t_shell *shell)
 
     update_shlvl_value(shell, next_level);
 }
-

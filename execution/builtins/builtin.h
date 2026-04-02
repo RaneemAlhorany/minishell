@@ -23,7 +23,7 @@ char	*get_depending_path(t_shell *shell , char *goal);
 
 int  parse_char_flag(char **args, int *index , char character);
 int builtin_echo(t_cmd *cmd, t_shell *shell);
-void print_args(char **args, int index, t_shell *shell);
+int print_args(char **args, int index, t_shell *shell);
 
 
 void handle_env_assignments(t_cmd *cmd, t_env **new_env, int *i);

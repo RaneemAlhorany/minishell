@@ -41,7 +41,7 @@ typedef enum e_node_type
 {
 	NODE_COMMAND,
 	NODE_PIPE
-}	t_node_type;
+} 	t_node_type;
 
 typedef struct s_ast
 {
@@ -65,6 +65,7 @@ typedef struct s_shell
     t_ast       *active_ast;
     int         is_running;
     int         last_exit_status;
+    int         prompt_needs_newline;
 } t_shell;
 
 
