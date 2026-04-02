@@ -1,54 +1,63 @@
 #include "builtin.h"
 
+int	is_visible_export(t_env *env)
+{
+	if (!env || !env->key || !env->is_exported)
+		return (0);
+	if (ft_strncmp(env->key, "_", 2) == 0)
+		return (0);
+	return (1);
+}
+
 void print_export_list(t_env *env)
 {
-    t_env **arr;
-    int count;
-    int i;
+	t_env	**arr;
+	int		count;
+	int		i;
 
-    count = count_exported(env);
-    if (count == 0)
-        return ;
-    arr = collect_exported(env, count);
-    if (!arr)
-        return ;
-    sort_env(arr, count);
-    i = 0;
-    while (i < count)
-        print_one_env(arr[i++]);
-    free(arr);
+	count = count_exported(env);
+	if (count == 0)
+		return ;
+	arr = collect_exported(env, count);
+	if (!arr)
+		return ;
+	sort_env(arr, count);
+	i = 0;
+	while (i < count)
+		print_one_env(arr[i++]);
+	free(arr);
 }
 
 int count_exported(t_env *env)
 {
-    int count;
+	int	count;
 
-    count = 0;
-    while (env)
-    {
-        if (env->key && env->is_exported)
-            count++;
-        env = env->next;
-    }
-    return (count);
+	count = 0;
+	while (env)
+	{
+		if (is_visible_export(env))
+			count++;
+		env = env->next;
+	}
+	return (count);
 }
 
 t_env **collect_exported(t_env *env, int count)
 {
-    t_env **arr;
-    int i;
+	t_env	**arr;
+	int		i;
 
-    arr = malloc(sizeof(t_env *) * count);
-    if (!arr)
-        return (NULL);
-    i = 0;
-    while (env)
-    {
-        if (env->key && env->is_exported)
-            arr[i++] = env;
-        env = env->next;
-    }
-    return (arr);
+	arr = malloc(sizeof(t_env *) * count);
+	if (!arr)
+		return (NULL);
+	i = 0;
+	while (env)
+	{
+		if (is_visible_export(env))
+			arr[i++] = env;
+		env = env->next;
+	}
+	return (arr);
 }
 
 void sort_env(t_env **arr, int count)

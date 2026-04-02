@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-void	handle_export_arg(char *arg, t_shell *shell)
+int	handle_export_arg(char *arg, t_shell *shell)
 {
 	char	*key;
 	char	*value;
@@ -8,14 +8,15 @@ void	handle_export_arg(char *arg, t_shell *shell)
 	if (arg[0] == '-')
 	{
 		ft_putstr_fd("export: invalid option\n", 2);
-		return;
+		return (1);
 	}
 	if (extract_export_data(arg, shell, &key, &value))
-		return;
+		return (1);
 	update_env_list(&shell->env, key, value);
 	free(key);
 	if (value && ft_strchr(arg, '='))
 		free(value);
+	return (0);
 }
 
 int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
@@ -66,5 +67,4 @@ int validate_identifier_export(char *key, char *value, char *equal)
     }
     return (0);
 }
-
 

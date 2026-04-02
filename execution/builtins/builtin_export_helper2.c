@@ -3,6 +3,8 @@
 
 int	handle_export_flow(t_cmd *cmd, t_shell *shell, int i, int flag_n)
 {
+	int	status;
+
 	if (!cmd->args[i])
 	{
 		print_export_list(shell->env);
@@ -10,9 +12,14 @@ int	handle_export_flow(t_cmd *cmd, t_shell *shell, int i, int flag_n)
 	}
 	if (flag_n)
 		return (handle_export_n(cmd, shell, i));
+	status = 0;
 	while (cmd->args[i])
-		handle_export_arg(cmd->args[i++], shell);
-	return (0);
+	{
+		if (handle_export_arg(cmd->args[i], shell))
+			status = 1;
+		i++;
+	}
+	return (status);
 }
 
 int handle_export_n(t_cmd *cmd, t_shell *shell,int i)
@@ -93,4 +100,3 @@ int is_valid_identifier(char *key)
     }
     return (1);
 }
-

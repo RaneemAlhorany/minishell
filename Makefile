@@ -27,6 +27,8 @@ SRCS = lexer/lexer.c \
 	shell/shell.c \
 	shell/helper_1.c \
 	shell/helper_2.c \
+	shell/helper_3.c \
+	shell/helper_4.c \
 	main.c \
 	execution/execute_ast.c \
 	execution/execute_builtin.c \

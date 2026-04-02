@@ -59,6 +59,7 @@ int count_exported(t_env *env);
 t_env **collect_exported(t_env *env, int count);
 void sort_env(t_env **arr, int count);
 void print_one_env(t_env *node);
+int	is_visible_export(t_env *env);
 
 ///////// export helper2
 int	handle_export_flow(t_cmd *cmd, t_shell *shell, int i, int flag_n);
@@ -75,7 +76,7 @@ void remove_export_flag(t_shell *shell, char *key);
 ///////// export helper4
 char *get_value(char *equal, t_shell *shell);
 int validate_identifier_export(char *key, char *value, char *equal);
-void	handle_export_arg(char *arg, t_shell *shell);
+int		handle_export_arg(char *arg, t_shell *shell);
 int	extract_export_data(char *arg, t_shell *shell,char **key, char **value);
 
 
@@ -93,4 +94,3 @@ int builtin_unset(t_cmd *cmd, t_shell *shell);
 
 
 #endif
-
