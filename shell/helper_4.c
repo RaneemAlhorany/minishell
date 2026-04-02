@@ -73,6 +73,7 @@ int execute_line(t_shell *shell, char *line)
 void	shell_interactive(t_shell *shell)
 {
 	char	*line;
+    char	*exec_line;
 
 	while (shell && shell->is_running)
 	{
@@ -93,9 +94,16 @@ void	shell_interactive(t_shell *shell)
 		}
 		if (line[0] != '\0')
 		{
+            exec_line = ft_strdup(line);
 			add_history(line);
 			set_interactive_readline_mode(0);
-			shell->last_exit_status = execute_line(shell, line);
+            if (!exec_line)
+                shell->last_exit_status = 1;
+            else
+            {
+                shell->last_exit_status = execute_line(shell, exec_line);
+                free(exec_line);
+            }
 		}
 		free(line);
 	}
