@@ -1,6 +1,17 @@
 
 #include "builtin.h"
 
+
+int	is_visible_export(t_env *env)
+{
+	if (!env || !env->key || !env->is_exported)
+		return (0);
+	if (ft_strncmp(env->key, "_", 2) == 0)
+		return (0);
+	return (1);
+}
+
+
 void	apply_export_n(t_shell *shell, char *key, char *value)
 {
 	t_env	*node;
@@ -62,5 +73,28 @@ void remove_export_flag(t_shell *shell, char *key)
     }
 }
 
+
+int	parse_export_options(char **args, int *i, int *flag_p, int *flag_n)
+{
+    int	ret;
+
+    *flag_p = 0;
+    *flag_n = 0;
+    while (args && args[*i])
+    {
+        if (args[*i][0] != '-' || args[*i][1] == '\0')
+            break;
+        ret = is_only_pn_options(args[*i], flag_p, flag_n);
+        if (ret == 2)
+        {
+            (*i)++;
+            break;
+        }
+        if (ret == 0)
+            return (0);
+        (*i)++;
+    }
+    return (1);
+}
 
 

@@ -37,7 +37,7 @@ int	count_words_in_cmd(t_token *token)
 
 	count = 0;
 	tmp = token;
-	while (tmp && tmp->type != TOKEN_PIPE)
+    while (tmp && !is_command_delimiter(tmp->type))
 	{
 		if (tmp->type == TOKEN_WORD)
         {

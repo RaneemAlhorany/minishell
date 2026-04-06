@@ -4,6 +4,10 @@
 #include "./env/env.h"
 #include "./lexer/lexer.h"
 
+#include <readline/readline.h>
+#include <stdlib.h>
+#include <signal.h>
+#include "libft.h"
 
 
 // helper functions 1
@@ -35,8 +39,15 @@ int check_syntax(t_token *tokens);
 t_ast *prepare_execution(t_shell *shell, char *line, t_token **tokens_head);
 void cleanup_execution(t_shell *shell, t_ast *ast, t_token *tokens);
 int execute_line(t_shell *shell, char *line);
-void	shell_interactive(t_shell *shell);
 void increment_shlvl(t_shell *shell);
+
+
+
+//helper 5
+void	shell_interactive(t_shell *shell);
+char	*build_prompt(t_shell *shell);
+void	handle_sigint(t_shell *shell);
+void	process_line(t_shell *shell, char *line);
 
 
 // shell 

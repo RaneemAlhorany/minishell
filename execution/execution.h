@@ -20,6 +20,7 @@
 
 
 
+
 typedef enum e_builtin_type
 {
     BUILTIN_NONE,
@@ -38,6 +39,11 @@ typedef struct s_redirection t_redirection;
 
 
 int execute_ast(t_ast *node , t_shell *shell);
+int	execute_group_node(t_ast *node, t_shell *shell);
+int	execute_child(t_ast *node, t_shell *shell);
+void	cleanup_child(t_shell *shell, t_ast *node);
+int	execute_logical_node(t_ast *node, t_shell *shell);
+
 
 int execute_builtin(t_cmd *cmd, t_shell *shell, t_builtin_type type);
 t_builtin_type get_builtin_type(char *cmd);
@@ -97,6 +103,7 @@ char *resolve_path_or_fail(t_cmd *cmd, t_shell *shell,char **envp, int path_avai
 int validate_command_access(char *cmd_path, t_cmd *cmd, char **envp);
 int execute_with_fork(t_cmd *cmd, t_shell *shell,char *cmd_path, char **envp);
 int execute_external(t_cmd *cmd, t_shell *shell);
+
 
 
 

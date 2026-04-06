@@ -1,7 +1,7 @@
 
 #include "builtin.h"
 
-static int	is_echo_n_option(const char *arg)
+int	is_echo_n_option(const char *arg)
 {
     int	j;
 

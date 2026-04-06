@@ -1,13 +1,6 @@
 #include "builtin.h"
 
-int	is_visible_export(t_env *env)
-{
-	if (!env || !env->key || !env->is_exported)
-		return (0);
-	if (ft_strncmp(env->key, "_", 2) == 0)
-		return (0);
-	return (1);
-}
+
 
 void print_export_list(t_env *env)
 {

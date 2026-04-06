@@ -1,8 +1,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "./env/env.h"
 #include "./lexer/lexer.h"
+# include "./env/env.h"
 #include "./expansion/expand.h"
 #include "./parser/parsing.h"
 #include "./execution/execution.h"
@@ -40,8 +40,11 @@ typedef struct s_cmd
 typedef enum e_node_type
 {
 	NODE_COMMAND,
-	NODE_PIPE
-} 	t_node_type;
+    NODE_PIPE,
+    NODE_AND,
+    NODE_OR,
+    NODE_GROUP
+}	t_node_type;
 
 typedef struct s_ast
 {
@@ -65,7 +68,7 @@ typedef struct s_shell
     t_ast       *active_ast;
     int         is_running;
     int         last_exit_status;
-    int         prompt_needs_newline;
+    char        *prompt_prefix;
 } t_shell;
 
 

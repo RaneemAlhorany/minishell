@@ -65,52 +65,6 @@ int execute_line(t_shell *shell, char *line)
     return (status);
 }
 
-
-
-
-
-
-void	shell_interactive(t_shell *shell)
-{
-	char	*line;
-    char	*exec_line;
-
-	while (shell && shell->is_running)
-	{
-		clear_last_signal();
-		set_interactive_readline_mode(1);
-		if (shell->prompt_needs_newline)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			shell->prompt_needs_newline = 0;
-		}
-		line = readline("minishell$ ");
-		if (!line)
-			break;		
-		if (get_last_signal() == SIGINT)
-		{
-			shell->last_exit_status = 130;
-			clear_last_signal();
-		}
-		if (line[0] != '\0')
-		{
-            exec_line = ft_strdup(line);
-			add_history(line);
-			set_interactive_readline_mode(0);
-            if (!exec_line)
-                shell->last_exit_status = 1;
-            else
-            {
-                shell->last_exit_status = execute_line(shell, exec_line);
-                free(exec_line);
-            }
-		}
-		free(line);
-	}
-}
-
-
-
 void increment_shlvl(t_shell *shell)
 {
     t_env *shlvl_node;
@@ -126,3 +80,52 @@ void increment_shlvl(t_shell *shell)
 
     update_shlvl_value(shell, next_level);
 }
+
+
+
+
+
+// void	shell_interactive(t_shell *shell)
+// {
+// 	char	*line;
+//     char	*joined_prompt;
+
+// 	while (shell && shell->is_running)
+// 	{
+//         joined_prompt = NULL;
+// 		clear_last_signal();
+// 		set_interactive_readline_mode(1);
+//         if (shell->prompt_prefix)
+//         {
+//             joined_prompt = ft_strjoin(shell->prompt_prefix, "minishell$ ");
+//             free(shell->prompt_prefix);
+//             shell->prompt_prefix = NULL;
+//             if (joined_prompt)
+//                 line = readline(joined_prompt);
+//             else
+//                 line = readline("minishell$ ");
+//             if (joined_prompt)
+//                 free(joined_prompt);
+//         }
+//         else
+//             line = readline("minishell$ ");
+// 		if (!line)
+// 			break;		
+// 		if (get_last_signal() == SIGINT)
+// 		{
+// 			shell->last_exit_status = 130;
+// 			clear_last_signal();
+// 		}
+// 		if (line[0] != '\0')
+// 		{
+// 			add_history(line);
+// 			set_interactive_readline_mode(0);
+// 			shell->last_exit_status = execute_line(shell, line);
+// 		}
+// 		free(line);
+// 	}
+// }
+
+
+
+

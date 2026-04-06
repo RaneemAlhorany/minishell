@@ -68,3 +68,25 @@ int validate_identifier_export(char *key, char *value, char *equal)
     return (0);
 }
 
+
+int	is_only_pn_options(const char *s, int *flag_p, int *flag_n)
+{
+    int	j;
+
+    if (!s || s[0] != '-' || s[1] == '\0')
+        return (0);
+    if (ft_strncmp(s, "--", 3) == 0)
+        return (2);
+    j = 1;
+    while (s[j])
+    {
+        if (s[j] == 'p')
+            *flag_p = 1;
+        else if (s[j] == 'n')
+            *flag_n = 1;
+        else
+            return (0);
+        j++;
+    }
+    return (1);
+}

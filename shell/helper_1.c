@@ -26,6 +26,8 @@ void	free_shell(t_shell *shell)
 {
 	if (!shell)
 		return;
+	if (shell->prompt_prefix)
+		free(shell->prompt_prefix);
 	if (shell->env)
 		free_env_list(shell->env);
 	free(shell);
@@ -75,7 +77,9 @@ char	*get_last_arg_from_ast(t_ast *ast)
 		return (NULL);
 	if (ast->type == NODE_COMMAND)
 		return (get_last_arg_from_cmd(ast->cmd));
-	if (ast->type == NODE_PIPE)
+	if (ast->type == NODE_PIPE || ast->type == NODE_AND || ast->type == NODE_OR)
 		return (get_last_arg_from_ast(ast->pipe.right));
+	if (ast->type == NODE_GROUP)
+		return (get_last_arg_from_ast(ast->pipe.left));
 	return (NULL);
 }

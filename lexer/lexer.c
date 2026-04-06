@@ -35,7 +35,9 @@ int	move_through_word(char **input)
 		}
 		else if (**input == ' ' || **input == '\t'
 			|| **input == '<' || **input == '>'
-			|| **input == '|' || **input == '\n')
+            || **input == '|' || **input == '&'
+            || **input == '(' || **input == ')'
+            || **input == '\n')
 			break;
 		else
 			(*input)++;
@@ -56,6 +58,8 @@ t_token *word_detection(char **input)
     if (!move_through_word(input))
         return (NULL);
     length = *input - start;
+    if (length <= 0)
+        return (NULL);
     temp = ft_substr(start, 0, length);
     if (!temp)
         return (NULL);

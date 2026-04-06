@@ -60,6 +60,8 @@ char *handle_env_variable(char *input, int *i, t_env *env)
     return (value);
 }
 
+
+
 char *expand_var(char *input, int *i, t_env *env, int last_status)
 {
     char *value;

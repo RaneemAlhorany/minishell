@@ -20,7 +20,7 @@ t_shell * init_shell(char **envp)
 	shell->active_ast = NULL;
     shell -> is_running = 1; // Set the shell to running state
     shell -> last_exit_status = 0; // Initialize last exit status to 0
-    shell->prompt_needs_newline = 0;
+    shell->prompt_prefix = NULL;
 	increment_shlvl(shell);
 
     return (shell);

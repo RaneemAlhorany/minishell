@@ -86,6 +86,8 @@ char *get_pwd_safe(t_shell *shell)
     return (pwd);
 }
 
+
+
 int builtin_cd(t_cmd *cmd, t_shell *shell)
 {
     char    *path;

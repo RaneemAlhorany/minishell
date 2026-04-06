@@ -66,7 +66,7 @@ int	process_command_tokens(t_ast *node, t_token **tokens, int *has_word)
 
 	index = 0;
 	last_redir = NULL;
-	while (*tokens && (*tokens)->type != TOKEN_PIPE)
+    while (*tokens && !is_command_delimiter((*tokens)->type))
 	{
 		if ((*tokens)->type == TOKEN_WORD)
 		{

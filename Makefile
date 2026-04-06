@@ -19,9 +19,11 @@ SRCS = lexer/lexer.c \
 	parser/build_command_1.c \
 	parser/build_command_2.c \
 	parser/build_command_3.c \
-	parser/parser_helper.c \
+	parser/parser_helper_1.c \
+	parser/parser_helper_2.c \
 	parser/syntax_check_lexer_1.c \
 	parser/syntax_check_lexer_2.c \
+	parser/syntax_check_lexer_3.c \
 	signals/signals.c \
 	signals/signals_utils.c \
 	shell/shell.c \
@@ -29,6 +31,7 @@ SRCS = lexer/lexer.c \
 	shell/helper_2.c \
 	shell/helper_3.c \
 	shell/helper_4.c \
+	shell/helper_5.c \
 	main.c \
 	execution/execute_ast.c \
 	execution/execute_builtin.c \
@@ -44,9 +47,13 @@ SRCS = lexer/lexer.c \
 	execution/builtins/builtin_cd.c \
 	execution/builtins/builtin_cd_helper.c \
 	execution/builtins/builtin_echo.c \
+	execution/builtins/builtin_echo_helper_1.c \
+	execution/builtins/builtin_echo_helper_2.c  \
 	execution/builtins/builtin_env.c \
 	execution/builtins/builtin_exit.c \
-	execution/builtins/builtin_exit_helper.c \
+	execution/builtins/builtin_exit_helper_1.c \
+	execution/builtins/builtin_exit_helper_2.c \
+	execution/builtins/builtin_exit_helper_3.c \
 	execution/builtins/builtin_export_helper1.c \
 	execution/builtins/builtin_export_helper2.c \
 	execution/builtins/builtin_export_helper3.c \

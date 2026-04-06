@@ -3,16 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ralhoura <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ralhoura <ralhoura@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 14:10:18 by ralhoura          #+#    #+#             */
-/*   Updated: 2025/09/03 14:19:45 by ralhoura         ###   ########.fr       */
+/*   Updated: 2026/03/22 18:25:41 by ralhoura         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "./libft.h"
 
-static int	len_of_int_variable(int n);
+static int	len_of_int_variable(int n)
+{
+	int	len;
+
+	len = 0;
+	if (n <= 0)
+	{
+		len++;
+		n *= -1;
+	}
+	while (n > 0)
+	{
+		len++;
+		n /= 10;
+	}
+	return (len);
+}
+
+static void	fill_number(char *str, int n, int len)
+{
+	while (n)
+	{
+		str[--len] = (n % 10) + '0';
+		n /= 10;
+	}
+}
 
 char	*ft_itoa(int n)
 {
@@ -33,28 +58,6 @@ char	*ft_itoa(int n)
 		n *= -1;
 	}
 	value_itoa[len] = '\0';
-	while (n != 0)
-	{
-		value_itoa[--len] = (n % 10) + '0';
-		n = n / 10;
-	}
+	fill_number(value_itoa, n, len);
 	return (value_itoa);
-}
-
-int	len_of_int_variable(int n)
-{
-	int	len;
-
-	len = 0;
-	if (n <= 0)
-	{
-		n *= -1;
-		len++;
-	}
-	while (n > 0)
-	{
-		len++;
-		n = n / 10;
-	}
-	return (len);
 }
