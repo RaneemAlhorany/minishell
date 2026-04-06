@@ -47,8 +47,13 @@ int wait_for_child(pid_t pid)
 {
     int status;
     int sig;
+    int i;
 
-    waitpid(pid, &status, 0);
+    i = waitpid(pid, &status, 0);
+    while (i == -1 && errno == EINTR)
+        i = waitpid(pid, &status, 0);
+    if (i == -1)
+        return (1);
     if (WIFEXITED(status))
         return (WEXITSTATUS(status));
     sig = WTERMSIG(status);

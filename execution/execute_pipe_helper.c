@@ -14,7 +14,8 @@ void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
     int status;
 
-    setup_child_signals();//babo edit
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
     dup2(pipe_fd[1], STDOUT_FILENO);
     close(pipe_fd[0]);
     close(pipe_fd[1]);
@@ -42,7 +43,8 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
     int status;
 
-    setup_child_signals();//babo edit
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
     dup2(pipe_fd[0], STDIN_FILENO);
     close(pipe_fd[1]);
     close(pipe_fd[0]);
@@ -68,11 +70,18 @@ int wait_for_pipe(pid_t left_pid, pid_t right_pid)
 {
     int status;
     int sig;
+    int i;
 
-    waitpid(left_pid, NULL, 0);
-    if (waitpid(right_pid, &status, 0) == -1)
+    while (waitpid(left_pid, NULL, 0) == -1)
+    {
+        if (errno != EINTR)
+            break;
+    }
+    i = waitpid(right_pid, &status, 0);
+    while (i == -1 && errno == EINTR)
+        i = waitpid(right_pid, &status, 0);
+    if (i == -1)
         return (1);
-
     if (WIFEXITED(status))
         return (WEXITSTATUS(status));
     if (WIFSIGNALED(status))
