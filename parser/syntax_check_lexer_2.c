@@ -16,11 +16,11 @@ int	set_redir_unexpected(t_token *current, char **unexpected_token,int *unexpect
     len = redir_run_len(current, c);
     if (c == '<')
     {
-        if (len <= 4)
+        if (len <= 3)
             return (set_unexpected(unexpected_token, unexpected_newline, NULL, 1));
-        if (len == 5)
+        if (len == 4)
             return (set_unexpected(unexpected_token, unexpected_newline, "<", 0));
-        if (len == 6)
+        if (len == 5)
             return (set_unexpected(unexpected_token, unexpected_newline, "<<", 0));
         return (set_unexpected(unexpected_token, unexpected_newline, "<<<", 0));
     }
@@ -36,8 +36,15 @@ int	check_redirection_syntax(t_token *current, char **unexpected_token,int *unex
     if (!current->next)
         return (set_unexpected(unexpected_token, unexpected_newline, NULL, 1));
     if (current->next->type != TOKEN_WORD)
+    {
+        if (is_redirection(current->next->type)
+            && current->value && current->next->value
+            && current->value[0] == current->next->value[0])
+            return (set_redir_unexpected(current, unexpected_token,
+                    unexpected_newline));
         return (set_unexpected(unexpected_token, unexpected_newline,
                 current->next->value, 0));
+    }
     return (1);
 }
 
