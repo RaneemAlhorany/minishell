@@ -93,6 +93,7 @@ t_redirection *create_redirection(t_token *current)
         return (NULL);
 
     new_redir->type = current->type;
+    new_redir->quoted = (current->next) ? current->next->quoted : 0;
     if (!current->next)
     {
         free(new_redir);

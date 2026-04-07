@@ -24,6 +24,8 @@ void	cleanup_child_state(t_shell *shell)
 
 void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
 {
+    int exec_status;
+
     setup_child_signals();
     if (!apply_redirections(cmd->redirections, shell))
     {
@@ -34,11 +36,15 @@ void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *sh
     }
     if (execve(cmd_path, cmd->args, envp) == -1)
     {
+        ft_putstr_fd("minishell: ", 2);
         perror(cmd->args[0]);
+        exec_status = 126;
+        if (errno == ENOENT)
+            exec_status = 127;
         free(cmd_path);
         free_2D(envp);
         cleanup_child_state(shell);
-        _exit(127);
+        _exit(exec_status);
     }
 }
 
@@ -56,9 +62,10 @@ int wait_for_child(pid_t pid)
         return (1);
     if (WIFEXITED(status))
         return (WEXITSTATUS(status));
+    if (!WIFSIGNALED(status))
+        return (1);
     sig = WTERMSIG(status);
-    if (sig == SIGQUIT)
-        write(STDERR_FILENO, "Quit (core dumped)\n", 19);
+    g_last_signal = sig;
     return (128 + sig);
 }
 

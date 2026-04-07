@@ -58,6 +58,11 @@ int execute_line(t_shell *shell, char *line)
         return (handle_prepare_failure(shell, tokens_head));
 
     status = execute_and_update(shell, ast);
+        if (get_last_signal() == SIGINT)
+        {
+		status = 130;
+		clear_last_signal();
+	}
     shell->last_exit_status = status;
 
     cleanup_execution(shell, ast, tokens_head);

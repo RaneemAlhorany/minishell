@@ -36,6 +36,11 @@ void	process_line(t_shell *shell, char *line)
 		add_history(line);
 		set_interactive_readline_mode(0);
 		shell->last_exit_status = execute_line(shell, line);
+		if (get_last_signal() == SIGQUIT)
+		{
+			ft_putendl_fd("Quit (core dumped)", 2);
+			clear_last_signal();
+		}
 	}
 }
 

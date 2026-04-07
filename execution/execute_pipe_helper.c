@@ -1,6 +1,21 @@
 
 #include "execution.h"
 
+static void	setup_pipeline_wrapper_signals(void)
+{
+    t_sigaction	sa_int;
+    t_sigaction	sa_quit;
+
+    sa_int.sa_handler = handle_sigint_exec_mode;
+    sigemptyset(&sa_int.sa_mask);
+    sa_int.sa_flags = SA_RESTART;
+    sigaction(SIGINT, &sa_int, NULL);
+    sa_quit.sa_handler = SIG_DFL;
+    sigemptyset(&sa_quit.sa_mask);
+    sa_quit.sa_flags = 0;
+    sigaction(SIGQUIT, &sa_quit, NULL);
+}
+
 
 int is_valid_pipe_node(t_ast *node)
 {
@@ -14,8 +29,7 @@ void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
     int status;
 
-    signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, SIG_IGN);
+    setup_pipeline_wrapper_signals();
     dup2(pipe_fd[1], STDOUT_FILENO);
     close(pipe_fd[0]);
     close(pipe_fd[1]);
@@ -43,8 +57,7 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 {
     int status;
 
-    signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, SIG_IGN);
+    setup_pipeline_wrapper_signals();
     dup2(pipe_fd[0], STDIN_FILENO);
     close(pipe_fd[1]);
     close(pipe_fd[0]);
@@ -69,7 +82,6 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 int wait_for_pipe(pid_t left_pid, pid_t right_pid)
 {
     int status;
-    int sig;
     int i;
 
     while (waitpid(left_pid, NULL, 0) == -1)
@@ -86,10 +98,8 @@ int wait_for_pipe(pid_t left_pid, pid_t right_pid)
         return (WEXITSTATUS(status));
     if (WIFSIGNALED(status))
     {
-        sig = WTERMSIG(status);
-        if (sig == SIGQUIT)
-            write(STDERR_FILENO, "Quit (core dumped)\n", 19);
-        return (128 + sig);
+        g_last_signal = WTERMSIG(status);
+        return (128 + g_last_signal);
     }
     return (1);
 }

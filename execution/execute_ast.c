@@ -68,7 +68,10 @@ int	execute_group_node(t_ast *node, t_shell *shell)
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
+	{
+		g_last_signal = WTERMSIG(status);
+		return (128 + g_last_signal);
+	}
 	return (1);
 }
 

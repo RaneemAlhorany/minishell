@@ -26,6 +26,7 @@ typedef struct s_redirection
     char    *filename;
     struct s_redirection *next;
     t_token_type         type;
+    int                 quoted;
 }   t_redirection;
 
 
