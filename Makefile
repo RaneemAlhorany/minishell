@@ -90,4 +90,10 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all libft clean fclean re
+test: all
+	bash tests/run_required_tests.sh
+
+test-long: all
+	RUN_LONG_TESTS=1 bash tests/run_required_tests.sh
+
+.PHONY: all libft clean fclean re test test-long

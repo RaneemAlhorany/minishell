@@ -67,6 +67,7 @@ char *join_path(const char *dir, const char *cmd);
 // helper execution functions 2
 int is_valid_external_cmd(t_cmd *cmd, t_shell *shell);
 int is_valid_command(t_ast *node);
+int expand_cmd_wildcards(t_cmd *cmd);
 void restore_fds(int stdin_copy, int stdout_copy);
 char *resolve_command_path(t_cmd *cmd, t_shell *shell);
 int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp);

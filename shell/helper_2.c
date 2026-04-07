@@ -6,10 +6,17 @@
 int	expand_tokens(t_token *tokens, t_shell *shell)
 {
 	char	*expanded;
+	t_token	*prev;
+
+	prev = NULL;
 
 	while (tokens)
 	{
-		if (tokens->type == TOKEN_WORD)
+		if (tokens->type == TOKEN_WORD
+			&& !(prev && (prev->type == TOKEN_REDIRECT_IN
+					|| prev->type == TOKEN_REDIRECT_OUT
+					|| prev->type == TOKEN_REDIRECT_APPEND
+					|| prev->type == TOKEN_HEREDOC)))
 		{
 			expanded = expand_string(tokens->value, shell->env,
 										shell->last_exit_status);
@@ -18,6 +25,7 @@ int	expand_tokens(t_token *tokens, t_shell *shell)
 			free(tokens->value);
 			tokens->value = expanded;
 		}
+		prev = tokens;
 		tokens = tokens->next;
 	}
 	return (1);

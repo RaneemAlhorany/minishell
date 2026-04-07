@@ -64,6 +64,9 @@ int handle_command_execution(t_ast *node, t_shell *shell)
     t_builtin_type builtin_type;
     int            dot_status;
 
+    if (!expand_cmd_wildcards(node->cmd))
+        return (1);
+
     dot_status = handle_dot_command(node->cmd);
     if (dot_status != -1)
         return (dot_status);
