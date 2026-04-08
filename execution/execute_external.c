@@ -1,12 +1,12 @@
 #include "execution.h"
 
-static void	print_cmd_errno(const char *cmd_name)
+void	print_cmd_errno(const char *cmd_name)
 {
     ft_putstr_fd("minishell: ", 2);
     perror(cmd_name);
 }
 
-static void	print_is_directory(const char *cmd_name)
+void	print_is_directory(const char *cmd_name)
 {
     ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd((char *)cmd_name, 2);

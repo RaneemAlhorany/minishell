@@ -73,4 +73,9 @@ typedef struct s_shell
 } t_shell;
 
 
+int	token_has_quotes(const char *s);
+t_token* create_token(char *value , t_token_type type);
+void append_token(t_token **head , t_token *new_token);
+void	free_tokens(t_token *head);
+
 #endif 

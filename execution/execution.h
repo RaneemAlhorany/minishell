@@ -1,6 +1,10 @@
 #ifndef EXECUTION_H
 #define EXECUTION_H
 
+# ifndef _DEFAULT_SOURCE
+#  define _DEFAULT_SOURCE
+# endif
+
 #include "./builtins/builtin.h"
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -17,6 +21,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+# include <signal.h>
+# include <stddef.h>
+
+
+
+#include <dirent.h>
 
 
 
@@ -105,8 +116,31 @@ int validate_command_access(char *cmd_path, t_cmd *cmd, char **envp);
 int execute_with_fork(t_cmd *cmd, t_shell *shell,char *cmd_path, char **envp);
 int execute_external(t_cmd *cmd, t_shell *shell);
 
+void	setup_pipeline_wrapper_signals(void);
+int	handle_dot_command(t_cmd *cmd);
+void	print_cmd_errno(const char *cmd_name);
+void	print_is_directory(const char *cmd_name);
+
+int	has_wildcard_chars(char *arg);
+int	wildcard_match(const char *pattern, const char *name);
+int	match_pattern(const char *pattern, const char *name);
+void	free_str_array(char **arr, int count);
+int	count_matches_in_cwd(char *pattern);
+int	append_match(char ***arr, int *count, int *cap, char *name);
+char	to_lower_ascii(char c);
+int	compare_match_names(char *a, char *b);
+void	sort_matches(char **matches, int count);
+int	collect_matches(const char *pattern, char ***matches, int *count);
+int	count_expanded_words(char **args);
+void	free_partial_args(char **args, int used);
 
 
+
+
+char	*strip_heredoc_quotes(const char *s);
+int	is_whitespace_char(char c);
+int	is_ambiguous_redirect(t_redirection *r, char *filename);
+int	prepare_redirection_filename(t_redirection *r, t_shell *shell, char **resolved);
 
 
 #endif

@@ -1,16 +1,16 @@
 
 #include "execution.h"
 
-static void	setup_pipeline_wrapper_signals(void)
+void	setup_pipeline_wrapper_signals(void)
 {
     t_sigaction	sa_int;
     t_sigaction	sa_quit;
 
-    sa_int.sa_handler = handle_sigint_exec_mode;
+    sa_int.sa_handler = SIG_IGN;
     sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = SA_RESTART;
+    sa_int.sa_flags = 0;
     sigaction(SIGINT, &sa_int, NULL);
-    sa_quit.sa_handler = SIG_DFL;
+    sa_quit.sa_handler = SIG_IGN;
     sigemptyset(&sa_quit.sa_mask);
     sa_quit.sa_flags = 0;
     sigaction(SIGQUIT, &sa_quit, NULL);
@@ -95,7 +95,11 @@ int wait_for_pipe(pid_t left_pid, pid_t right_pid)
     if (i == -1)
         return (1);
     if (WIFEXITED(status))
+    {
+        if (WEXITSTATUS(status) == 128 + SIGQUIT)
+            g_last_signal = SIGQUIT;
         return (WEXITSTATUS(status));
+    }
     if (WIFSIGNALED(status))
     {
         g_last_signal = WTERMSIG(status);

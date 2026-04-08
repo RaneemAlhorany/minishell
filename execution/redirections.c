@@ -1,11 +1,11 @@
 #include "execution.h"
 
-static int	is_whitespace_char(char c)
+int	is_whitespace_char(char c)
 {
     return (c == ' ' || c == '\t' || c == '\n');
 }
 
-static int	is_ambiguous_redirect(t_redirection *r, char *filename)
+int	is_ambiguous_redirect(t_redirection *r, char *filename)
 {
     int	i;
 
@@ -23,7 +23,7 @@ static int	is_ambiguous_redirect(t_redirection *r, char *filename)
     return (0);
 }
 
-static int	prepare_redirection_filename(t_redirection *r, t_shell *shell,
+int	prepare_redirection_filename(t_redirection *r, t_shell *shell,
     char **resolved)
 {
     char	*expanded;

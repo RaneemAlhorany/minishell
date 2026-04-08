@@ -72,5 +72,8 @@ t_ast	*parse_group_expression(t_token **tokens);
 int	is_primary_token(t_token *token);
 
 t_ast	*parse_pipe_right(t_token **tokens, t_ast *left);
+int	count_unquoted_words(char *s);
+int	append_quoted_word(t_cmd *cmd, t_token *token, int *index);
+int	append_unquoted_words(t_cmd *cmd, t_token *token, int *index);
 
 #endif

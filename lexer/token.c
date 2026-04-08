@@ -1,7 +1,7 @@
 
 #include "minishell.h"
 
-static int	token_has_quotes(const char *s)
+int	token_has_quotes(const char *s)
 {
     if (!s)
         return (0);

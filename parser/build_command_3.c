@@ -14,7 +14,7 @@ int	fill_command_data(t_ast *node, t_token **tokens)
 	return (1);
 }
 
-static int	append_quoted_word(t_cmd *cmd, t_token *token, int *index)
+int	append_quoted_word(t_cmd *cmd, t_token *token, int *index)
 {
     if (!token->value)
         return (0);
@@ -25,7 +25,7 @@ static int	append_quoted_word(t_cmd *cmd, t_token *token, int *index)
     return (1);
 }
 
-static int	append_unquoted_words(t_cmd *cmd, t_token *token, int *index)
+int	append_unquoted_words(t_cmd *cmd, t_token *token, int *index)
 {
     char	*start;
     char	*word;

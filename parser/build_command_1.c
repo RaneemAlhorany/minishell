@@ -1,7 +1,7 @@
 
 #include "parsing.h"
 
-static int	count_unquoted_words(const char *s)
+int	count_unquoted_words(char *s)
 {
     int	count;
 

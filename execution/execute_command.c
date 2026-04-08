@@ -1,6 +1,6 @@
 #include "execution.h"
 
-static int	handle_dot_command(t_cmd *cmd)
+int	handle_dot_command(t_cmd *cmd)
 {
     if (ft_strncmp(cmd->args[0], ".", 2) != 0)
         return (-1);

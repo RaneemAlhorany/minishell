@@ -66,13 +66,13 @@ void set_active_state(t_shell *shell, t_token *tokens, t_ast *ast)
 
 int execute_and_update(t_shell *shell, t_ast *ast)
 {
-	char *last_arg;
-    int   status;
+	char	*last_arg;
+	int		status;
 
 	last_arg = get_last_arg_from_ast(ast);
-    status = execute_ast(ast, shell);
 	if (last_arg)
 		update_env(shell, "_", last_arg);
+    status = execute_ast(ast, shell);
     return (status);
 }
 

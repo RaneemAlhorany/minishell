@@ -1,7 +1,7 @@
 #include "execution.h"
 
 
-static char	*strip_heredoc_quotes(const char *s)
+char	*strip_heredoc_quotes(const char *s)
 {
     char	*result;
     int		i;
