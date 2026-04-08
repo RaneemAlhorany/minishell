@@ -217,6 +217,7 @@ int	wait_heredoc_child(pid_t pid, int *status)
 int handle_heredoc(t_redirection *redirect, t_shell *shell)
 {
     int     fd[2];
+    int     tty_fd;
     char    *limiter;
     int     quoted;
     pid_t   pid;
@@ -259,6 +260,22 @@ int handle_heredoc(t_redirection *redirect, t_shell *shell)
 
         clear_last_signal();
         setup_heredoc_child_signals();
+        tty_fd = -1;
+        if (isatty(STDIN_FILENO))
+            tty_fd = open("/dev/tty", O_RDONLY);
+        if (tty_fd >= 0)
+        {
+            if (dup2(tty_fd, STDIN_FILENO) < 0)
+            {
+                close(tty_fd);
+                close(fd[0]);
+                close(fd[1]);
+                free(limiter);
+                cleanup_heredoc_child_state(shell);
+                _exit(1);
+            }
+            close(tty_fd);
+        }
         close(fd[0]);
         close_inherited_fds_except(fd[1]);
         interrupted = heredoc_loop(fd[1], limiter, shell, quoted);
@@ -292,6 +309,53 @@ int handle_heredoc(t_redirection *redirect, t_shell *shell)
         return (-1);
     }
     return (fd[0]);
+}
+
+
+static int	preload_heredocs_in_redirections(t_redirection *redir, t_shell *shell)
+{
+    int	fd;
+
+    while (redir)
+    {
+        if (redir->type == TOKEN_HEREDOC)
+        {
+            if (redir->heredoc_fd >= 0)
+            {
+                close(redir->heredoc_fd);
+                redir->heredoc_fd = -1;
+            }
+            fd = handle_heredoc(redir, shell);
+            if (fd == -2)
+                return (-2);
+            if (fd < 0)
+                return (-1);
+            redir->heredoc_fd = fd;
+        }
+        redir = redir->next;
+    }
+    return (0);
+}
+
+int	preload_heredocs_ast(t_ast *node, t_shell *shell)
+{
+    int	status;
+
+    if (!node)
+        return (0);
+    if (node->type == NODE_COMMAND)
+        return (preload_heredocs_in_redirections(node->cmd->redirections, shell));
+    if (node->type == NODE_PIPE || node->type == NODE_AND
+        || node->type == NODE_OR || node->type == NODE_GROUP)
+    {
+        status = preload_heredocs_ast(node->pipe.left, shell);
+        if (status != 0)
+            return (status);
+        if (node->type == NODE_GROUP)
+            return (0);
+        return (preload_heredocs_ast(node->pipe.right, shell));
+    }
+    return (0);
 }
 
 

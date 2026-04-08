@@ -108,6 +108,7 @@ int handle_heredoc_redirect(t_redirection *r, t_shell *shell, int saved_stdin);
 int process_redirection(t_redirection *r, t_shell *shell, int saved_stdin);
 int apply_redirections(t_redirection *redirections, t_shell *shell);
 int fail_redirection ( char *filename);
+int preload_heredocs_ast(t_ast *node, t_shell *shell);
 
 
 int is_path_available(t_shell *shell);

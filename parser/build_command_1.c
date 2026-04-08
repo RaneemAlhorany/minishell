@@ -94,6 +94,7 @@ t_redirection *create_redirection(t_token *current)
 
     new_redir->type = current->type;
     new_redir->quoted = (current->next) ? current->next->quoted : 0;
+    new_redir->heredoc_fd = -1;
     if (!current->next)
     {
         free(new_redir);

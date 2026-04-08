@@ -72,7 +72,13 @@ int handle_heredoc_redirect(t_redirection *r, t_shell *shell, int saved_stdin)
     if (dup2(saved_stdin, STDIN_FILENO) < 0)
         return (0);
 
-    fd = handle_heredoc(r, shell);
+    if (r->heredoc_fd >= 0)
+    {
+        fd = r->heredoc_fd;
+        r->heredoc_fd = -1;
+    }
+    else
+        fd = handle_heredoc(r, shell);
     if (fd < 0)
         return (0);
 

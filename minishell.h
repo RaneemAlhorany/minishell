@@ -27,6 +27,7 @@ typedef struct s_redirection
     struct s_redirection *next;
     t_token_type         type;
     int                 quoted;
+    int                 heredoc_fd;
 }   t_redirection;
 
 
