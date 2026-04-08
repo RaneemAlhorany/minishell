@@ -347,6 +347,37 @@ char *resolve_command_path(t_cmd *cmd, t_shell *shell)
 }
 
 
+static void	print_command_not_found_line(char *cmd_name)
+{
+    const char	*prefix;
+    const char	*suffix;
+    char		*line;
+    size_t		prefix_len;
+    size_t		name_len;
+    size_t		suffix_len;
+
+    prefix = "minishell: ";
+    suffix = ": command not found\n";
+    prefix_len = ft_strlen(prefix);
+    name_len = ft_strlen(cmd_name);
+    suffix_len = ft_strlen(suffix);
+    line = malloc(prefix_len + name_len + suffix_len + 1);
+    if (!line)
+    {
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd_name, 2);
+        ft_putendl_fd(": command not found", 2);
+        return ;
+    }
+    ft_memcpy(line, prefix, prefix_len);
+    ft_memcpy(line + prefix_len, cmd_name, name_len);
+    ft_memcpy(line + prefix_len + name_len, suffix, suffix_len);
+    line[prefix_len + name_len + suffix_len] = '\0';
+    write(2, line, prefix_len + name_len + suffix_len);
+    free(line);
+}
+
+
 
 
 int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp)
@@ -355,11 +386,7 @@ int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp)
         free(cmd_path);
     free_2D(envp);
     if (cmd_name && *cmd_name)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd_name, 2);
-        ft_putendl_fd(": command not found", 2);
-    }
+        print_command_not_found_line(cmd_name);
     else
         ft_putendl_fd("minishell: : command not found", 2);
     return (127);
