@@ -81,3 +81,36 @@ t_token *operator_detection(char **input)
         return (token);
     return (detect_single_operator(input));
 }
+
+char	check_unclosed_quotes(char *input)
+{
+	int	i;
+	char	quote;
+
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			quote = input[i];
+			i++;
+			while (input[i] && input[i] != quote)
+			{
+				if (quote == '"' && input[i] == '\\')
+				{
+					i++;
+					if (input[i] == '"' || input[i] == '\\' || input[i] == '$')
+						i++;
+				}
+				else
+					i++;
+			}
+			if (!input[i] || input[i] != quote)
+				return (quote);
+			i++;
+		}
+		else
+			i++;
+	}
+	return (0);
+}

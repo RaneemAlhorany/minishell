@@ -75,8 +75,11 @@ t_token *lexer(char *input)
 {
     t_token *head;
     t_token *new;
+    char	unclosed_quote;
+    char	*original_input;
 
     head = NULL;
+    original_input = input;
     while (*input)
     {
         skip_spaces(&input);
@@ -94,6 +97,13 @@ t_token *lexer(char *input)
                 append_token(&head ,new );
             else 
             {
+                unclosed_quote = check_unclosed_quotes(original_input);
+                if (unclosed_quote)
+                {
+                    ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
+                    ft_putchar_fd(unclosed_quote, 2);
+                    ft_putendl_fd("'", 2);
+                }
                 free_tokens(head);
                 return (NULL);
             }

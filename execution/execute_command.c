@@ -72,6 +72,8 @@ int handle_command_execution(t_ast *node, t_shell *shell)
         return (dot_status);
 
     builtin_type = get_builtin_type(node->cmd->args[0]);
+    if (builtin_type == BUILTIN_ENV && node->cmd->args[1])
+       return (execute_external(node->cmd, shell));
 
     if (builtin_type != BUILTIN_NONE)
         return (execute_builtin_with_redirection(node, shell, builtin_type));

@@ -40,6 +40,7 @@ t_token *detect_double_operator(char **input);
 t_token *detect_single_operator(char **input);
 t_token    *operator_detection(char **input);
 t_token *helper_create_token (char **input , char *value , t_token_type type);
+char	check_unclosed_quotes(char *input);
 
 t_token    *create_token(char *value, t_token_type type);
 void        append_token(t_token **head, t_token *new_token);
