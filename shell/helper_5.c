@@ -58,9 +58,12 @@ void	shell_interactive(t_shell *shell)
 		prompt = build_prompt(shell);
 		line = readline(prompt);
 		free(prompt);
-		if (!line)
-			break ;
 		handle_sigint(shell);
+		if (!line)
+		{
+			ft_putendl_fd("exit", 1);
+			break ;
+		}
 		process_line(shell, line);
 		free(line);
 	}

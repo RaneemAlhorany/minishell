@@ -1,6 +1,19 @@
 #include "execution.h"
 
 
+void	close_extra_fds_for_exec(void)
+{
+    int		fd;
+
+    fd = 3;
+    while (fd < 1024)
+    {
+        close(fd);
+        fd++;
+    }
+}
+
+
 
 void	cleanup_child_state(t_shell *shell)
 {
@@ -34,6 +47,7 @@ void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *sh
         cleanup_child_state(shell);
         _exit(1);
     }
+    close_extra_fds_for_exec();
     if (execve(cmd_path, cmd->args, envp) == -1)
     {
         ft_putstr_fd("minishell: ", 2);

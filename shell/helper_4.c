@@ -62,12 +62,14 @@ int execute_line(t_shell *shell, char *line)
     if (preload_status == -2)
     {
         shell->last_exit_status = 130;
-        return (handle_prepare_failure(shell, tokens_head));
+        cleanup_execution(shell, ast, tokens_head);
+        return (130);
     }
     if (preload_status != 0)
     {
         shell->last_exit_status = 1;
-        return (handle_prepare_failure(shell, tokens_head));
+        cleanup_execution(shell, ast, tokens_head);
+        return (1);
     }
 
     status = execute_and_update(shell, ast);

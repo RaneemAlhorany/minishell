@@ -26,6 +26,8 @@ void free_redirections(t_redirection *r)
     while (r)
     {
         tmp = r->next;
+        if (r->heredoc_fd >= 0)
+            close(r->heredoc_fd);
         free(r->filename);
         free(r);
         r = tmp;

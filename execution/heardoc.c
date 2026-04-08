@@ -8,14 +8,10 @@ static void	heredoc_child_sigint(int signum)
 
 static void	close_inherited_fds_except(int keep_fd)
 {
-    long	max_fd;
     int	fd;
 
-    max_fd = sysconf(_SC_OPEN_MAX);
-    if (max_fd < 0)
-        max_fd = 1024;
     fd = 3;
-    while (fd < (int)max_fd)
+    while (fd < 1024)
     {
         if (fd != keep_fd)
             close(fd);

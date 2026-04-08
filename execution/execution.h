@@ -149,5 +149,6 @@ int	wait_heredoc_child(pid_t pid, int *status);
 int is_assignment_word(char *arg);
 int set_shell_assignment(t_shell *shell, char *arg);
 int handle_assignment_only_command(t_ast *node, t_shell *shell);
+void	close_extra_fds_for_exec(void);
 
 #endif
