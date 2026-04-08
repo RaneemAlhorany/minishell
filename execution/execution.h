@@ -141,6 +141,6 @@ char	*strip_heredoc_quotes(const char *s);
 int	is_whitespace_char(char c);
 int	is_ambiguous_redirect(t_redirection *r, char *filename);
 int	prepare_redirection_filename(t_redirection *r, t_shell *shell, char **resolved);
-
-
+void	set_heredoc_signal_mode(t_sigaction *old_int, t_sigaction *old_quit);
+void	handle_sigint_heredoc(int signum);
 #endif

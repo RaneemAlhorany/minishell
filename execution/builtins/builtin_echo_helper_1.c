@@ -43,16 +43,11 @@ int	parse_echo_options(char **args, int *index)
 
 void print_args(char **args, int index, t_shell *shell)
 {
-    char *expanded;
+    (void)shell;
 
     while (args[index])
     {
-        expanded = expand_string(args[index], shell->env, shell->last_exit_status);
-        if (!expanded)
-            expanded = args[index];
-        ft_putstr_fd(expanded, 1);
-        if (expanded != args[index])
-            free(expanded);
+        ft_putstr_fd(args[index], 1);
         if (args[index + 1])
             ft_putchar_fd(' ', 1);
         index++;
@@ -74,16 +69,12 @@ void clear_prompt_prefix(t_shell *shell)
 
  char *append_expanded(char *result, char *arg, t_shell *shell)
 {
-    char    *expanded;
     char    *tmp;
 
-    expanded = expand_string(arg, shell->env, shell->last_exit_status);
-    if (!expanded)
-        expanded = arg;
-    tmp = ft_strjoin(result, expanded);
+    (void)shell;
+
+    tmp = ft_strjoin(result, arg);
     free(result);
-    if (expanded != arg)
-        free(expanded);
     return (tmp);
 }
 

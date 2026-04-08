@@ -82,6 +82,8 @@ t_token *lexer(char *input)
         skip_spaces(&input);
         if (!*input)
             break;
+        if (*input == '#')
+            break;
         new = operator_detection(&input);
         if (new)
             append_token(&head ,new);

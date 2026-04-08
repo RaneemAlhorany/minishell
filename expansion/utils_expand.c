@@ -34,6 +34,8 @@ char *handle_special_dollar(char *input, int *i, int last_status)
         (*i)++;
         return (ft_strdup(""));
     }
+    if (input[*i] == '"')
+        return (ft_strdup(""));
     if (input[*i] == '\0')
         return (ft_strdup("$"));
     if (!ft_isalpha(input[*i]) && input[*i] != '_')
