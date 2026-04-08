@@ -100,7 +100,7 @@ int execute_command_node(t_ast *node, t_shell *shell);
 int	is_limiter_match(const char *line, const char *limiter);
 void print_heredoc_warning(char *limiter);
 void process_heredoc_line(char *line, t_shell *shell, int write_fd, int quoted);
-void heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted);
+int heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted);
 int handle_heredoc(t_redirection *redirect, t_shell *shell);
 
 int  redirect_fd(char *filename, int flags, int std_fd);

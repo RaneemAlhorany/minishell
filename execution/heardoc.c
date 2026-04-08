@@ -1,11 +1,51 @@
 #include "execution.h"
 
+static void	heredoc_child_sigint(int signum)
+{
+	(void)signum;
+	g_last_signal = SIGINT;
+}
+
+static void	close_inherited_fds_except(int keep_fd)
+{
+    long	max_fd;
+    int	fd;
+
+    max_fd = sysconf(_SC_OPEN_MAX);
+    if (max_fd < 0)
+        max_fd = 1024;
+    fd = 3;
+    while (fd < (int)max_fd)
+    {
+        if (fd != keep_fd)
+            close(fd);
+        fd++;
+    }
+}
+
+static void	cleanup_heredoc_child_state(t_shell *shell)
+{
+    if (!shell)
+        return ;
+    if (shell->active_tokens)
+    {
+        free_tokens(shell->active_tokens);
+        shell->active_tokens = NULL;
+    }
+    if (shell->active_ast)
+    {
+        free_ast(shell->active_ast);
+        shell->active_ast = NULL;
+    }
+    free_shell(shell);
+}
+
 void	setup_heredoc_child_signals(void)
 {
     t_sigaction	sa_int;
     t_sigaction	sa_quit;
 
-    sa_int.sa_handler = SIG_DFL;
+    sa_int.sa_handler = heredoc_child_sigint;
     sigemptyset(&sa_int.sa_mask);
     sa_int.sa_flags = 0;
     sigaction(SIGINT, &sa_int, NULL);
@@ -121,7 +161,7 @@ void process_heredoc_line(char *line, t_shell *shell, int write_fd, int quoted)
         ft_putendl_fd("", write_fd);
 }
 
-void heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
+int	heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
 {
     char	*line;
 
@@ -131,10 +171,12 @@ void heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
 		line = read_heredoc_line();
 		if (!line)
 		{
+            if (get_last_signal() == SIGINT)
+                return (1);
             if (isatty(STDIN_FILENO))
                 write(STDOUT_FILENO, "\n", 1);
-			print_heredoc_warning(limiter);
-			break ;
+            print_heredoc_warning(limiter);
+            break ;
 		}
 		if (is_limiter_match(line, limiter))
 		{
@@ -144,6 +186,7 @@ void heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
 		process_heredoc_line(line, shell, write_fd, quoted);
 		free(line);
 	}
+    return (0);
 }
 
 int	wait_heredoc_child(pid_t pid, int *status)
@@ -212,11 +255,18 @@ int handle_heredoc(t_redirection *redirect, t_shell *shell)
     }
     if (pid == 0)
     {
+        int interrupted;
+
+        clear_last_signal();
         setup_heredoc_child_signals();
         close(fd[0]);
-        heredoc_loop(fd[1], limiter, shell, quoted);
+        close_inherited_fds_except(fd[1]);
+        interrupted = heredoc_loop(fd[1], limiter, shell, quoted);
         close(fd[1]);
         free(limiter);
+        cleanup_heredoc_child_state(shell);
+        if (interrupted)
+            _exit(130);
         _exit(0);
     }
     close(fd[1]);
