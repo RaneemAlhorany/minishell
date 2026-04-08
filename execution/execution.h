@@ -145,5 +145,8 @@ int	prepare_redirection_filename(t_redirection *r, t_shell *shell, char **resolv
 void	setup_heredoc_child_signals(void);
 char	*read_heredoc_line(void);
 int	wait_heredoc_child(pid_t pid, int *status);
+int is_assignment_word(char *arg);
+int set_shell_assignment(t_shell *shell, char *arg);
+int handle_assignment_only_command(t_ast *node, t_shell *shell);
 
 #endif

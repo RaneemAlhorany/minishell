@@ -22,6 +22,7 @@ int	handle_export_arg(char *arg, t_shell *shell)
 int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
 {
 	char	*equal;
+	(void)shell;
 
 	equal = ft_strchr(arg, '=');
 	*value = NULL;
@@ -33,7 +34,7 @@ int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
 		return (1);
 	if (equal)
 	{
-		*value = get_value(equal, shell);
+		*value = get_value(equal);
 		if (!*value)
 		{
 			free(*key);
@@ -45,14 +46,14 @@ int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
 	return (0);
 }
 
-char *get_value(char *equal, t_shell *shell)
+char *get_value(char *equal)
 {
     char *raw_value;
 
     if (!equal)
         return (NULL);
     raw_value = equal + 1;
-    return (expand_string(raw_value, shell->env, shell->last_exit_status));
+	return (ft_strdup(raw_value));
 }
 
 int validate_identifier_export(char *key, char *value, char *equal)

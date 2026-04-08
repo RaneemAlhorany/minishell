@@ -94,7 +94,7 @@ int	parse_export_options(char **args, int *i, int *flag_p, int *flag_n);
 //helper 4 :
 int		handle_export_arg(char *arg, t_shell *shell);
 int	extract_export_data(char *arg, t_shell *shell,char **key, char **value);
-char *get_value(char *equal, t_shell *shell);
+char *get_value(char *equal);
 int validate_identifier_export(char *key, char *value, char *equal);
 int	is_only_pn_options(const char *s, int *flag_p, int *flag_n);
 //export
