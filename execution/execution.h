@@ -16,7 +16,7 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "signals/signals.h"
+#include "../signals/signals.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -26,10 +26,14 @@
 # include <stddef.h>
 
 
-
-#include <dirent.h>
-
-
+typedef struct s_wildcard_read_state
+{
+    char	buffer[512];
+    char	line[1024];
+    ssize_t	bytes;
+    int	index;
+    int	line_len;
+} t_wildcard_read_state;
 
 
 typedef enum e_builtin_type
@@ -44,6 +48,10 @@ typedef enum e_builtin_type
     BUILTIN_EXIT
 } t_builtin_type;
 
+
+
+
+typedef struct s_wildcard_collect_ctx t_wildcard_collect_ctx;
 typedef struct s_shell t_shell;
 typedef struct s_cmd t_cmd;
 typedef struct s_redirection t_redirection;
@@ -54,15 +62,11 @@ int	execute_group_node(t_ast *node, t_shell *shell);
 int	execute_child(t_ast *node, t_shell *shell);
 void	cleanup_child(t_shell *shell, t_ast *node);
 int	execute_logical_node(t_ast *node, t_shell *shell);
-
-
 int execute_builtin(t_cmd *cmd, t_shell *shell, t_builtin_type type);
 t_builtin_type get_builtin_type(char *cmd);
-
 pid_t fork_left_process(t_ast *node, t_shell *shell, int pipe_fd[2]);
 pid_t fork_right_process(t_ast *node, t_shell *shell, int pipe_fd[2], pid_t left_pid);
 int execute_pipe_node(t_ast *node, t_shell *shell);
-
 int is_valid_pipe_node(t_ast *node);
 void execute_left_child(t_ast *node, t_shell *shell, int pipe_fd[2]);
 void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2]);
@@ -128,20 +132,57 @@ int	match_pattern(const char *pattern, const char *name);
 void	free_str_array(char **arr, int count);
 int	count_matches_in_cwd(char *pattern);
 int	append_match(char ***arr, int *count, int *cap, char *name);
-char	to_lower_ascii(char c);
 int	compare_match_names(char *a, char *b);
 void	sort_matches(char **matches, int count);
 int	collect_matches(const char *pattern, char ***matches, int *count);
 int	count_expanded_words(char **args);
 void	free_partial_args(char **args, int used);
+int	read_ls_output(int fd, t_wildcard_collect_ctx *ctx);
 
+ void	heredoc_child_sigint(int signum);
+  void	close_inherited_fds_except(int keep_fd);
+ void	cleanup_heredoc_child_state(t_shell *shell);
+  char *init_buffer_herdoc(size_t *cap);
+   int handle_read(ssize_t n, char *buf, size_t len);
 
-
-
+ char *resize_buffer(char *buf, size_t *cap, size_t len);
+  char *read_loop(char *buf, size_t *len, size_t *cap);
+ int	preload_heredocs_in_redirections(t_redirection *redir, t_shell *shell);
+ int init_heredoc_pipe(int fd[2]);
+ char *prepare_limiter(t_redirection *redirect, int *quoted);
+  void close_pipe(int fd[2]);
+ int handle_fork_error(int fd[2], char *limiter);
+  void setup_child_stdin(int *tty_fd, int fd[2], char *limiter, t_shell *shell);
+ void heredoc_child(int fd[2], char *limiter,t_shell *shell, int quoted);
+ int handle_child_status(int fd[2], int status);
+ int	copy_normal_arg(char **new_args, int *j, char *arg);
+ int	add_matches(char **new_args, int *j, char **matches, int match_count);
+ int	handle_wildcard(char **new_args, int *j, char *arg);
+ int	process_args(char **args, char **new_args);
+  void handle_star(const char **pattern,const char **star,const char **match,const char **name);
+ void print_command_not_found_line(char *cmd_name);
+ int handle_match(const char **pattern, const char **name);
+ int resize_array(char ***arr, int *cap, int count);
+ void	exec_ls_child(int pipe_fd[2]);
+ int handle_backtrack(const char **pattern,const char **name,const char **star,const char **match);
+ int add_element(char **arr, int *count, char *name);
+ int skip_stars(const char *pattern);
+ size_t get_total_length(const char *prefix,const char *name,const char *suffix);
+ int	read_from_pipe(int pipe_fd[2], t_wildcard_collect_ctx *ctx);
+ void fallback_print(char *cmd_name);
+  char *build_error_line(const char *prefix,const char *name,const char *suffix);
+ int	wait_and_check(pid_t pid, int status, int ok);
 char	*strip_heredoc_quotes(const char *s);
 int	is_whitespace_char(char c);
 int	is_ambiguous_redirect(t_redirection *r, char *filename);
 int	prepare_redirection_filename(t_redirection *r, t_shell *shell, char **resolved);
+ int	fill_matches_from_ls(t_wildcard_collect_ctx *ctx);
+ int	append_pending_line(t_wildcard_collect_ctx *ctx,t_wildcard_read_state *state);
+ int	append_if_match(const char *line, t_wildcard_collect_ctx *ctx);
+  void	init_read_state(t_wildcard_read_state *state);
+ int	read_next_chunk(int fd, t_wildcard_read_state *state);
+int	handle_file_redirection(t_redirection *r, t_shell *shell,int flags, int std_fd);
+
 
 void	setup_heredoc_child_signals(void);
 char	*read_heredoc_line(void);
@@ -150,5 +191,14 @@ int is_assignment_word(char *arg);
 int set_shell_assignment(t_shell *shell, char *arg);
 int handle_assignment_only_command(t_ast *node, t_shell *shell);
 void	close_extra_fds_for_exec(void);
+int create_new_node(t_shell *shell, char *key, char *value);
+ int	create_process(int pipe_fd[2], pid_t *pid);
+ int update_existing_node(t_env *node, char *key, char *value);
+ char *extract_value(char *arg);
+  char *extract_key(char *arg);
+
+ int	consume_chunk(t_wildcard_collect_ctx *ctx, t_wildcard_read_state *state);
+  int	flush_pending_line(t_wildcard_collect_ctx *ctx,t_wildcard_read_state *state);
+
 
 #endif

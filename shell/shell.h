@@ -1,13 +1,13 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#include "./env/env.h"
-#include "./lexer/lexer.h"
+#include "../env/env.h"
+#include "../lexer/lexer.h"
 
 #include <readline/readline.h>
 #include <stdlib.h>
 #include <signal.h>
-#include "libft.h"
+#include "../Libft/libft.h"
 
 
 // helper functions 1
@@ -41,8 +41,12 @@ void cleanup_execution(t_shell *shell, t_ast *ast, t_token *tokens);
 int execute_line(t_shell *shell, char *line);
 void increment_shlvl(t_shell *shell);
 
+ int	handle_prepare(t_shell *shell,t_token *tokens_head, t_ast *ast);
 
 
+ int	handle_heredoc_shell(t_shell *shell,t_ast *ast, t_token *tokens_head);
+
+ int	execute_phase(t_shell *shell, t_ast *ast);
 //helper 5
 void	shell_interactive(t_shell *shell);
 char	*build_prompt(t_shell *shell);

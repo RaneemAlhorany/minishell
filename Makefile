@@ -7,6 +7,7 @@ INCS = -I. -I./Libft
 # Source files
 SRCS = lexer/lexer.c \
 	lexer/lexer_utils.c \
+	lexer/lexer_helper.c \
 	lexer/token.c \
 	expansion/expand.c \
 	expansion/utils_expand.c \
@@ -32,18 +33,35 @@ SRCS = lexer/lexer.c \
 	shell/helper_3.c \
 	shell/helper_4.c \
 	shell/helper_5.c \
+	shell/helper_6.c \
 	main.c \
 	execution/execute_ast.c \
 	execution/execute_builtin.c \
-	execution/execute_command.c \
-	execution/execute_external.c \
+	execution/execute_command_1.c \
+	execution/execute_command_2.c \
+	execution/execute_command_3.c \
+	execution/execute_external_1.c \
+	execution/execute_external_2.c \
 	execution/execute_pipe_helper.c \
 	execution/execute_pipe.c \
 	execution/heardoc.c \
+	execution/heardoc_helper_1.c \
+	execution/heardoc_helper_2.c \
+	execution/heardoc_helper_3.c \
+	execution/heardoc_helper_4.c \
 	execution/helper_execution_1.c \
 	execution/helper_execution_2.c \
 	execution/helper_execution_3.c \
+	execution/helper_execution_4.c \
+	execution/helper_execution_5.c \
+	execution/helper_execution_6.c \
+	execution/helper_execution_7.c \
+	execution/helper_execution_8.c \
+	execution/helper_execution_9.c \
+	execution/helper_execution_10.c \
+	execution/helper_execution_11.c \
 	execution/redirections.c \
+	execution/redirections_helper.c \
 	execution/builtins/builtin_cd.c \
 	execution/builtins/builtin_cd_helper.c \
 	execution/builtins/builtin_echo.c \

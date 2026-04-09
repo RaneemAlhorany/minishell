@@ -2,7 +2,7 @@
 # define ENV_H
 
 #include <stdlib.h>
-#include "./Libft/libft.h" 
+#include "../Libft/libft.h" 
 #include "../minishell.h"
 
 typedef struct s_env

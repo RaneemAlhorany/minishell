@@ -1,14 +1,5 @@
 #include "minishell.h"
 
-void skip_spaces(char **input)
-{
-    while (**input)
-    {
-        if (**input != ' ' && **input  != '\t' && **input  != '\n' )
-            return ;
-        (*input)++;
-    }
-}
 
 
 
@@ -59,18 +50,6 @@ t_token *detect_single_operator(char **input)
 }
 
 
-t_token *helper_create_token (char **input , char *value , t_token_type type)
-{ 
-    t_token *token;
-
-    token = NULL;
-    if (input || *input || **input )
-    {
-        token = create_token(value, type);
-        (*input)++;
-    }
-    return(token);
-}
 
 t_token *operator_detection(char **input)
 {
@@ -82,9 +61,31 @@ t_token *operator_detection(char **input)
     return (detect_single_operator(input));
 }
 
+
+
+ int	skip_quote_content(char *input, int *i, char quote)
+{
+	(*i)++;
+	while (input[*i] && input[*i] != quote)
+	{
+		if (quote == '"' && input[*i] == '\\')
+		{
+			(*i)++;
+			if (input[*i] == '"' || input[*i] == '\\' || input[*i] == '$')
+				(*i)++;
+		}
+		else
+			(*i)++;
+	}
+	if (!input[*i] || input[*i] != quote)
+		return (0);
+	(*i)++;
+	return (1);
+}
+
 char	check_unclosed_quotes(char *input)
 {
-	int	i;
+	int		i;
 	char	quote;
 
 	i = 0;
@@ -93,24 +94,44 @@ char	check_unclosed_quotes(char *input)
 		if (input[i] == '\'' || input[i] == '"')
 		{
 			quote = input[i];
-			i++;
-			while (input[i] && input[i] != quote)
-			{
-				if (quote == '"' && input[i] == '\\')
-				{
-					i++;
-					if (input[i] == '"' || input[i] == '\\' || input[i] == '$')
-						i++;
-				}
-				else
-					i++;
-			}
-			if (!input[i] || input[i] != quote)
+			if (!skip_quote_content(input, &i, quote))
 				return (quote);
-			i++;
 		}
 		else
 			i++;
 	}
 	return (0);
 }
+
+// char	check_unclosed_quotes(char *input)
+// {
+// 	int	i;
+// 	char	quote;
+
+// 	i = 0;
+// 	while (input[i])
+// 	{
+// 		if (input[i] == '\'' || input[i] == '"')
+// 		{
+// 			quote = input[i];
+// 			i++;
+// 			while (input[i] && input[i] != quote)
+// 			{
+// 				if (quote == '"' && input[i] == '\\')
+// 				{
+// 					i++;
+// 					if (input[i] == '"' || input[i] == '\\' || input[i] == '$')
+// 						i++;
+// 				}
+// 				else
+// 					i++;
+// 			}
+// 			if (!input[i] || input[i] != quote)
+// 				return (quote);
+// 			i++;
+// 		}
+// 		else
+// 			i++;
+// 	}
+// 	return (0);
+// }

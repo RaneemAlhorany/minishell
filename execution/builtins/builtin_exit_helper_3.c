@@ -65,3 +65,4 @@ int set_result(unsigned long long res, int sign, long long *value)
         *value = (long long)(res * sign);
     return (1);
 }
+

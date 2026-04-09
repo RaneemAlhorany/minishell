@@ -19,6 +19,14 @@
 #include <readline/history.h>
 #include "signals/signals.h"
 
+typedef struct s_wildcard_collect_ctx
+{
+	const char	*pattern;
+	char		***matches;
+	int			*count;
+	int			*cap;
+} t_wildcard_collect_ctx;
+
 
 
 typedef struct s_redirection

@@ -18,6 +18,9 @@ int	get_last_signal(void)
 {
 	return ((int)g_last_signal);
 }
+
+
+
 void	clear_last_signal(void)
 {
 	g_last_signal = 0;

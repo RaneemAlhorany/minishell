@@ -33,7 +33,7 @@ t_token    *lexer(char *input);
 int  move_through_word(char **input);
 t_token    *word_detection(char **input);
 int	handle_quotes_for_lexer(char **input);
-
+ int	skip_quote_content(char *input, int *i, char quote);
 
 void        skip_spaces(char **input);
 t_token *detect_double_operator(char **input);
@@ -45,6 +45,15 @@ char	check_unclosed_quotes(char *input);
 t_token    *create_token(char *value, t_token_type type);
 void        append_token(t_token **head, t_token *new_token);
 void        free_tokens(t_token *head);
+ void	print_unclosed_quote_error(char quote);
+
+t_token	*handle_lexer_error(t_token *head, char *input);
+
+ int	process_token(char **input, t_token **head);
+ t_token	*lexer_loop(char *input, char *original_input);
 
 
-#endif
+
+
+
+ #endif 

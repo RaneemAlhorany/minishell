@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "../../minishell.h"
 #include "../../env/env.h"
+#include "../../Libft/libft.h"
 #include <limits.h>
 
 typedef struct s_shell t_shell;
