@@ -79,42 +79,98 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
     _exit(status);
 }
 
-int wait_for_pipe(pid_t left_pid, pid_t right_pid)
+static int	handle_exit_status(int right_status)
 {
-    int status;
-    int right_status;
-    int reaped;
-    pid_t waited;
-
-    right_status = 0;
-    reaped = 0;
-    while (reaped < 2)
-    {
-        waited = waitpid(-1, &status, 0);
-        if (waited == -1)
-        {
-            if (errno == EINTR)
-                continue ;
-            if (errno == ECHILD)
-                break ;
-            return (1);
-        }
-        if (waited == left_pid || waited == right_pid)
-            reaped++;
-        if (waited == right_pid)
-            right_status = status;
-    }
-    if (WIFEXITED(right_status))
-    {
-        if (WEXITSTATUS(right_status) == 128 + SIGQUIT)
-            g_last_signal = SIGQUIT;
-        return (WEXITSTATUS(right_status));
-    }
-    if (WIFSIGNALED(right_status))
-    {
-        g_last_signal = WTERMSIG(right_status);
-        return (128 + g_last_signal);
-    }
-    return (1);
+	if (WIFEXITED(right_status))
+	{
+		if (WEXITSTATUS(right_status) == 128 + SIGQUIT)
+			g_last_signal = SIGQUIT;
+		return (WEXITSTATUS(right_status));
+	}
+	if (WIFSIGNALED(right_status))
+	{
+		g_last_signal = WTERMSIG(right_status);
+		return (128 + g_last_signal);
+	}
+	return (1);
 }
+
+
+static int	wait_loop(pid_t left_pid, pid_t right_pid, int *right_status)
+{
+	int		status;
+	int		reaped;
+	pid_t	waited;
+
+	reaped = 0;
+	while (reaped < 2)
+	{
+		waited = waitpid(-1, &status, 0);
+		if (waited == -1)
+		{
+			if (errno == EINTR)
+				continue ;
+			if (errno == ECHILD)
+				break ;
+			return (1);
+		}
+		if (waited == left_pid || waited == right_pid)
+			reaped++;
+		if (waited == right_pid)
+			*right_status = status;
+	}
+	return (0);
+}
+
+
+int	wait_for_pipe(pid_t left_pid, pid_t right_pid)
+{
+	int	right_status;
+
+	right_status = 0;
+	if (wait_loop(left_pid, right_pid, &right_status))
+		return (1);
+	return (handle_exit_status(right_status));
+}
+
+
+
+// int wait_for_pipe(pid_t left_pid, pid_t right_pid)
+// {
+//     int status;
+//     int right_status;
+//     int reaped;
+//     pid_t waited;
+
+//     right_status = 0;
+//     reaped = 0;
+//     while (reaped < 2)
+//     {
+//         waited = waitpid(-1, &status, 0);
+//         if (waited == -1)
+//         {
+//             if (errno == EINTR)
+//                 continue ;
+//             if (errno == ECHILD)
+//                 break ;
+//             return (1);
+//         }
+//         if (waited == left_pid || waited == right_pid)
+//             reaped++;
+//         if (waited == right_pid)
+//             right_status = status;
+//     }
+//     if (WIFEXITED(right_status))
+//     {
+//         if (WEXITSTATUS(right_status) == 128 + SIGQUIT)
+//             g_last_signal = SIGQUIT;
+//         return (WEXITSTATUS(right_status));
+//     }
+//     if (WIFSIGNALED(right_status))
+//     {
+//         g_last_signal = WTERMSIG(right_status);
+//         return (128 + g_last_signal);
+//     }
+//     return (1);
+// }
 
