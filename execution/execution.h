@@ -200,5 +200,6 @@ int create_new_node(t_shell *shell, char *key, char *value);
  int	consume_chunk(t_wildcard_collect_ctx *ctx, t_wildcard_read_state *state);
   int	flush_pending_line(t_wildcard_collect_ctx *ctx,t_wildcard_read_state *state);
 
+int	wait_loop(pid_t left_pid, pid_t right_pid, int *right_status);
 
 #endif

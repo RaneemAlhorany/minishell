@@ -33,34 +33,32 @@ void	cleanup_child_state(t_shell *shell)
     rl_clear_history();
 }
 
-
-
-void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
+static char	**build_sh_fallback_args(t_cmd *cmd, char *cmd_path)
 {
-    int exec_status;
+    int		argc;
+    int		i;
+    char	**sh_argv;
 
-    setup_child_signals();
-    if (!apply_redirections(cmd->redirections, shell))
+    argc = 0;
+    while (cmd->args && cmd->args[argc])
+        argc++;
+    sh_argv = ft_calloc(argc + 2, sizeof(char *));
+    if (!sh_argv)
+        return (NULL);
+    sh_argv[0] = "/bin/sh";
+    sh_argv[1] = cmd_path;
+    i = 1;
+    while (i < argc)
     {
-        free(cmd_path);
-        free_2D(envp);
-        cleanup_child_state(shell);
-        _exit(1);
+        sh_argv[i + 1] = cmd->args[i];
+        i++;
     }
-    close_extra_fds_for_exec();
-    if (execve(cmd_path, cmd->args, envp) == -1)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        perror(cmd->args[0]);
-        exec_status = 126;
-        if (errno == ENOENT)
-            exec_status = 127;
-        free(cmd_path);
-        free_2D(envp);
-        cleanup_child_state(shell);
-        _exit(exec_status);
-    }
+    sh_argv[argc + 1] = NULL;
+    return (sh_argv);
 }
+
+
+
 
 
 int wait_for_child(pid_t pid)
@@ -95,3 +93,102 @@ char **prepare_envp(t_shell *shell)
 }
 
 
+static void	handle_exec_error(t_cmd *cmd, char *cmd_path, char **envp, t_shell *shell)
+{
+	int	exec_status;
+
+	ft_putstr_fd("minishell: ", 2);
+	perror(cmd->args[0]);
+	exec_status = 126;
+	if (errno == ENOENT)
+		exec_status = 127;
+	free(cmd_path);
+	free_2D(envp);
+	cleanup_child_state(shell);
+	_exit(exec_status);
+}
+
+
+static void	try_sh_fallback(t_cmd *cmd, char *cmd_path, char **envp)
+{
+	char	**sh_argv;
+
+	if (errno == ENOEXEC)
+	{
+		sh_argv = build_sh_fallback_args(cmd, cmd_path);
+		if (sh_argv)
+		{
+			execve("/bin/sh", sh_argv, envp);
+			free(sh_argv);
+		}
+	}
+}
+
+
+static void	execute_command(t_cmd *cmd, char *cmd_path, char **envp, t_shell *shell)
+{
+	if (execve(cmd_path, cmd->args, envp) == -1)
+	{
+		try_sh_fallback(cmd, cmd_path, envp);
+		handle_exec_error(cmd, cmd_path, envp, shell);
+	}
+}
+
+
+static void	handle_redirection_fail(char *cmd_path, char **envp, t_shell *shell)
+{
+	free(cmd_path);
+	free_2D(envp);
+	cleanup_child_state(shell);
+	_exit(1);
+}
+
+
+void	execute_child_process(t_cmd *cmd, char *cmd_path, char **envp, t_shell *shell)
+{
+	setup_child_signals();
+	if (!apply_redirections(cmd->redirections, shell))
+		handle_redirection_fail(cmd_path, envp, shell);
+	close_extra_fds_for_exec();
+	execute_command(cmd, cmd_path, envp, shell);
+}
+
+
+
+
+// void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
+// {
+//     int     exec_status;
+//     char    **sh_argv;
+
+//     setup_child_signals();
+//     if (!apply_redirections(cmd->redirections, shell))
+//     {
+//         free(cmd_path);
+//         free_2D(envp);
+//         cleanup_child_state(shell);
+//         _exit(1);
+//     }
+//     close_extra_fds_for_exec();
+//     if (execve(cmd_path, cmd->args, envp) == -1)
+//     {
+//         if (errno == ENOEXEC)
+//         {
+//             sh_argv = build_sh_fallback_args(cmd, cmd_path);
+//             if (sh_argv)
+//             {
+//                 execve("/bin/sh", sh_argv, envp);
+//                 free(sh_argv);
+//             }
+//         }
+//         ft_putstr_fd("minishell: ", 2);
+//         perror(cmd->args[0]);
+//         exec_status = 126;
+//         if (errno == ENOENT)
+//             exec_status = 127;
+//         free(cmd_path);
+//         free_2D(envp);
+//         cleanup_child_state(shell);
+//         _exit(exec_status);
+//     }
+// }

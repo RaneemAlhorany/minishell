@@ -22,7 +22,6 @@ SRCS = lexer/lexer.c \
 	parser/build_command_3.c \
 	parser/parser_helper_1.c \
 	parser/parser_helper_2.c \
-	parser/parser_helper_3.c \
 	parser/syntax_check_lexer_1.c \
 	parser/syntax_check_lexer_2.c \
 	parser/syntax_check_lexer_3.c \
