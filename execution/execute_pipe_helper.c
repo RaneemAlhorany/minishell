@@ -82,27 +82,37 @@ void execute_right_child(t_ast *node, t_shell *shell, int pipe_fd[2])
 int wait_for_pipe(pid_t left_pid, pid_t right_pid)
 {
     int status;
-    int i;
+    int right_status;
+    int reaped;
+    pid_t waited;
 
-    while (waitpid(left_pid, NULL, 0) == -1)
+    right_status = 0;
+    reaped = 0;
+    while (reaped < 2)
     {
-        if (errno != EINTR)
-            break;
+        waited = waitpid(-1, &status, 0);
+        if (waited == -1)
+        {
+            if (errno == EINTR)
+                continue ;
+            if (errno == ECHILD)
+                break ;
+            return (1);
+        }
+        if (waited == left_pid || waited == right_pid)
+            reaped++;
+        if (waited == right_pid)
+            right_status = status;
     }
-    i = waitpid(right_pid, &status, 0);
-    while (i == -1 && errno == EINTR)
-        i = waitpid(right_pid, &status, 0);
-    if (i == -1)
-        return (1);
-    if (WIFEXITED(status))
+    if (WIFEXITED(right_status))
     {
-        if (WEXITSTATUS(status) == 128 + SIGQUIT)
+        if (WEXITSTATUS(right_status) == 128 + SIGQUIT)
             g_last_signal = SIGQUIT;
-        return (WEXITSTATUS(status));
+        return (WEXITSTATUS(right_status));
     }
-    if (WIFSIGNALED(status))
+    if (WIFSIGNALED(right_status))
     {
-        g_last_signal = WTERMSIG(status);
+        g_last_signal = WTERMSIG(right_status);
         return (128 + g_last_signal);
     }
     return (1);

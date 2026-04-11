@@ -35,11 +35,6 @@
 	int	status;
 
 	status = execute_and_update(shell, ast);
-	if (get_last_signal() == SIGINT)
-	{
-		status = 130;
-		clear_last_signal();
-	}
 	shell->last_exit_status = status;
 	return (status);
 }
