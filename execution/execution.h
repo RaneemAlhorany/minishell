@@ -89,7 +89,7 @@ int handle_command_not_found(char *cmd_name, char *cmd_path, char **envp);
 
 // helper execution functions 3
 void	cleanup_child_state(t_shell *shell);
-void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell);
+void execute_child_process(t_cmd *cmd, char **envp, t_shell *shell);
 int wait_for_child(pid_t pid);
 char **prepare_envp(t_shell *shell);
 
@@ -118,7 +118,7 @@ int preload_heredocs_ast(t_ast *node, t_shell *shell);
 int is_path_available(t_shell *shell);
 char *resolve_path_or_fail(t_cmd *cmd, t_shell *shell,char **envp, int path_available);
 int validate_command_access(char *cmd_path, t_cmd *cmd, char **envp);
-int execute_with_fork(t_cmd *cmd, t_shell *shell,char *cmd_path, char **envp);
+int execute_with_fork(t_cmd *cmd, t_shell *shell, char **envp);
 int execute_external(t_cmd *cmd, t_shell *shell);
 
 void	setup_pipeline_wrapper_signals(void);
