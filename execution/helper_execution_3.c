@@ -135,20 +135,9 @@ static void	execute_command(t_cmd *cmd, char *cmd_path, char **envp, t_shell *sh
 }
 
 
-static void	handle_redirection_fail(char *cmd_path, char **envp, t_shell *shell)
-{
-	free(cmd_path);
-	free_2D(envp);
-	cleanup_child_state(shell);
-	_exit(1);
-}
-
-
 void	execute_child_process(t_cmd *cmd, char *cmd_path, char **envp, t_shell *shell)
 {
 	setup_child_signals();
-	if (!apply_redirections(cmd->redirections, shell))
-		handle_redirection_fail(cmd_path, envp, shell);
 	close_extra_fds_for_exec();
 	execute_command(cmd, cmd_path, envp, shell);
 }

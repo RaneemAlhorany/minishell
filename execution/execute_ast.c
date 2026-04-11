@@ -5,18 +5,30 @@ int	execute_logical_node(t_ast *node, t_shell *shell)
 	int	status;
 
 	status = execute_ast(node->pipe.left, shell);
+	if (shell)
+		shell->last_exit_status = status;
 	if (!shell || !shell->is_running)
 		return (status);
 	if (node->type == NODE_AND)
 	{
 		if (status == 0)
-			return (execute_ast(node->pipe.right, shell));
+		{
+			status = execute_ast(node->pipe.right, shell);
+			if (shell)
+				shell->last_exit_status = status;
+			return (status);
+		}
 		return (status);
 	}
 	if (node->type == NODE_OR)
 	{
 		if (status != 0)
-			return (execute_ast(node->pipe.right, shell));
+		{
+			status = execute_ast(node->pipe.right, shell);
+			if (shell)
+				shell->last_exit_status = status;
+			return (status);
+		}
 		return (status);
 	}
 	return (status);

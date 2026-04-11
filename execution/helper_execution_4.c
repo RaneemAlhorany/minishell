@@ -30,9 +30,6 @@ int	match_pattern(const char *pattern, const char *name)
 {
     if (!pattern || !name)
         return (0);
-    if ((name[0] == '.' && name[1] == '\0')
-        || (name[0] == '.' && name[1] == '.' && name[2] == '\0'))
-        return (0);
     if (name[0] == '.' && pattern[0] != '.')
         return (0);
     return (wildcard_match(pattern, name));

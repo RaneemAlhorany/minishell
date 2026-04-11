@@ -29,20 +29,46 @@ int execute_external(t_cmd *cmd, t_shell *shell)
     int     path_available;
     int     status;
     pid_t   pid;
+    int     save_stdin;
+    int     save_stdout;
 
     if (!is_valid_external_cmd(cmd, shell))
         return (127);
     envp = prepare_envp(shell);
     if (!envp)
         return (1);
+    save_stdin = dup(STDIN_FILENO);
+    save_stdout = dup(STDOUT_FILENO);
+    if (save_stdin < 0 || save_stdout < 0)
+    {
+        if (save_stdin >= 0)
+            close(save_stdin);
+        if (save_stdout >= 0)
+            close(save_stdout);
+        free_2D(envp);
+        return (1);
+    }
+    if (!apply_redirections(cmd->redirections, shell))
+    {
+        restore_fds(save_stdin, save_stdout);
+        free_2D(envp);
+        return (1);
+    }
     path_available = is_path_available(shell);
     cmd_path = resolve_path_or_fail(cmd, shell, envp, path_available);
     if (!cmd_path)
+    {
+        restore_fds(save_stdin, save_stdout);
         return (127);
+    }
     status = validate_command_access(cmd_path, cmd, envp);
     if (status != 0)
+    {
+        restore_fds(save_stdin, save_stdout);
         return (status);
+    }
     pid = execute_with_fork(cmd, shell, cmd_path, envp);
+    restore_fds(save_stdin, save_stdout);
     free(cmd_path);
     free_2D(envp);
     if (pid < 0)
