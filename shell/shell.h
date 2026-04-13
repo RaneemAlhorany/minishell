@@ -31,7 +31,7 @@ char *prepare_input(char *line);
 t_token *get_tokens(char *input);
 int expand_tokens_safe(t_token *tokens, t_shell *shell);
 void print_syntax_error(char *unexpected, int unexpected_newline);
-int check_syntax(t_token *tokens);
+int check_syntax(t_token *tokens, t_shell *shell);
 
 
 

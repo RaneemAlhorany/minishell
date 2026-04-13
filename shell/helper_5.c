@@ -85,7 +85,7 @@ t_ast *prepare_execution(t_shell *shell, char *line, t_token **tokens_head)
     if (!expand_tokens_safe(tokens, shell))
         return (NULL);
 
-    if (!check_syntax(tokens))
+    if (!check_syntax(tokens, shell))
         return (NULL);
 
     return (parse_pipeline(&tokens));
