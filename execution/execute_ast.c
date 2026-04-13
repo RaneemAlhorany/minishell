@@ -1,5 +1,15 @@
 #include "execution.h"
 
+static int	execute_right_branch(t_ast *node, t_shell *shell)
+{
+	int	status;
+
+	status = execute_ast(node->pipe.right, shell);
+	if (shell)
+		shell->last_exit_status = status;
+	return (status);
+}
+
 int	execute_logical_node(t_ast *node, t_shell *shell)
 {
 	int	status;
@@ -9,28 +19,10 @@ int	execute_logical_node(t_ast *node, t_shell *shell)
 		shell->last_exit_status = status;
 	if (!shell || !shell->is_running)
 		return (status);
-	if (node->type == NODE_AND)
-	{
-		if (status == 0)
-		{
-			status = execute_ast(node->pipe.right, shell);
-			if (shell)
-				shell->last_exit_status = status;
-			return (status);
-		}
-		return (status);
-	}
-	if (node->type == NODE_OR)
-	{
-		if (status != 0)
-		{
-			status = execute_ast(node->pipe.right, shell);
-			if (shell)
-				shell->last_exit_status = status;
-			return (status);
-		}
-		return (status);
-	}
+	if (node->type == NODE_AND && status == 0)
+		return (execute_right_branch(node, shell));
+	if (node->type == NODE_OR && status != 0)
+		return (execute_right_branch(node, shell));
 	return (status);
 }
 
@@ -61,7 +53,7 @@ int	execute_child(t_ast *node, t_shell *shell)
 	status = execute_ast(node->pipe.left, shell);
 	cleanup_child(shell, node);
 	_exit(status);
-	return (status); // never reached
+	return (status);
 }
 
 int	execute_group_node(t_ast *node, t_shell *shell)

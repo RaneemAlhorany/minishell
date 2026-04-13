@@ -70,34 +70,3 @@ int append_match(char ***arr, int *count, int *cap, char *name)
     }
     return (add_element(*arr, count, name));
 }
-
-
-// int	append_match(char ***arr, int *count, int *cap, char *name)
-// {
-//     char	**new_arr;
-//     int		i;
-
-//     if (*count >= *cap)
-//     {
-//         if (*cap == 0)
-//             *cap = 8;
-//         else
-//             *cap *= 2;
-//         new_arr = malloc(sizeof(char *) * (*cap));
-//         if (!new_arr)
-//             return (0);
-//         i = 0;
-//         while (i < *count)
-//         {
-//             new_arr[i] = (*arr)[i];
-//             i++;
-//         }
-//         free(*arr);
-//         *arr = new_arr;
-//     }
-//     (*arr)[*count] = ft_strdup(name);
-//     if (!(*arr)[*count])
-//         return (0);
-//     (*count)++;
-//     return (1);
-// }

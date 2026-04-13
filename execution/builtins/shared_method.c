@@ -52,32 +52,43 @@ void handle_existing(t_env *existing, char *value)
     }
 }
 
+static int	is_matching_flag_arg(char *arg, char character)
+{
+	if (character == 'n' && !is_echo_n_option(arg))
+		return (0);
+	if (arg[0] != '-')
+		return (0);
+	if (arg[1] != character)
+		return (0);
+	return (1);
+}
+
+static int	consume_char_flag(char *arg, int *flag, char character)
+{
+	int	j;
+
+	j = 1;
+	while (arg[j] == character)
+		j++;
+	if (arg[j] != '\0')
+		return (0);
+	*flag = 1;
+	return (1);
+}
+
 
 int  parse_char_flag(char **args, int *index , char character)
 {
-    int j;
     int flag;
 
     flag = 0;
     while (args[*index])
     {
-        if (character == 'n' && !is_echo_n_option(args[*index]))
+        if (!is_matching_flag_arg(args[*index], character))
             break;
-        if (args[*index][0] != '-')
+        if (!consume_char_flag(args[*index], &flag, character))
             break;
-        if (args[*index][1] != character)
-            break;
-        j = 1;
-        while (args[*index][j] == character)
-            j++;
-
-        if (args[*index][j] == '\0')
-        {
-            flag = 1;
-            (*index)++;
-        }
-        else
-            break;
+		(*index)++;
     }
     return (flag);
 }

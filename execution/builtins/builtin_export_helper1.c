@@ -53,6 +53,13 @@ t_env **collect_exported(t_env *env, int count)
 	return (arr);
 }
 
+static size_t	max_key_len(t_env *a, t_env *b)
+{
+	if (ft_strlen(a->key) > ft_strlen(b->key))
+		return (ft_strlen(a->key));
+	return (ft_strlen(b->key));
+}
+
 void sort_env(t_env **arr, int count)
 {
     int i;
@@ -66,10 +73,7 @@ void sort_env(t_env **arr, int count)
         j = 0;
         while (j < count - i - 1)
         {
-            if (ft_strlen(arr[j]->key) > ft_strlen(arr[j + 1]->key))
-                len = ft_strlen(arr[j]->key);
-            else
-                len = ft_strlen(arr[j + 1]->key);
+			len = max_key_len(arr[j], arr[j + 1]);
             if (ft_strncmp(arr[j]->key, arr[j + 1]->key, len) > 0)
             {
                 tmp = arr[j];

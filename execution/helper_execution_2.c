@@ -1,8 +1,6 @@
 #include "execution.h"
 
 
-
-
  int	copy_normal_arg(char **new_args, int *j, char *arg)
 {
 	new_args[*j] = ft_strdup(arg);
@@ -51,6 +49,13 @@
 	return (1);
 }
 
+static int	copy_arg_with_wildcard(char **new_args, int *j, char *arg)
+{
+	if (!has_wildcard_chars(arg))
+		return (copy_normal_arg(new_args, j, arg));
+	return (handle_wildcard(new_args, j, arg));
+}
+
 
  int	process_args(char **args, char **new_args)
 {
@@ -61,16 +66,8 @@
 	j = 0;
 	while (args[i])
 	{
-		if (!has_wildcard_chars(args[i]))
-		{
-			if (!copy_normal_arg(new_args, &j, args[i]))
-				return (free_partial_args(new_args, j), 0);
-		}
-		else
-		{
-			if (!handle_wildcard(new_args, &j, args[i]))
-				return (free_partial_args(new_args, j), 0);
-		}
+		if (!copy_arg_with_wildcard(new_args, &j, args[i]))
+			return (free_partial_args(new_args, j), 0);
 		i++;
 	}
 	new_args[j] = NULL;
@@ -101,73 +98,3 @@ int	expand_cmd_wildcards(t_cmd *cmd)
 	cmd->args = new_args;
 	return (1);
 }
-
-
-
-
-// int	expand_cmd_wildcards(t_cmd *cmd)
-// {
-//     int		words;
-//     int		i;
-//     int		j;
-//     char	**new_args;
-//     char	**matches;
-//     int		k;
-//     int		match_count;
-
-//     if (!cmd || !cmd->args)
-//         return (1);
-//     words = count_expanded_words(cmd->args);
-//     if (words < 0)
-//         return (0);
-//     new_args = malloc(sizeof(char *) * (words + 1));
-//     if (!new_args)
-//         return (0);
-//     i = 0;
-//     j = 0;
-//     while (cmd->args[i])
-//     {
-//         if (!has_wildcard_chars(cmd->args[i]))
-//             new_args[j++] = ft_strdup(cmd->args[i]);
-//         else
-//         {
-//             if (!collect_matches(cmd->args[i], &matches, &match_count))
-//                 return (free_partial_args(new_args, j), 0);
-//             if (match_count == 0)
-//             {
-//                 new_args[j] = ft_strdup(cmd->args[i]);
-//                 if (!new_args[j])
-//                     return (free_partial_args(new_args, j), 0);
-//                 j++;
-//             }
-//             else
-//             {
-//                 k = 0;
-//                 while (k < match_count)
-//                 {
-//                     new_args[j] = ft_strdup(matches[k]);
-//                     if (!new_args[j])
-//                     {
-//                         free_str_array(matches, match_count);
-//                         return (free_partial_args(new_args, j), 0);
-//                     }
-//                     j++;
-//                     k++;
-//                 }
-//             }
-//             free_str_array(matches, match_count);
-//         }
-//         if (j > 0 && !new_args[j - 1])
-//             return (free_partial_args(new_args, j), 0);
-//         i++;
-//     }
-//     new_args[j] = NULL;
-//     free_2D(cmd->args);
-//     cmd->args = new_args;
-//     return (1);
-// }
-
-
-
-
-

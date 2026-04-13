@@ -1,5 +1,14 @@
 #include "builtin.h"
 
+static int	is_non_empty_numeric(char *trimmed)
+{
+    if (!trimmed || !*trimmed)
+        return (0);
+    if (!check_digits(trimmed))
+        return (0);
+    return (1);
+}
+
 
 int is_numeric(char *str)
 {
@@ -11,21 +20,10 @@ int is_numeric(char *str)
 
     clean = remove_quotes(str);
     trimmed = ft_strtrim(clean, " \t\n");
-
-    if (!trimmed || !*trimmed)
-    {
-        free(trimmed);
-        return (0);
-    }
-
-    if (!check_digits(trimmed))
-    {
-        free(trimmed);
-        return (0);
-    }
-
-    free(trimmed);
-    return (1);
+	if (!is_non_empty_numeric(trimmed))
+		return (free(trimmed), 0);
+	free(trimmed);
+	return (1);
 }
 
 

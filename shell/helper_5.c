@@ -54,25 +54,33 @@ void cleanup_execution(t_shell *shell, t_ast *ast, t_token *tokens)
     shell->active_ast = NULL;
 }
 
+static t_token	*tokenize_prepared_input(char *line, t_token **tokens_head)
+{
+    char	*input;
+    t_token	*tokens;
+
+    input = prepare_input(line);
+    if (!input)
+        return (NULL);
+    tokens = get_tokens(input);
+    free(input);
+    if (!tokens)
+        return (NULL);
+    *tokens_head = tokens;
+    return (tokens);
+}
+
 
 t_ast *prepare_execution(t_shell *shell, char *line, t_token **tokens_head)
 {
-    char    *input;
     t_token *tokens;
 
     if (!shell)
         return (NULL);
 
-    input = prepare_input(line);
-    if (!input)
-        return (NULL);
-
-    tokens = get_tokens(input);
-    free(input);
+    tokens = tokenize_prepared_input(line, tokens_head);
     if (!tokens)
         return (NULL);
-
-    *tokens_head = tokens;
 
     if (!expand_tokens_safe(tokens, shell))
         return (NULL);

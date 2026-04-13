@@ -18,6 +18,7 @@ t_env *find_env(t_env *env, char *key)
 }
 
 
+
 void update_existing_env(t_env *node, char *value)
 {
     if (node->value)

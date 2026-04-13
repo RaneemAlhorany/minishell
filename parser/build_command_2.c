@@ -56,17 +56,13 @@ t_ast *build_command(t_token **tokens)
 }
 
 
-
-
-
 int	process_command_tokens(t_ast *node, t_token **tokens, int *has_word)
 {
 	int				index;
 	t_redirection	*last_redir;
-
 	index = 0;
 	last_redir = NULL;
-    while (*tokens && !is_command_delimiter((*tokens)->type))
+	while (*tokens && !is_command_delimiter((*tokens)->type))
 	{
 		if ((*tokens)->type == TOKEN_WORD)
 		{

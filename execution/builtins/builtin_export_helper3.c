@@ -20,6 +20,16 @@ void	apply_export_n(t_shell *shell, char *key, char *value)
 	handle_export_n_logic(shell, node, key, value);
 }
 
+static void	update_export_n_node_value(t_env *node, char *value)
+{
+    if (!value)
+        return ;
+    if (node->value)
+        free(node->value);
+    node->value = ft_strdup(value);
+    node->has_value = 1;
+}
+
 void	handle_export_n_logic(t_shell *shell, t_env *node, char *key, char *value)
 {
 	if (!node && !value)
@@ -38,13 +48,7 @@ void	handle_export_n_logic(t_shell *shell, t_env *node, char *key, char *value)
 		}
 		return;
 	}
-	if (value)
-	{
-		if (node->value)
-			free(node->value);
-		node->value = ft_strdup(value);
-		node->has_value = 1;
-	}
+    update_export_n_node_value(node, value);
 	node->is_exported = 0;
 }
 

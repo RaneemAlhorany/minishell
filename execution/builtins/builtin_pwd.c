@@ -20,29 +20,43 @@ char	*get_pwd_value(char mode, t_shell *shell)
 	return (pwd);
 }
 
+static int	update_pwd_mode(char c, char *mode)
+{
+	if (c == 'L' || c == 'P')
+	{
+		*mode = c;
+		return (1);
+	}
+	ft_putendl_fd("pwd: invalid option", 2);
+	ft_putendl_fd("pwd: usage: pwd [-LP]", 2);
+	return (0);
+}
+
+static int	parse_pwd_option_arg(char *arg, char *mode)
+{
+	int	j;
+
+	j = 1;
+	while (arg[j])
+	{
+		if (!update_pwd_mode(arg[j], mode))
+			return (0);
+		j++;
+	}
+	return (1);
+}
+
 
 int	parse_pwd_options(t_cmd *cmd, char *mode)
 {
 	int	i;
-	int	j;
 
 	*mode = 'L';
 	i = 1;
 	while (cmd->args[i] && cmd->args[i][0] == '-')
 	{
-		j = 1;
-		while (cmd->args[i][j])
-		{
-			if (cmd->args[i][j] == 'L' || cmd->args[i][j] == 'P')
-				*mode = cmd->args[i][j];
-			else
-			{
-				ft_putendl_fd("pwd: invalid option", 2);
-				ft_putendl_fd("pwd: usage: pwd [-LP]", 2);
-				return (0);
-			}
-			j++;
-		}
+		if (!parse_pwd_option_arg(cmd->args[i], mode))
+			return (0);
 		i++;
 	}
 	return (1);

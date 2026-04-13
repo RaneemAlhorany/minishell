@@ -47,11 +47,6 @@ void free_2D(char **dirs)
     free(dirs);
 }
 
-
-
-
-
-
 char	*get_last_arg_from_cmd(t_cmd *cmd)
 {
 	int		i;

@@ -4,7 +4,7 @@ void	setup_child_signals(void)
 {
 	t_sigaction	sa;
 
-	sa.sa_handler = SIG_DFL; // استرجاع behavior الافتراضي
+	sa.sa_handler = SIG_DFL;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
@@ -12,8 +12,6 @@ void	setup_child_signals(void)
 }
 
 
-
-// موجودين اضافه على الmain عارف انه مش كامل بس برضه لازم هيك تكون نتاج ال سقنل 
 int	get_last_signal(void)
 {
 	return ((int)g_last_signal);

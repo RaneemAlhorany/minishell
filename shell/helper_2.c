@@ -1,6 +1,19 @@
 
 #include "shell.h"
 
+static int	should_expand_token(t_token *tokens, t_token *prev)
+{
+	if (tokens->type != TOKEN_WORD)
+		return (0);
+	if (!prev)
+		return (1);
+	if (prev->type == TOKEN_REDIRECT_IN || prev->type == TOKEN_REDIRECT_OUT)
+		return (0);
+	if (prev->type == TOKEN_REDIRECT_APPEND || prev->type == TOKEN_HEREDOC)
+		return (0);
+	return (1);
+}
+
 
 
 int	expand_tokens(t_token *tokens, t_shell *shell)
@@ -12,11 +25,7 @@ int	expand_tokens(t_token *tokens, t_shell *shell)
 
 	while (tokens)
 	{
-		if (tokens->type == TOKEN_WORD
-			&& !(prev && (prev->type == TOKEN_REDIRECT_IN
-					|| prev->type == TOKEN_REDIRECT_OUT
-					|| prev->type == TOKEN_REDIRECT_APPEND
-					|| prev->type == TOKEN_HEREDOC)))
+		if (should_expand_token(tokens, prev))
 		{
 			expanded = expand_string(tokens->value, shell->env,
 										shell->last_exit_status);

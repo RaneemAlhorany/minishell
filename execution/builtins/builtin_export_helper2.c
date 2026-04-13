@@ -58,12 +58,8 @@ int	parse_export_arg(char *arg, char **key, char **value)
 	return (0);
 }
 
-int	extract_key_value(char *arg, char **key, char **value)
+static int	assign_export_pair(char **key, char **value, char *equal, char *arg)
 {
-	char	*equal;
-
-	*value = NULL;
-	equal = ft_strchr(arg, '=');
 	if (equal)
 	{
 		*key = ft_substr(arg, 0, equal - arg);
@@ -75,14 +71,21 @@ int	extract_key_value(char *arg, char **key, char **value)
 			free(*key);
 			return (1);
 		}
+		return (0);
 	}
-	else
-	{
-		*key = ft_strdup(arg);
-		if (!*key)
-			return (1);
-	}
+	*key = ft_strdup(arg);
+	if (!*key)
+		return (1);
 	return (0);
+}
+
+int	extract_key_value(char *arg, char **key, char **value)
+{
+	char	*equal;
+
+	*value = NULL;
+	equal = ft_strchr(arg, '=');
+	return (assign_export_pair(key, value, equal, arg));
 }
 
 int is_valid_identifier(char *key)

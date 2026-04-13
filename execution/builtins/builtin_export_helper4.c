@@ -19,6 +19,30 @@ int	handle_export_arg(char *arg, t_shell *shell)
 	return (0);
 }
 
+static int	assign_export_key(char *arg, char *equal, char **key)
+{
+	if (equal)
+		*key = ft_substr(arg, 0, equal - arg);
+	else
+		*key = ft_strdup(arg);
+	if (!*key)
+		return (1);
+	return (0);
+}
+
+static int	assign_export_value(char *equal, char **key, char **value)
+{
+	if (!equal)
+		return (0);
+	*value = get_value(equal);
+	if (!*value)
+	{
+		free(*key);
+		return (1);
+	}
+	return (0);
+}
+
 int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
 {
 	char	*equal;
@@ -26,21 +50,10 @@ int	extract_export_data(char *arg, t_shell *shell,char **key, char **value)
 
 	equal = ft_strchr(arg, '=');
 	*value = NULL;
-	if (equal)
-		*key = ft_substr(arg, 0, equal - arg);
-	else
-		*key = ft_strdup(arg);
-	if (!*key)
+	if (assign_export_key(arg, equal, key))
 		return (1);
-	if (equal)
-	{
-		*value = get_value(equal);
-		if (!*value)
-		{
-			free(*key);
-			return (1);
-		}
-	}
+	if (assign_export_value(equal, key, value))
+		return (1);
 	if (validate_identifier_export(*key, *value, equal))
 		return (1);
 	return (0);

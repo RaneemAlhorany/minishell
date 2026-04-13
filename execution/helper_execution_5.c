@@ -46,30 +46,36 @@ void	sort_matches(char **matches, int count)
     }
 }
 
+static int	count_arg_expansion(char *arg)
+{
+    int	matches;
+
+    if (!has_wildcard_chars(arg))
+        return (1);
+    matches = count_matches_in_cwd(arg);
+    if (matches < 0)
+        return (-1);
+    if (matches == 0)
+        return (1);
+    return (matches);
+}
+
 
 
 int	count_expanded_words(char **args)
 {
     int		count;
     int		i;
-    int		matches;
+    int		expanded;
 
     count = 0;
     i = 0;
     while (args && args[i])
     {
-        if (!has_wildcard_chars(args[i]))
-            count++;
-        else
-        {
-            matches = count_matches_in_cwd(args[i]);
-            if (matches < 0)
-                return (-1);
-            if (matches == 0)
-                count++;
-            else
-                count += matches;
-        }
+		expanded = count_arg_expansion(args[i]);
+		if (expanded < 0)
+			return (-1);
+		count += expanded;
         i++;
     }
     return (count);

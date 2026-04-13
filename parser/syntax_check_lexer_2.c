@@ -1,5 +1,16 @@
 #include "parsing.h"
 
+static int	check_pipe_next_primary(t_token *current, char **unexpected_token,
+        int *unexpected_newline)
+{
+    if (!current)
+        return (set_unexpected(unexpected_token, unexpected_newline, NULL, 1));
+    if (!is_primary_start(current->type))
+        return (set_unexpected(unexpected_token, unexpected_newline,
+                current->value, 0));
+    return (1);
+}
+
 int	is_primary_start(t_token_type type)
 {
     if (type == TOKEN_WORD || is_redirection(type) || type == TOKEN_LPAREN)
@@ -63,8 +74,7 @@ int	check_command_syntax(t_token **tokens, char **unexpected_token,int *unexpect
         else if (is_redirection((*tokens)->type))
         {
             has_word_or_redir = 1;
-            if (!check_redirection_syntax(*tokens, unexpected_token,
-                    unexpected_newline))
+            if (!check_redirection_syntax(*tokens, unexpected_token, unexpected_newline))
                 return (0);
             *tokens = (*tokens)->next->next;
         }
@@ -77,24 +87,13 @@ int	check_command_syntax(t_token **tokens, char **unexpected_token,int *unexpect
 
 int check_pipe_syntax(t_token **tokens, char **unexpected_token, int *unexpected_newline)
 {
-    t_token *current;
-
     if (!check_primary_syntax(tokens, unexpected_token, unexpected_newline))
         return 0;
     while (*tokens && (*tokens)->type == TOKEN_PIPE)
     {
         *tokens = (*tokens)->next;
-        if (*tokens)
-            current = *tokens;
-        else
-            current = NULL;
-        if (current)
-        {
-            if (!is_primary_start(current->type))
-                return set_unexpected(unexpected_token, unexpected_newline, current->value, 0);
-        }
-        else
-            return set_unexpected(unexpected_token, unexpected_newline, NULL, 1);
+        if (!check_pipe_next_primary(*tokens, unexpected_token, unexpected_newline))
+            return (0);
         if (!check_primary_syntax(tokens, unexpected_token, unexpected_newline))
             return 0;
     }

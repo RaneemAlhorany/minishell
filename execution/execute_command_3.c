@@ -1,7 +1,5 @@
 #include "execution.h"
 
-
-
  char *extract_key(char *arg)
 {
     char    *equal;
@@ -67,40 +65,3 @@ int set_shell_assignment(t_shell *shell, char *arg)
 }
 
 
-
-
-
-
-// int set_shell_assignment(t_shell *shell, char *arg)
-// {
-//     t_env   *node;
-//     char    *equal;
-//     char    *key;
-//     char    *value;
-
-//     equal = ft_strchr(arg, '=');
-//     key = ft_substr(arg, 0, equal - arg);
-//     if (!key)
-//         return (0);
-//     value = ft_strdup(equal + 1);
-//     if (!value)
-//         return (free(key), 0);
-//     node = find_env(shell->env, key);
-//     if (node)
-//     {
-//         if (node->value)
-//             free(node->value);
-//         node->value = value;
-//         node->has_value = 1;
-//         free(key);
-//         return (1);
-//     }
-//     node = env_new(key, value);
-//     free(key);
-//     free(value);
-//     if (!node)
-//         return (0);
-//     node->is_exported = 0;
-//     env_add_back(&shell->env, node);
-//     return (1);
-// }

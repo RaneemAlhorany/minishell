@@ -51,7 +51,7 @@ void env_add_back(t_env **head, t_env *new)
     t_env *temp;
 
     if (!head || !new)
-        return; // Handle null pointers
+        return;
     if (*head == NULL)
     {
         *head = new;
@@ -61,6 +61,13 @@ void env_add_back(t_env **head, t_env *new)
     while (temp->next)
         temp = temp->next;
     temp->next = new;
+}
+
+static char	*extract_env_key(char *env_str, char *equal_sign)
+{
+    if (equal_sign)
+        return (ft_substr(env_str, 0, equal_sign - env_str));
+    return (ft_strdup(env_str));
 }
 
 
@@ -74,16 +81,8 @@ t_env *create_env_node(char *env_str)
     t_env   *new_node;
 
     equal_sign = ft_strchr(env_str, '=');
-    if (equal_sign)
-    {
-        key = ft_substr(env_str, 0, equal_sign - env_str);
-        value_ptr = equal_sign + 1;
-    }
-    else
-    {
-        key = ft_strdup(env_str);
-        value_ptr = NULL;
-    }
+    key = extract_env_key(env_str, equal_sign);
+    value_ptr = equal_sign ? (equal_sign + 1) : NULL;
     if (!key)
         return (NULL);
     new_node = env_new(key, value_ptr);

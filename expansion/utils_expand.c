@@ -1,6 +1,24 @@
 
 #include "minishell.h"
 
+static char	*expand_numeric_or_quote(char c)
+{
+    if (c == '0')
+        return (ft_strdup("minishell"));
+    if (ft_isdigit(c) || c == '"')
+        return (ft_strdup(""));
+    return (NULL);
+}
+
+static char	*expand_invalid_identifier(char c)
+{
+    if (c == '\0')
+        return (ft_strdup("$"));
+    if (!ft_isalpha(c) && c != '_')
+        return (ft_strdup("$"));
+    return (NULL);
+}
+
  int  init_expand(t_expand *ex,char *input, t_env *env, int last_status)
 {
     ex->input = input;
@@ -18,28 +36,22 @@
 
 char *handle_special_dollar(char *input, int *i, int last_status)
 {
-    // $? 
+    char    *value;
+
     if (input[*i] == '?')
     {
         (*i)++;
         return (ft_itoa(last_status));
     }
-    if (input[*i] == '0')
+    value = expand_numeric_or_quote(input[*i]);
+    if (value)
     {
         (*i)++;
-        return (ft_strdup("minishell"));
+        return (value);
     }
-    if (ft_isdigit(input[*i]))
-    {
-        (*i)++;
-        return (ft_strdup(""));
-    }
-    if (input[*i] == '"')
-        return (ft_strdup(""));
-    if (input[*i] == '\0')
-        return (ft_strdup("$"));
-    if (!ft_isalpha(input[*i]) && input[*i] != '_')
-        return (ft_strdup("$"));
+    value = expand_invalid_identifier(input[*i]);
+    if (value)
+        return (value);
     return (NULL); // not a special
 }
 

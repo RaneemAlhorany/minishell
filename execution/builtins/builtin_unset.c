@@ -1,6 +1,23 @@
 
 #include "builtin.h"
 
+static int	matches_env_key(t_env *node, char *key)
+{
+    return (ft_strncmp(node->key, key, ft_strlen(key) + 1) == 0);
+}
+
+static void	unlink_env_node(t_shell *shell, t_env *prev, t_env *node)
+{
+    if (prev == NULL)
+        shell->env = node->next;
+    else
+        prev->next = node->next;
+    free(node->key);
+    if (node->value)
+        free(node->value);
+    free(node);
+}
+
 void remove_env(t_shell *shell, char *key)
 {
     t_env *temp;
@@ -12,16 +29,9 @@ void remove_env(t_shell *shell, char *key)
     prev = NULL;
     while (temp)
     {
-        if (ft_strncmp(temp -> key , key , ft_strlen(key)+1) == 0)
+        if (matches_env_key(temp, key))
         {
-            if (prev == NULL)
-                shell ->env = temp ->next;
-            else 
-                prev -> next = temp -> next;
-            free(temp ->key);
-            if (temp->value)
-                free(temp->value);
-            free(temp);
+            unlink_env_node(shell, prev, temp);
             return ;
         }
         prev = temp;

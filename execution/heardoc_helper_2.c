@@ -44,6 +44,16 @@ void process_heredoc_line(char *line, t_shell *shell, int write_fd, int quoted)
         ft_putendl_fd("", write_fd);
 }
 
+static int	handle_heredoc_eof(char *limiter)
+{
+    if (get_last_signal() == SIGINT)
+        return (1);
+    if (isatty(STDIN_FILENO))
+        write(STDOUT_FILENO, "\n", 1);
+    print_heredoc_warning(limiter);
+    return (0);
+}
+
 
 int	heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
 {
@@ -55,11 +65,8 @@ int	heredoc_loop(int write_fd, char *limiter, t_shell *shell, int quoted)
 		line = read_heredoc_line();
 		if (!line)
 		{
-            if (get_last_signal() == SIGINT)
+            if (handle_heredoc_eof(limiter))
                 return (1);
-            if (isatty(STDIN_FILENO))
-                write(STDOUT_FILENO, "\n", 1);
-            print_heredoc_warning(limiter);
             break ;
 		}
 		if (is_limiter_match(line, limiter))

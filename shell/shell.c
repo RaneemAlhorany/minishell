@@ -9,8 +9,8 @@ t_shell * init_shell(char **envp)
 
     shell = malloc(sizeof(t_shell));
     if (!shell)
-        return NULL; // Handle memory allocation failure
-    shell ->env = build_env_list(envp); // Initialize the environment pointer
+        return NULL;
+    shell ->env = build_env_list(envp);
     if (!shell->env)
     {
         free(shell);
@@ -18,8 +18,8 @@ t_shell * init_shell(char **envp)
     }
 	shell->active_tokens = NULL;
 	shell->active_ast = NULL;
-    shell -> is_running = 1; // Set the shell to running state
-    shell -> last_exit_status = 0; // Initialize last exit status to 0
+    shell -> is_running = 1;
+    shell -> last_exit_status = 0;
     shell->prompt_prefix = NULL;
 	increment_shlvl(shell);
 

@@ -24,8 +24,6 @@ int	preload_heredocs_ast(t_ast *node, t_shell *shell)
 }
 
 
-
-
  int	preload_heredocs_in_redirections(t_redirection *redir, t_shell *shell)
 {
     int	fd;

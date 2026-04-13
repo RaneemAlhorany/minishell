@@ -1,27 +1,26 @@
 
 #include "parsing.h"
 
+static int	check_next_primary(t_token *current, char **unexpected_token,
+		int *unexpected_newline)
+{
+	if (!current)
+		return (set_unexpected(unexpected_token, unexpected_newline, NULL, 1));
+	if (!is_primary_start(current->type))
+		return (set_unexpected(unexpected_token, unexpected_newline,
+				current->value, 0));
+	return (1);
+}
+
 int check_and_or_syntax(t_token **tokens, char **unexpected_token, int *unexpected_newline)
 {
-    t_token *current;
-
     if (!check_pipe_syntax(tokens, unexpected_token, unexpected_newline))
         return 0;
     while (*tokens && is_binary_operator((*tokens)->type) && (*tokens)->type != TOKEN_PIPE)
     {
         *tokens = (*tokens)->next;
-        if (*tokens)
-            current = *tokens;
-        else
-            current = NULL;
-        if (current)
-        {
-            if (!is_primary_start(current->type))
-                return set_unexpected(unexpected_token, unexpected_newline, current->value, 0);
-        }
-        else
-            return set_unexpected(unexpected_token, unexpected_newline, NULL, 1);
-
+        if (!check_next_primary(*tokens, unexpected_token, unexpected_newline))
+            return (0);
         if (!check_pipe_syntax(tokens, unexpected_token, unexpected_newline))
             return 0;
     }

@@ -58,9 +58,6 @@ static char	**build_sh_fallback_args(t_cmd *cmd, char *cmd_path)
 }
 
 
-
-
-
 int wait_for_child(pid_t pid)
 {
     int status;
@@ -80,8 +77,6 @@ int wait_for_child(pid_t pid)
     g_last_signal = sig;
     return (128 + sig);
 }
-
-
 
 
 char **prepare_envp(t_shell *shell)
@@ -142,42 +137,3 @@ void	execute_child_process(t_cmd *cmd, char *cmd_path, char **envp, t_shell *she
 	execute_command(cmd, cmd_path, envp, shell);
 }
 
-
-
-
-// void execute_child_process(t_cmd *cmd, char *cmd_path, char **envp , t_shell *shell)
-// {
-//     int     exec_status;
-//     char    **sh_argv;
-
-//     setup_child_signals();
-//     if (!apply_redirections(cmd->redirections, shell))
-//     {
-//         free(cmd_path);
-//         free_2D(envp);
-//         cleanup_child_state(shell);
-//         _exit(1);
-//     }
-//     close_extra_fds_for_exec();
-//     if (execve(cmd_path, cmd->args, envp) == -1)
-//     {
-//         if (errno == ENOEXEC)
-//         {
-//             sh_argv = build_sh_fallback_args(cmd, cmd_path);
-//             if (sh_argv)
-//             {
-//                 execve("/bin/sh", sh_argv, envp);
-//                 free(sh_argv);
-//             }
-//         }
-//         ft_putstr_fd("minishell: ", 2);
-//         perror(cmd->args[0]);
-//         exec_status = 126;
-//         if (errno == ENOENT)
-//             exec_status = 127;
-//         free(cmd_path);
-//         free_2D(envp);
-//         cleanup_child_state(shell);
-//         _exit(exec_status);
-//     }
-// }

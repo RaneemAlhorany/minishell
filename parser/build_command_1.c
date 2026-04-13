@@ -28,6 +28,13 @@ void	init_cmd(t_cmd *cmd)
     cmd->redirections = NULL;
 }
 
+static int	count_token_words(t_token *token)
+{
+    if (token->quoted)
+        return (1);
+    return (count_unquoted_words(token->value));
+}
+
 
 
 int	count_words_in_cmd(t_token *token)
@@ -40,12 +47,7 @@ int	count_words_in_cmd(t_token *token)
     while (tmp && !is_command_delimiter(tmp->type))
 	{
 		if (tmp->type == TOKEN_WORD)
-        {
-            if (tmp->quoted)
-                count++;
-            else
-                count += count_unquoted_words(tmp->value);
-        }
+            count += count_token_words(tmp);
 		else if (is_redirection(tmp->type))
 		{
 			if (tmp->next)
@@ -55,6 +57,13 @@ int	count_words_in_cmd(t_token *token)
 			tmp = tmp->next;
 	}
 	return (count);
+}
+
+static char	*dup_redirection_name(t_token *current)
+{
+    if (!current->next)
+        return (NULL);
+    return (strdup(current->next->value));
 }
 
 t_cmd *create_cmd(int argc)
@@ -95,12 +104,7 @@ t_redirection *create_redirection(t_token *current)
     new_redir->type = current->type;
     new_redir->quoted = (current->next) ? current->next->quoted : 0;
     new_redir->heredoc_fd = -1;
-    if (!current->next)
-    {
-        free(new_redir);
-        return (NULL);
-    }
-    new_redir->filename = strdup(current->next->value);
+    new_redir->filename = dup_redirection_name(current);
     if (!new_redir->filename)
     {
         free(new_redir);

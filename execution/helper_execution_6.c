@@ -63,39 +63,3 @@ int wildcard_match(const char *pattern, const char *name)
     }
     return (skip_stars(pattern));
 }
-
-
-
-// int	wildcard_match(const char *pattern, const char *name)
-// {
-//     const char	*star;
-//     const char	*match;
-
-//     star = NULL;
-//     match = NULL;
-//     while (*name)
-//     {
-//         if (*pattern == '*')
-//         {
-//             star = pattern;
-//             match = name;
-//             pattern++;
-//         }
-//         else if (*pattern == *name)
-//         {
-//             pattern++;
-//             name++;
-//         }
-//         else if (star)
-//         {
-//             pattern = star + 1;
-//             match++;
-//             name = match;
-//         }
-//         else
-//             return (0);
-//     }
-//     while (*pattern == '*')
-//         pattern++;
-//     return (*pattern == '\0');
-// }
