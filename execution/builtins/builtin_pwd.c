@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:15:51 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:34:09 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 char	*get_pwd_value(char mode, t_shell *shell)
@@ -20,32 +32,28 @@ char	*get_pwd_value(char mode, t_shell *shell)
 	return (pwd);
 }
 
-static int	update_pwd_mode(char c, char *mode)
-{
-	if (c == 'L' || c == 'P')
-	{
-		*mode = c;
-		return (1);
-	}
-	ft_putendl_fd("pwd: invalid option", 2);
-	ft_putendl_fd("pwd: usage: pwd [-LP]", 2);
-	return (0);
-}
-
-static int	parse_pwd_option_arg(char *arg, char *mode)
+int	parse_pwd_option_arg(char *arg, char *mode)
 {
 	int	j;
 
 	j = 1;
 	while (arg[j])
 	{
-		if (!update_pwd_mode(arg[j], mode))
+		if (arg[j] == 'L' || arg[j] == 'P')
+		{
+			*mode = arg[j];
+			return (1);
+		}
+		else
+		{
+			ft_putendl_fd("pwd: invalid option", 2);
+			ft_putendl_fd("pwd: usage: pwd [-LP]", 2);
 			return (0);
+		}
 		j++;
 	}
 	return (1);
 }
-
 
 int	parse_pwd_options(t_cmd *cmd, char *mode)
 {

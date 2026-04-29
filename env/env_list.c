@@ -1,13 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_list.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:14:04 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:24:42 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "env.h"
 
+void	free_env_list(t_env *head)
+{
+	t_env	*temp;
+
+	while (head)
+	{
+		temp = head;
+		head = head->next;
+		if (temp->key)
+			free(temp->key);
+		if (temp->value)
+			free(temp->value);
+		free(temp);
+	}
+}
 
 int	init_env_value(t_env *node, char *value)
 {
 	if (value)
 	{
 		node->value = ft_strdup(value);
-		if (!node->value)
-			return (1);
 		node->has_value = 1;
 	}
 	else
@@ -17,7 +42,6 @@ int	init_env_value(t_env *node, char *value)
 	}
 	return (0);
 }
-
 
 t_env	*env_new(char *key, char *value)
 {
@@ -43,76 +67,49 @@ t_env	*env_new(char *key, char *value)
 	return (new_node);
 }
 
-
-
-
-void env_add_back(t_env **head, t_env *new)
+t_env	*create_env_node(char *env_str)
 {
-    t_env *temp;
+	char	*equal_sign;
+	char	*key;
+	char	*value_ptr;
+	t_env	*new_node;
 
-    if (!head || !new)
-        return;
-    if (*head == NULL)
-    {
-        *head = new;
-        return;
-    }
-    temp = *head;
-    while (temp->next)
-        temp = temp->next;
-    temp->next = new;
+	equal_sign = ft_strchr(env_str, '=');
+	if (equal_sign)
+		key = ft_substr(env_str, 0, equal_sign - env_str);
+	else
+		key = ft_strdup(env_str);
+	if (equal_sign)
+		value_ptr = equal_sign + 1;
+	else
+		value_ptr = NULL;
+	if (!key)
+		return (NULL);
+	new_node = env_new(key, value_ptr);
+	free(key);
+	if (!new_node)
+		return (NULL);
+	return (new_node);
 }
 
-static char	*extract_env_key(char *env_str, char *equal_sign)
+t_env	*build_env_list(char **envp)
 {
-    if (equal_sign)
-        return (ft_substr(env_str, 0, equal_sign - env_str));
-    return (ft_strdup(env_str));
+	t_env	*env_list;
+	t_env	*new_node;
+	int		i;
+
+	env_list = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		new_node = create_env_node(envp[i]);
+		if (!new_node)
+		{
+			free_env_list(env_list);
+			return (NULL);
+		}
+		env_add_back(&env_list, new_node);
+		i++;
+	}
+	return (env_list);
 }
-
-
-
-
-t_env *create_env_node(char *env_str)
-{
-    char    *equal_sign;
-    char    *key;
-    char    *value_ptr;
-    t_env   *new_node;
-
-    equal_sign = ft_strchr(env_str, '=');
-    key = extract_env_key(env_str, equal_sign);
-    value_ptr = equal_sign ? (equal_sign + 1) : NULL;
-    if (!key)
-        return (NULL);
-    new_node = env_new(key, value_ptr);
-    free(key);
-    if (!new_node)
-        return (NULL);
-    return (new_node);
-}
-
-
-t_env *build_env_list(char **envp)
-{
-    t_env   *env_list;
-    t_env   *new_node;
-    int     i;
-
-    env_list = NULL;
-    i = 0;
-    while (envp[i])
-    {
-        new_node = create_env_node(envp[i]);
-        if (!new_node)
-        {
-            free_env_list(env_list);
-            return (NULL);
-        }
-        env_add_back(&env_list, new_node);
-        i++;
-    }
-    return (env_list);
-}
-
-

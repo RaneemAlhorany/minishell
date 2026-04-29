@@ -1,41 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   build_command_1.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:19:47 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:19:49 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "parsing.h"
 
-int	count_unquoted_words(char *s)
+t_ast	*build_command(t_token **tokens)
 {
-    int	count;
+	t_ast	*node;
+	int		has_word;
 
-    count = 0;
-    if (!s)
-        return (0);
-    while (*s)
-    {
-        while (*s == ' ' || *s == '\t' || *s == '\n')
-            s++;
-        if (!*s)
-            break ;
-        count++;
-        while (*s && *s != ' ' && *s != '\t' && *s != '\n')
-            s++;
-    }
-    return (count);
+	has_word = 0;
+	node = init_command_node(*tokens);
+	if (!node)
+		return (NULL);
+	if (!process_command_tokens(node, tokens, &has_word) || (!has_word
+			&& !node->cmd->redirections))
+	{
+		free_command(node->cmd);
+		free(node);
+		return (NULL);
+	}
+	return (node);
 }
 
-
-void	init_cmd(t_cmd *cmd)
+t_ast	*init_command_node(t_token *tokens)
 {
-    cmd->args = NULL;
-    cmd->redirections = NULL;
+	t_ast	*node;
+	int		argc;
+
+	node = create_ast_node(NODE_COMMAND);
+	if (!node)
+		return (NULL);
+	argc = count_words_in_cmd(tokens);
+	node->cmd = create_cmd(argc);
+	if (!node->cmd)
+	{
+		free(node);
+		return (NULL);
+	}
+	return (node);
 }
-
-static int	count_token_words(t_token *token)
-{
-    if (token->quoted)
-        return (1);
-    return (count_unquoted_words(token->value));
-}
-
-
 
 int	count_words_in_cmd(t_token *token)
 {
@@ -44,10 +56,15 @@ int	count_words_in_cmd(t_token *token)
 
 	count = 0;
 	tmp = token;
-    while (tmp && !is_command_delimiter(tmp->type))
+	while (tmp && !is_command_delimiter(tmp->type))
 	{
 		if (tmp->type == TOKEN_WORD)
-            count += count_token_words(tmp);
+		{
+			if (tmp->quoted)
+				count++;
+			else
+				count += count_unquoted_words(tmp->value);
+		}
 		else if (is_redirection(tmp->type))
 		{
 			if (tmp->next)
@@ -59,62 +76,51 @@ int	count_words_in_cmd(t_token *token)
 	return (count);
 }
 
-static char	*dup_redirection_name(t_token *current)
+int	count_unquoted_words(char *s)
 {
-    if (!current->next)
-        return (NULL);
-    return (strdup(current->next->value));
+	int	count;
+
+	count = 0;
+	if (!s)
+		return (0);
+	while (*s)
+	{
+		while (*s == ' ' || *s == '\t' || *s == '\n')
+			s++;
+		if (!*s)
+			break ;
+		count++;
+		while (*s && *s != ' ' && *s != '\t' && *s != '\n')
+			s++;
+	}
+	return (count);
 }
 
-t_cmd *create_cmd(int argc)
+t_cmd	*create_cmd(int argc)
 {
-    t_cmd *cmd;
-    int   i;
+	t_cmd	*cmd;
+	int		i;
+	int		capacity;
 
-    cmd = malloc(sizeof(t_cmd));
-    if (!cmd)
-        return (NULL);
-    init_cmd(cmd);
-    cmd->args = malloc(sizeof(char *) * (argc + 1));
-    if (!cmd->args)
-    {
-        free(cmd);
-        return (NULL);
-    }
-    i = 0;
-    while (i <= argc)
-    {
-        cmd->args[i] = NULL;
-        i++;
-    }
-    return (cmd);
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	cmd->args = NULL;
+	cmd->arg_cap = 0;
+	cmd->redirections = NULL;
+	capacity = argc + 2;
+	cmd->args = malloc(sizeof(char *) * capacity);
+	if (!cmd->args)
+	{
+		free(cmd);
+		return (NULL);
+	}
+	i = 0;
+	while (i < capacity)
+	{
+		cmd->args[i] = NULL;
+		i++;
+	}
+	cmd->arg_cap = capacity;
+	return (cmd);
 }
-
-
-
-
-t_redirection *create_redirection(t_token *current)
-{
-    t_redirection *new_redir;
-
-    new_redir = malloc(sizeof(t_redirection));
-    if (!new_redir)
-        return (NULL);
-
-    new_redir->type = current->type;
-    new_redir->quoted = (current->next) ? current->next->quoted : 0;
-    new_redir->heredoc_fd = -1;
-    new_redir->filename = dup_redirection_name(current);
-    if (!new_redir->filename)
-    {
-        free(new_redir);
-        return (NULL);
-    }
-    new_redir->next = NULL;
-
-    return (new_redir);
-}
-
-
-
-

@@ -1,75 +1,110 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:21:08 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:21:10 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "shell.h"
 
-
-
-t_shell * init_shell(char **envp)
+int	execute_line(t_shell *shell, char *line)
 {
-    t_shell *shell;
+	t_token	*tokens_head;
+	t_ast	*ast;
+	int		status;
 
-    shell = malloc(sizeof(t_shell));
-    if (!shell)
-        return NULL;
-    shell ->env = build_env_list(envp);
-    if (!shell->env)
-    {
-        free(shell);
-        return (NULL);
-    }
-	shell->active_tokens = NULL;
-	shell->active_ast = NULL;
-    shell -> is_running = 1;
-    shell -> last_exit_status = 0;
-    shell->prompt_prefix = NULL;
-	increment_shlvl(shell);
-
-    return (shell);
+	tokens_head = NULL;
+	status = -1;
+	ast = prepare_execution(shell, line, &tokens_head);
+	shell->active_tokens = tokens_head;
+	shell->active_ast = ast;
+	if (!ast)
+		return (handle_prepare_failure(shell, tokens_head));
+	status = handle_heredoc_shell(shell, ast, tokens_head);
+	if (status != -1)
+		return (status);
+	status = execute_and_update(shell, ast);
+	shell->last_exit_status = status;
+	cleanup_execution(shell, ast, tokens_head);
+	return (status);
 }
 
- int get_current_level(t_env *shlvl_node)
+int	is_blank_input(char *line)
 {
-    if (!shlvl_node || !shlvl_node->has_value
-        || !is_str_numeric(shlvl_node->value))
-        return (1);
-    return (ft_atoi(shlvl_node->value));
+	int	index;
+
+	index = 0;
+	while (line[index])
+	{
+		if (line[index] != ' ' && line[index] != '\t')
+			return (0);
+		index++;
+	}
+	return (1);
 }
 
-void print_shlvl_warning(int level)
+void	process_line(t_shell *shell, char *line)
 {
-    ft_putstr_fd("minishell: warning: shell level (", 2);
-    ft_putnbr_fd(level, 2);
-    ft_putendl_fd(") too high, resetting to 1", 2);
+	int	status;
+
+	if (line[0] == '\0' || is_blank_input(line))
+		return ;
+	add_history(line);
+	set_interactive_readline_mode(0);
+	status = execute_line(shell, line);
+	shell->last_exit_status = status;
+	if ((int)g_last_signal == SIGQUIT)
+	{
+		ft_putendl_fd("Quit (core dumped)", 2);
+		g_last_signal = 0;
+	}
 }
 
-int compute_next_level(int current_level)
+char	*build_prompt(t_shell *shell)
 {
-    int next_level;
+	char	*prompt;
 
-    next_level = current_level + 1;
-
-    if (next_level < 0)
-        return (0);
-    if (next_level >= 1000)
-    {
-        print_shlvl_warning(next_level);
-        return (1);
-    }
-    return (next_level);
+	if (shell->prompt_prefix)
+	{
+		prompt = ft_strjoin(shell->prompt_prefix, "minishell$ ");
+		free(shell->prompt_prefix);
+		shell->prompt_prefix = NULL;
+		if (!prompt)
+			return (ft_strdup("minishell$ "));
+		return (prompt);
+	}
+	return (ft_strdup("minishell$ "));
 }
 
-void update_shlvl_value(t_shell *shell, int level)
+void	shell_interactive(t_shell *shell)
 {
-    char *new_level;
+	char	*line;
+	char	*prompt;
 
-    new_level = ft_itoa(level);
-    if (!new_level)
-        return ;
-    update_env(shell, "SHLVL", new_level);
-    free(new_level);
+	while (shell && shell->is_running)
+	{
+		g_last_signal = 0;
+		set_interactive_readline_mode(1);
+		prompt = build_prompt(shell);
+		line = readline(prompt);
+		free(prompt);
+		handle_sigint(shell);
+		if (!line)
+		{
+			ft_putendl_fd("exit", 1);
+			break ;
+		}
+		if (line[0] == '\0')
+		{
+			free(line);
+			continue ;
+		}
+		process_line(shell, line);
+		free(line);
+	}
 }
-
-
-
-
-
-

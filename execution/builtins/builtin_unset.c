@@ -1,92 +1,80 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_unset.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:16:04 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:16:06 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "builtin.h"
 
-static int	matches_env_key(t_env *node, char *key)
+int	consume_char_flag(char *arg, int *flag, char character)
 {
-    return (ft_strncmp(node->key, key, ft_strlen(key) + 1) == 0);
+	int	j;
+
+	j = 1;
+	while (arg[j] == character)
+		j++;
+	if (arg[j] != '\0')
+		return (0);
+	*flag = 1;
+	return (1);
 }
 
-static void	unlink_env_node(t_shell *shell, t_env *prev, t_env *node)
+int	is_matching_flag_arg(char *arg, char character)
 {
-    if (prev == NULL)
-        shell->env = node->next;
-    else
-        prev->next = node->next;
-    free(node->key);
-    if (node->value)
-        free(node->value);
-    free(node);
+	if (arg[0] != '-')
+		return (0);
+	if (arg[1] != character)
+		return (0);
+	return (1);
 }
 
-void remove_env(t_shell *shell, char *key)
+int	parse_char_flag(char **args, int *index, char character)
 {
-    t_env *temp;
-    t_env *prev;
+	int	flag;
 
-    if (!shell || !shell->env || !key)
-        return;
-    temp = shell -> env;
-    prev = NULL;
-    while (temp)
-    {
-        if (matches_env_key(temp, key))
-        {
-            unlink_env_node(shell, prev, temp);
-            return ;
-        }
-        prev = temp;
-        temp = temp ->next;
-    }
+	flag = 0;
+	while (args[*index])
+	{
+		if (!is_matching_flag_arg(args[*index], character))
+			break ;
+		if (!consume_char_flag(args[*index], &flag, character))
+			break ;
+		(*index)++;
+	}
+	return (flag);
 }
 
-char *strip_quotes(char *str)
+int	handle_unset_option(t_cmd *cmd, int *i)
 {
-    if (!str)
-        return (NULL);
-    return (ft_strtrim(str, "\""));
+	if (cmd->args[1] && cmd->args[1][0] == '-')
+	{
+		if (parse_char_flag(cmd->args, i, 'v'))
+			*i = 2;
+		else
+		{
+			ft_putendl_fd("unset:invalid option", 2);
+			ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
+			return (1);
+		}
+	}
+	return (0);
 }
 
-void process_unset_args(t_cmd *cmd, t_shell *shell, int i)
+int	builtin_unset(t_cmd *cmd, t_shell *shell)
 {
-    char *key;
+	int	i;
 
-    while (cmd->args[i])
-    {
-        key = strip_quotes(cmd->args[i]);
-        if (key)
-        {
-            remove_env(shell, key);
-            free(key);
-        }
-        i++;
-    }
-}
-
-int handle_unset_option(t_cmd *cmd, int *i)
-{
-    if (cmd->args[1] && cmd->args[1][0] == '-')
-    {
-        if (parse_char_flag(cmd->args ,i ,'v'))
-            *i = 2;
-        else
-        {
-            ft_putendl_fd("unset:invalid option", 2);
-            ft_putendl_fd("unset: usage: unset [-v] [name ...]", 2);
-            return (1);
-        }
-    }
-    return (0);
-}
-
-int builtin_unset(t_cmd *cmd, t_shell *shell)
-{
-    int i;
-
-    if (!cmd || !shell)
-        return (1);
-    i = 1;
-    if (handle_unset_option(cmd, &i))
-        return (1);
-    process_unset_args(cmd, shell, i);
-    return (0);
+	if (!cmd || !shell)
+		return (1);
+	i = 1;
+	if (handle_unset_option(cmd, &i))
+		return (1);
+	process_unset_args(cmd, shell, i);
+	return (0);
 }

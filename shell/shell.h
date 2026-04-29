@@ -1,81 +1,80 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:21:15 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:22:26 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SHELL_H
-#define SHELL_H
+# define SHELL_H
 
-#include "../env/env.h"
-#include "../lexer/lexer.h"
+# include "../Libft/libft.h"
+# include "../env/env.h"
+# include "../minishell.h"
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdlib.h>
 
-#include <readline/readline.h>
-#include <stdlib.h>
-#include <signal.h>
-#include "../Libft/libft.h"
+typedef struct s_env			t_env;
+typedef struct s_token			t_token;
+typedef struct s_ast			t_ast;
+typedef struct s_cmd			t_cmd;
+typedef struct s_redirection	t_redirection;
+typedef struct s_shell			t_shell;
 
+//shell_execution.c
+t_ast							*prepare_execution(t_shell *shell, char *line,
+									t_token **tokens_head);
+int								is_blank_line(const char *s);
+int								check_syntax(t_token *tokens, t_shell *shell);
+int								process_heredocs_on_error(t_token *tokens,
+									t_shell *shell);
+int								expand_tokens(t_token *tokens, t_shell *shell);
 
-// helper functions 1
-int	is_str_numeric(const char *s);
-void	free_shell(t_shell *shell);
-char	*get_last_arg_from_cmd(t_cmd *cmd);
-char	*get_last_arg_from_ast(t_ast *ast);
-void free_2D(char **dirs);
+//shell_free_1.c
+int								handle_prepare_failure(t_shell *shell,
+									t_token *tokens_head);
+void							free_tokens(t_token *head);
+void							cleanup_execution(t_shell *shell, t_ast *ast,
+									t_token *tokens);
+void							free_ast(t_ast *ast);
 
+//shell_free_2.c
+void							free_command(t_cmd *cmd);
+void							free_redirections(t_redirection *r);
+void							free_shell(t_shell *shell);
+void							free_2d(char **dirs);
 
-// helper functions 2
-int	expand_tokens(t_token *tokens, t_shell *shell);
-int	is_blank_line(const char *s);
-int handle_prepare_failure(t_shell *shell, t_token *tokens_head);
-void set_active_state(t_shell *shell, t_token *tokens, t_ast *ast);
-int execute_and_update(t_shell *shell, t_ast *ast);
+//shell_helper_1.c
+t_ast							*parse_pipeline(t_token **tokens);
+int								handle_heredoc_shell(t_shell *shell, t_ast *ast,
+									t_token *tokens_head);
+int								preload_heredocs_ast(t_ast *node,
+									t_shell *shell);
+int								preload_heredocs_redirect(t_redirection *redir,
+									t_shell *shell);
+int								execute_and_update(t_shell *shell, t_ast *ast);
 
+//shell_helper_2.c
+char							*get_last_arg_from_ast(t_ast *ast);
+char							*get_last_arg_from_cmd(t_cmd *cmd);
 
-// helper functions 3
-char *prepare_input(char *line);
-t_token *get_tokens(char *input);
-int expand_tokens_safe(t_token *tokens, t_shell *shell);
-void print_syntax_error(char *unexpected, int unexpected_newline);
-int check_syntax(t_token *tokens, t_shell *shell);
+//shell.c
+int								execute_line(t_shell *shell, char *line);
+int								is_blank_input(char *line);
+void							process_line(t_shell *shell, char *line);
+char							*build_prompt(t_shell *shell);
+void							shell_interactive(t_shell *shell);
 
-
-
-// helper functions 4
-t_ast *prepare_execution(t_shell *shell, char *line, t_token **tokens_head);
-void cleanup_execution(t_shell *shell, t_ast *ast, t_token *tokens);
-int execute_line(t_shell *shell, char *line);
-void increment_shlvl(t_shell *shell);
-
- int	handle_prepare(t_shell *shell,t_token *tokens_head, t_ast *ast);
-
-
- int	handle_heredoc_shell(t_shell *shell,t_ast *ast, t_token *tokens_head);
-
- int	execute_phase(t_shell *shell, t_ast *ast);
-//helper 5
-void	shell_interactive(t_shell *shell);
-char	*build_prompt(t_shell *shell);
-void	handle_sigint(t_shell *shell);
-void	process_line(t_shell *shell, char *line);
-
-
-// shell 
-t_shell * init_shell(char **envp);
-int get_current_level(t_env *shlvl_node);
-void print_shlvl_warning(int level);
-int compute_next_level(int current_level);
-void update_shlvl_value(t_shell *shell, int level);
-
-
-
-
-
-
-
-
-
-
-
-
+//shlvl.c
+int								compute_next_level(int current_level);
+int								is_str_numeric(const char *s);
+void							increment_shlvl(t_shell *shell);
+t_shell							*init_shell(char **envp);
 
 #endif
-
-
-
-
-

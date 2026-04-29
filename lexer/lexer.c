@@ -1,28 +1,71 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:19:24 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:35:05 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "lexer.h"
 
-
- void	print_unclosed_quote_error(char quote)
+void	append_token(t_token **head, t_token *new_token)
 {
-	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
-	ft_putchar_fd(quote, 2);
-	ft_putendl_fd("'", 2);
+	t_token	*temp;
+
+	if (!new_token)
+		return ;
+	if (!*head)
+		*head = new_token;
+	else
+	{
+		temp = *head;
+		while (temp->next)
+			temp = temp->next;
+		temp->next = new_token;
+	}
 }
 
-
- t_token	*handle_lexer_error(t_token *head, char *input)
+t_token	*word_detection(char **input)
 {
-	char	unclosed_quote;
+	char	*start;
+	char	*temp;
+	t_token	*token;
+	int		length;
 
-	unclosed_quote = check_unclosed_quotes(input);
-	if (unclosed_quote)
-		print_unclosed_quote_error(unclosed_quote);
-	free_tokens(head);
-	return (NULL);
+	start = *input;
+	if (!move_through_word(input))
+		return (NULL);
+	length = *input - start;
+	if (length <= 0)
+		return (NULL);
+	temp = ft_substr(start, 0, length);
+	if (!temp)
+		return (NULL);
+	token = create_token(temp, TOKEN_WORD);
+	free(temp);
+	if (!token)
+		return (NULL);
+	return (token);
 }
 
+t_token	*operator_detection(char **input)
+{
+	t_token	*token;
 
- int	process_token(char **input, t_token **head)
+	token = match_and_or(input);
+	if (token)
+		return (token);
+	token = match_double_redirect(input);
+	if (token)
+		return (token);
+	return (detect_single_operator(input));
+}
+
+int	process_token(char **input, t_token **head)
 {
 	t_token	*new;
 
@@ -35,30 +78,20 @@
 	return (1);
 }
 
-
- t_token	*lexer_loop(char *input, char *original_input)
+t_token	*lexer(char *input)
 {
 	t_token	*head;
+	char	*original_input;
 
 	head = NULL;
+	original_input = input;
 	while (*input)
 	{
 		skip_spaces(&input);
 		if (!*input || *input == '#')
-			break;
+			break ;
 		if (!process_token(&input, &head))
 			return (handle_lexer_error(head, original_input));
 	}
 	return (head);
 }
-
-t_token	*lexer(char *input)
-{
-	return (lexer_loop(input, input));
-}
-
-
-
-
-
-

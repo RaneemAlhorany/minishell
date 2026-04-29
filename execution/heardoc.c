@@ -1,124 +1,124 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heardoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:17:43 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:17:44 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "execution.h"
 
-
-
- int handle_fork_error(int fd[2], char *limiter)
+void	heredoc_child(int fd[2], char *limiter, t_shell *shell, int quoted)
 {
-    close_pipe(fd);
-    free(limiter);
-    return (-1);
+	int	interrupted;
+	int	tty_fd;
+	int	tmp_fd;
+
+	g_last_signal = 0;
+	tmp_fd = 3;
+	setup_execution_signal(1);
+	setup_child_stdin(&tty_fd, fd, limiter, shell);
+	close(fd[0]);
+	while (tmp_fd < 1024)
+	{
+		if (tmp_fd != fd[1])
+			close(tmp_fd);
+		tmp_fd++;
+	}
+	interrupted = heredoc_loop(fd[1], limiter, shell, quoted);
+	close(fd[1]);
+	free(limiter);
+	free_parts(shell);
+	free_shell(shell);
+	if (interrupted)
+		exit(130);
+	exit(0);
 }
 
- void setup_child_stdin(int *tty_fd, int fd[2], char *limiter, t_shell *shell)
+int	fork_heredoc_child(int fd[2], char *limiter, t_shell *shell, int quoted)
 {
-    *tty_fd = -1;
-    if (isatty(STDIN_FILENO))
-        *tty_fd = open("/dev/tty", O_RDONLY);
-    if (*tty_fd >= 0)
-    {
-        if (dup2(*tty_fd, STDIN_FILENO) < 0)
-        {
-            close(*tty_fd);
-            close_pipe(fd);
-            free(limiter);
-            cleanup_heredoc_child_state(shell);
-            _exit(1);
-        }
-        close(*tty_fd);
-    }
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		close(fd[0]);
+		close(fd[1]);
+		free(limiter);
+		return (-1);
+	}
+	if (pid == 0)
+		heredoc_child(fd, limiter, shell, quoted);
+	close(fd[1]);
+	return (pid);
 }
 
- void heredoc_child(int fd[2], char *limiter,t_shell *shell, int quoted)
+char	*strip_heredoc_quotes(const char *s)
 {
-    int interrupted;
-    int tty_fd;
+	char	*result;
+	int		i;
+	int		j;
 
-    clear_last_signal();
-    setup_heredoc_child_signals();
-    setup_child_stdin(&tty_fd, fd, limiter, shell);
-
-    close(fd[0]);
-    close_inherited_fds_except(fd[1]);
-
-    interrupted = heredoc_loop(fd[1], limiter, shell, quoted);
-
-    close(fd[1]);
-    free(limiter);
-    cleanup_heredoc_child_state(shell);
-
-    if (interrupted)
-        _exit(130);
-    _exit(0);
+	if (!s)
+		return (NULL);
+	result = malloc(ft_strlen(s) + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s[i])
+	{
+		if (s[i] != '\'' && s[i] != '"')
+			result[j++] = s[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
 }
 
-
- int handle_child_status(int fd[2], int status)
+char	*prepare_limit(t_redirection *redirect, int *quoted)
 {
-    if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-        || (WIFEXITED(status) && WEXITSTATUS(status) == 130))
-    {
-        if (isatty(STDIN_FILENO))
-            write(STDOUT_FILENO, "\n", 1);
-        g_last_signal = SIGINT;
-        close(fd[0]);
-        return (-2);
-    }
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-    {
-        close(fd[0]);
-        return (-1);
-    }
-    return (fd[0]);
+	char	*limiter;
+
+	if (redirect)
+	{
+		*quoted = redirect->quoted;
+		limiter = strip_heredoc_quotes(redirect->filename);
+	}
+	else
+	{
+		*quoted = 0;
+		limiter = NULL;
+	}
+	return (limiter);
 }
 
-static int	fork_heredoc_child(int fd[2], char *limiter, t_shell *shell, int quoted)
+int	handle_heredoc(t_redirection *redirect, t_shell *shell)
 {
-    pid_t	pid;
+	int		fd[2];
+	char	*limiter;
+	int		quoted;
+	int		pid;
 
-    pid = fork();
-    if (pid < 0)
-        return (handle_fork_error(fd, limiter));
-    if (pid == 0)
-        heredoc_child(fd, limiter, shell, quoted);
-    close(fd[1]);
-    return (pid);
-}
-
-static int	finalize_heredoc_parent(int fd[2], char *limiter, int pid)
-{
-    int	status;
-
-    if (!wait_heredoc_child(pid, &status))
-    {
-        close(fd[0]);
-        free(limiter);
-        return (-1);
-    }
-    free(limiter);
-    return (handle_child_status(fd, status));
-}
-
-int handle_heredoc(t_redirection *redirect, t_shell *shell)
-{
-    int     fd[2];
-    char    *limiter;
-    int     quoted;
-    int     pid;
-
-    if (!init_heredoc_pipe(fd))
-    {
-        return (-1);
-    }
-    clear_last_signal();
-    limiter = prepare_limiter(redirect, &quoted);
-    if (!limiter)
-    {
-        return (close_pipe(fd), -1);
+	if (pipe(fd) < 0)
+	{
+		perror("minishell: pipe");
+		return (-1);
+	}
+	g_last_signal = 0;
+	limiter = prepare_limit(redirect, &quoted);
+	if (!limiter)
+	{
+		close(fd[0]);
+		close(fd[1]);
+		return (-1);
 	}
 	pid = fork_heredoc_child(fd, limiter, shell, quoted);
 	if (pid < 0)
-    {
 		return (pid);
-	}
 	return (finalize_heredoc_parent(fd, limiter, pid));
 }

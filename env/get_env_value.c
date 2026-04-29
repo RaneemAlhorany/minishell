@@ -1,26 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_env_value.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: babo-sai <babo-sai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/29 16:14:28 by babo-sai          #+#    #+#             */
+/*   Updated: 2026/04/29 16:14:30 by babo-sai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "env.h"
 
-
-
-char    *get_env_value(char *name, t_env *env)
+char	*get_env_value(char *name, t_env *env)
 {
-    t_env   *temp;
-    size_t len;
+	t_env	*temp;
+	size_t	len;
 
-    if (!name )
-        return (ft_strdup(""));
-    temp = env;
-    len = ft_strlen(name);
-    while (temp)
-    {
-        if (ft_strncmp(name, temp->key, len + 1) == 0)
-        {
-            if (!temp -> value)
-                return (ft_strdup(""));
-              return (ft_strdup(temp -> value));
-        }
-        temp = temp -> next;
-    }
-    return (ft_strdup(""));
+	if (!name)
+		return (ft_strdup(""));
+	temp = env;
+	len = ft_strlen(name);
+	while (temp)
+	{
+		if (ft_strncmp(name, temp->key, len + 1) == 0)
+		{
+			if (!temp->value)
+				return (ft_strdup(""));
+			return (ft_strdup(temp->value));
+		}
+		temp = temp->next;
+	}
+	return (ft_strdup(""));
 }
-
