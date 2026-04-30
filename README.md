@@ -191,7 +191,7 @@ This project implements the common shell builtins and supports several options a
 If you want, I can add a short examples subsection with common usage patterns (temporary env assignment, `env -i`, `pwd -P`, `echo -n`, etc.) — should I add that now?
 
 
-# Minishell Comprehensive Test Suite
+## Minishell Comprehensive Test Suite
 
 ## Running Checks
 
