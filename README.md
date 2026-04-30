@@ -705,6 +705,13 @@ Exit: `2`
 - Complex combinations of pipes and redirections
 
 
+## Project Statistics
+
+- **Total Lines of Code**: 8,991
+- **Total Functions**: 301
+- **Total Files**: 115
+
+
 ## Resources
 
 Classic references used while building this project:
