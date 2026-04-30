@@ -193,8 +193,6 @@ If you want, I can add a short examples subsection with common usage patterns (t
 
 # Minishell Comprehensive Test Suite
 
-This README collects the test cases for validating a Minishell implementation.
-
 ## Running Checks
 
 ### Valgrind
@@ -707,7 +705,7 @@ Exit: `2`
 
 ## Project Statistics
 
-- **Total Lines of Code**: 8,991
+- **Total Lines of Code**: 8,989
 - **Total Functions**: 301
 - **Total Files**: 115
 
