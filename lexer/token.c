@@ -43,17 +43,3 @@ int	token_has_quotes(const char *s)
 	}
 	return (0);
 }
-
-// void	free_tokens(t_token *head)
-// {
-// 	t_token	*tmp;
-
-// 	while (head)
-// 	{
-// 		tmp = head->next;
-// 		if (head->value)
-// 			free(head->value);
-// 		free(head);
-// 		head = tmp;
-// 	}
-// }
