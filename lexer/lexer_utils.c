@@ -77,8 +77,6 @@ t_token	*helper_create_token(char **input, char *value, t_token_type type)
 	token = NULL;
 	if (input && *input && **input)
 	{
-		(void)type;
-		(void)value;
 		token = create_token(value, type);
 		(*input)++;
 	}
