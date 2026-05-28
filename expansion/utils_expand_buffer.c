@@ -49,7 +49,7 @@ int	buffer_grow(t_buffer *buf, size_t needed)
 	new_data = malloc(new_capacity);
 	if (!new_data)
 		return (0);
-	memcpy(new_data, buf->data, buf->len);
+	ft_memcpy(new_data, buf->data, buf->len);
 	free(buf->data);
 	buf->data = new_data;
 	buf->capacity = new_capacity;
