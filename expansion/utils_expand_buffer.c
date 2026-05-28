@@ -30,7 +30,7 @@ int	buffer_append_str(t_buffer *buf, char *str)
 	i = ft_strlen(str);
 	if (!buffer_grow(buf, i))
 		return (0);
-	memcpy(buf->data + buf->len, str, i);
+	ft_memcpy(buf->data + buf->len, str, i);
 	buf->len += i;
 	buf->data[buf->len] = '\0';
 	return (1);
