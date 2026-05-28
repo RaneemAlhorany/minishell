@@ -27,7 +27,7 @@ int	buffer_append_str(t_buffer *buf, char *str)
 {
 	size_t	i;
 
-	i = strlen(str);
+	i = ft_strlen(str);
 	if (!buffer_grow(buf, i))
 		return (0);
 	memcpy(buf->data + buf->len, str, i);
