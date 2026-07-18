@@ -109,7 +109,7 @@ t_redirection	*create_redirection(t_token *current)
 	if (!current->next)
 		new_redir->filename = NULL;
 	else
-		new_redir->filename = strdup(current->next->value);
+		new_redir->filename = ft_strdup(current->next->value);
 	if (!new_redir->filename)
 	{
 		free(new_redir);
