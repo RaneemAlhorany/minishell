@@ -54,7 +54,7 @@ int	handle_word_token(t_cmd *cmd, t_token *token, int *index)
 			return (0);
 		if (!ensure_cmd_args_capacity(cmd, *index))
 			return (0);
-		cmd->args[*index] = strdup(token->value);
+		cmd->args[*index] = ft_strdup(token->value);
 		if (!cmd->args[*index])
 			return (0);
 		(*index)++;
