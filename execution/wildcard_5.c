@@ -31,12 +31,18 @@ int	handle_wildcard(char **new_arg, int *j, char *arg)
 	if (match_count == 0)
 	{
 		if (!copy_normal_arg(new_arg, j, arg))
-			return (free_str_array(matches, match_count), 0);
+		{
+			free_str_array(matches, match_count);
+			return (0);	
+		}
 	}
 	else
 	{
 		if (!add_matches(new_arg, j, matches, match_count))
-			return (free_str_array(matches, match_count), 0);
+		{
+			free_str_array(matches, match_count);
+			return (0);
+		}
 	}
 	free_str_array(matches, match_count);
 	return (1);
